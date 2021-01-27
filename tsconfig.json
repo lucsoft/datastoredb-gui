@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "target": "es2019",
+        "module": "commonjs",
+        "strict": true,
+        "outDir": "bin",
+        "resolveJsonModule": true
+    },
+    "include": [
+        "./declarations.d.ts"
+    ]
+}
