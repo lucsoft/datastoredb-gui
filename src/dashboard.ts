@@ -40,8 +40,9 @@ export function renderMain(web: WebGen)
                     icon: '🚦'
                 }))
             }
-            await refreshIcons(hmsys)
-            renderIconlist(list)
+            refreshIcons(hmsys)
+                .then(() => renderIconlist(list))
+
         })
     }
 
