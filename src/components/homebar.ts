@@ -1,20 +1,20 @@
 import { WebGenElements } from '@lucsoft/webgen';
-import { HeadlessCard } from '@lucsoft/webgen/bin/lib/Cards';
-
-
+import type { HeadlessCard } from '@lucsoft/webgen/bin/lib/Cards';
+import '../../res/css/homebar.css';
 export function renderHomeBar(ele: WebGenElements)
 {
-    const search = document.createElement('div')
-    search.style.height = "1rem"
-    const upload = document.createElement('div')
-    upload.style.height = "1rem"
-    ele.cards({ minColumnWidth: 5 }, {
+    const search = document.createElement('input')
+    search.placeholder = "Search something...";
+    const control = document.createElement('button')
+    control.classList.add('one')
+    control.innerText = "Settings"
+    const menu = ele.cards({ minColumnWidth: 5 }, {
         type: "less",
-        html: search,
-        width: 3
+        html: search
     } as HeadlessCard, {
         type: "less",
-        html: upload,
-        width: 1
+        html: control
     } as HeadlessCard)
+    menu.last.classList.add('homebar')
+    menu.last.style.gridTemplateColumns = "auto 12rem";
 }

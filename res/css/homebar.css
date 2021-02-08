@@ -1,0 +1,14 @@
+.homebar card > input {
+    height: 1.6rem;
+    background: none;
+    margin: 0;
+    color: var(--on-card-text);
+    padding: 1.1rem 1.3rem;
+}
+.homebar card > button {
+    background: none;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1.2rem 1.5rem 1rem !important;
+}

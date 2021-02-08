@@ -2,9 +2,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: .5rem;
+    gap: .7rem;
 }
-.image-list > img{
+.image-list .shell img{
     width: 64px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;

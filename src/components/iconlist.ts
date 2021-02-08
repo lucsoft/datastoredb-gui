@@ -7,9 +7,15 @@ export async function renderIconlist(element: HTMLElement)
     element.innerHTML = "";
     data.forEach(x =>
     {
+        const shell = document.createElement('div')
+        shell.classList.add('shell')
         const image = document.createElement('img')
-
+        image.onclick = () =>
+        {
+            shell.classList.toggle('menu')
+        }
         image.src = URL.createObjectURL(x.data)
-        element.append(image)
+        shell.append(image)
+        element.append(shell)
     })
 }
