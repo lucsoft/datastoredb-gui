@@ -10,3 +10,21 @@
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
 }
+.image-list .shell > span {
+    position: absolute;
+    box-shadow: var(--background-card);
+    border-radius: var(--border-radius);
+    background: var(--background-card);
+    color: var(--on-card-text);
+    font-family: var(--font);
+    backdrop-filter: blur(1rem);
+    opacity: 0;
+    display: none;
+}
+.image-list .shell.menu > span {
+    display: inline-block;
+    opacity: 1;
+}
+.image-list .shell > span > span {
+    display: block;
+}

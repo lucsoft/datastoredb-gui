@@ -7,7 +7,7 @@ export function renderHomeBar(ele: WebGenElements)
     search.placeholder = "Search something...";
     const control = document.createElement('button')
     control.classList.add('one')
-    control.innerText = "Settings"
+    control.innerText = "About DataStoreDB"
     const menu = ele.cards({ minColumnWidth: 5 }, {
         type: "less",
         html: search
