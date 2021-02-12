@@ -1,8 +1,8 @@
-import { NetworkConnector } from '@lucsoft/network-connector';
-import { db, Icon } from './IconsCache';
+import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
+import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 
-export async function refreshIcons(hmsys: NetworkConnector)
+registerEvent(DataStoreEvents.RefreshData, async (hmsys) =>
 {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
 
@@ -12,7 +12,7 @@ export async function refreshIcons(hmsys: NetworkConnector)
     const toAddFetch: Response[] = await Promise.all(toAdd.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
     const toAddBlobs = await Promise.all(toAddFetch.map(x => x.blob()))
 
-    return db.transaction('rw', db.icons, async () =>
+    await db.transaction('rw', db.icons, async () =>
     {
         await db.icons.bulkDelete(toRemove)
         await db.icons.bulkAdd(toAdd.map((entry, index) =>
@@ -21,4 +21,6 @@ export async function refreshIcons(hmsys: NetworkConnector)
             data: toAddBlobs[ index ]
         })))
     })
-}
+
+    emitEvent(DataStoreEvents.RefreshDataComplete, { new: toAdd, removed: toRemove })
+})
