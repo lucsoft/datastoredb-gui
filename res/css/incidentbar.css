@@ -1,0 +1,26 @@
+.incident-bar {
+    height: 0;
+    padding: 0 1.5rem;
+    opacity: 0;
+    display: block;
+    transition: all 250ms ease;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    background: transparent;
+}
+.incident-bar.active {
+    padding: 1.5rem 1.5rem;
+    opacity: 1;
+    height: auto;
+    margin-bottom: 2rem;
+
+    background: #e48208;
+}
+
+.incident-bar.good {
+    background: #148e50;
+    padding: 1.5rem 1.5rem;
+    opacity: 1;
+    height: auto;
+    margin-bottom: 2rem;
+}
