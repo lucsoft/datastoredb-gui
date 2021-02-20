@@ -1,13 +1,12 @@
-import { WebGen, WebGenElements } from "@lucsoft/webgen";
+import { WebGenElements, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { db } from '../data/IconsCache';
-const { span } = new WebGen().elements.none().components;
 export const createIconList = (elements: WebGenElements) =>
 {
     const list = document.createElement('div');
     list.classList.add('image-list');
 
-    elements.custom({ element: list })
+    elements.custom(list)
     return list;
 };
 

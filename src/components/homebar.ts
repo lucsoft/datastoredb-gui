@@ -1,5 +1,5 @@
-import { WebGenElements } from '@lucsoft/webgen';
-import type { HeadlessCard } from '@lucsoft/webgen/bin/lib/Cards';
+import { HeadlessCard, WebGenElements } from '@lucsoft/webgen';
+import { CardTypes } from "@lucsoft/webgen/bin/types/card";
 import '../../res/css/homebar.css';
 export function renderHomeBar(ele: WebGenElements)
 {
@@ -9,10 +9,10 @@ export function renderHomeBar(ele: WebGenElements)
     control.classList.add('one')
     control.innerText = "About DataStoreDB"
     const menu = ele.cards({ minColumnWidth: 5 }, {
-        type: "less",
+        type: CardTypes.Headless,
         html: search
     } as HeadlessCard, {
-        type: "less",
+        type: CardTypes.Headless,
         html: control
     } as HeadlessCard)
     menu.last.classList.add('homebar')

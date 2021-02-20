@@ -38,5 +38,5 @@ export const createIncidentBar = (ele: WebGenElements, hmsys: NetworkConnector) 
         }
     })
 
-    ele.custom({ element })
+    ele.custom(element)
 }
