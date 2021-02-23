@@ -9,7 +9,12 @@ import './common/refreshData';
 
 export function renderMain(web: WebGen)
 {
-    const elements = web.elements.body({ maxWidth: '75rem' })
+    const shell = document.createElement('div')
+    shell.classList.add('masterShell')
+    const main = document.createElement('article')
+    shell.append(main);
+    document.body.append(shell)
+    const elements = web.elements.custom(main, { maxWidth: '75rem' })
     const hmsys = new NetworkConnector('eu01.hmsys.de:444')
 
     createIncidentBar(elements, hmsys)
