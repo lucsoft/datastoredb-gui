@@ -1,0 +1,14 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    right:0;
+    margin: var(--gap);
+    margin-top: 6rem;
+    transform: translate(200%);
+}
+.sidebar.open {
+    transform: translate(0%);
+}
+.sidebar cardlist {
+    margin: 0;
+}

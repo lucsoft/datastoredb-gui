@@ -1,5 +1,6 @@
-import { WebGenElements, span } from "@lucsoft/webgen";
+import { WebGenElements, span, custom } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
+import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { db } from '../data/IconsCache';
 export const createIconList = (elements: WebGenElements) =>
 {
@@ -18,22 +19,19 @@ export async function renderIconlist(element: HTMLElement)
 
     data.forEach(x =>
     {
-        const shell = document.createElement('div')
-        shell.classList.add('shell')
         const image = document.createElement('img')
+        const shell = custom('div', image, 'shell')
 
         image.src = URL.createObjectURL(x.data)
-        shell.tabIndex = -1;
-        image.onclick = () => shell.classList.toggle('menu')
-        shell.onblur = () => shell.classList.remove('menu')
-
-        const menu = document.createElement('span')
-
-        menu.append(span("Edit"))
-        menu.append(span("Download"))
-        menu.append(span("Delete"))
-
-        shell.append(image, menu)
+        image.onclick = () =>
+        {
+            emitEvent(DataStoreEvents.SidebarUpdate, {
+                image: image.src,
+                id: x.id,
+                tags: x.tags,
+                displayName: x.filename
+            })
+        }
         element.append(shell)
     })
 }
