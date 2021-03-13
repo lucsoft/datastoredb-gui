@@ -2,7 +2,8 @@ export enum DataStoreEvents
 {
     IncidentBar,
     RefreshData,
-    RefreshDataComplete
+    RefreshDataComplete,
+    SidebarUpdate
 }
 
 const events: DataStoreEvent[] = []
