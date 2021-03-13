@@ -11,6 +11,15 @@ export const createIconList = (elements: WebGenElements) =>
     return list;
 };
 
+function getOffset(el: HTMLElement)
+{
+    const rect = el.getBoundingClientRect();
+    return {
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY
+    };
+}
+
 export async function renderIconlist(element: HTMLElement)
 {
     const data = await db.icons.orderBy('date').toArray()
@@ -23,15 +32,16 @@ export async function renderIconlist(element: HTMLElement)
         const shell = custom('div', image, 'shell')
 
         image.src = URL.createObjectURL(x.data)
-        image.onclick = () =>
-        {
-            emitEvent(DataStoreEvents.SidebarUpdate, {
-                image: image.src,
-                id: x.id,
-                tags: x.tags,
-                displayName: x.filename
-            })
-        }
+        image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
+            offset: getOffset(image),
+            image: image.src,
+            id: x.id,
+            date: x.date,
+            alts: [ image.src ],
+            tags: x.tags,
+            displayName: x.filename
+        })
+
         element.append(shell)
     })
 }

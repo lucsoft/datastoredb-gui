@@ -1,14 +1,139 @@
 .sidebar {
     position: fixed;
     top: 0;
-    right:0;
-    margin: var(--gap);
-    margin-top: 6rem;
-    transform: translate(200%);
+    left: 0;
+    opacity: 0;
+    display: none;
+    margin: -3rem 0 0 -2.8rem;
+    user-select: none;
 }
 .sidebar.open {
-    transform: translate(0%);
+    display: block;
+    opacity: 1;
+}
+@keyframes fadeInInnerCard {
+    0% {
+        margin-bottom: -15rem;
+        margin-right: -7rem;
+    }
+}
+.sidebar .shell {
+    width: 23rem;
+    animation: fadeInInnerCard 400ms ease;
 }
 .sidebar cardlist {
     margin: 0;
+}
+@keyframes fadeInCard {
+    0% {
+        transform: translate(0,20%);
+    }
+}
+.sidebar card {
+    box-shadow: 0px 10px 22px 0px rgb(0 0 0 / 30%);
+    animation: fadeInCard 250ms ease;
+    overflow: hidden;
+
+}
+
+@keyframes fadeInImage {
+    0% {
+        width: 4rem;
+        height: 4rem;
+        margin-left: 2.5rem;
+    }
+    30% {
+        width: 4rem;
+        height: 4rem;
+        margin-left: 2.5rem;
+    }
+}
+.sidebar .preview {
+    display: block;
+    width: 7rem;
+    height: 7rem;
+    image-rendering: pixelated;
+    margin: 1.4rem 0 0 1.5rem;
+    animation: fadeInImage 300ms ease;
+}
+.sidebar .icon-title {
+    display: block;
+    margin: 8px 0 0 1.5rem;
+    font-size: 55px;
+    font-weight: 700;
+}
+.sidebar .tags-list {
+    margin: 6px 0 0 1.5rem;
+    padding: 0;
+    display: flex;
+    gap: 7px;
+}
+.sidebar .tags-list span {
+    background: rgb(0 0 0 / 5%);
+    border-radius: 7px;
+    font-size: 14px;
+    padding: 4px 7px 4px;
+    font-weight: 500;
+}
+.sidebar .tags-list span:hover {
+    opacity: 0.8;
+}
+.sidebar .tags-list span.material-icons-round {
+    font-size: 18px;
+    padding: 3px 2px 3px 4px;
+}
+.sidebar .variants-title {
+    font-size: 18px;
+    display: block;
+    font-weight: 500;
+    margin: 21px 0 0 1.5rem;
+}
+
+.sidebar .action {
+    display: flex;
+    align-items: center;
+    height: 26px;
+    margin-bottom: 31px;
+}
+.sidebar .action:hover {
+    opacity: 0.9;
+}
+.sidebar .action span.material-icons-round {
+    font-size: 28px;
+    padding: 0 18px;
+}
+.sidebar .action span.label {
+    font-size: 18px;
+    display: inline-flex;
+    font-weight: 400;
+}
+.sidebar .action.red {
+    color: #EA4747;
+}
+
+.sidebar .extra-data {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    margin: 0 0 1.5rem 1.5rem;
+}
+.variants {
+    display: flex;
+    gap: 12px;
+    margin: 6px 0 30px 1.5rem;
+}
+.variants .alt-preview {
+    height: 62px;
+    width: 62px;
+    image-rendering: pixelated;
+}
+.variants .material-icons-round {
+    margin: 15px 10px;
+    border-radius: 11px;
+    padding: 10px;
+    background: rgb(0 0 0 / 5%);
+    font-size: 20px;
+}
+.variants .material-icons-round:hover {
+    opacity: 0.8;
 }

@@ -1,5 +1,5 @@
 import { NetworkConnector } from '@lucsoft/network-connector';
-import { WebGen } from '@lucsoft/webgen';
+import { custom, WebGen } from '@lucsoft/webgen';
 import { renderHomeBar } from './components/homebar';
 import { createIconList, renderIconlist } from './components/iconlist';
 import { createSidebar } from "./components/sidebar";
@@ -7,15 +7,14 @@ import { updateFirstTimeDatabase } from "./data/init/hmsys";
 import { createIncidentBar } from "./data/states/incidentBar";
 import './common/refreshData';
 
-export async function renderMain(web: WebGen)
+export function renderMain(web: WebGen)
 {
-    const shell = document.createElement('div')
-    shell.classList.add('masterShell')
-    const main = document.createElement('article')
-    shell.append(main, createSidebar(web));
+    const main = custom('article', undefined)
+    const shell = custom('div', main, 'masterShell')
     document.body.append(shell)
     const elements = web.elements.custom(main, { maxWidth: '75rem' })
     const hmsys = new NetworkConnector('eu01.hmsys.de:444')
+    elements.custom(createSidebar(web, hmsys))
 
     createIncidentBar(elements, hmsys)
     renderHomeBar(elements)
