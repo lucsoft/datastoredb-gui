@@ -58,6 +58,7 @@ module.exports = (_, mode) =>
                 chunks: [ 'index' ],
                 template: './src/index.html',
                 filename: 'index.html',
+                favicon: './res/favicon.ico',
                 minify: isProduction ? { minifyCSS: true, minifyJS: true, removeComments: true } : undefined
             }),
         ],
