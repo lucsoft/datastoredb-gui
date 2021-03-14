@@ -3,6 +3,8 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: .7rem;
+    margin: 0 auto;
+    max-width: var(--max-width);
 }
 .image-list .shell img{
     width: 64px;
