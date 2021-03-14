@@ -41,5 +41,6 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) =>
             data: toAddBlobs[ index ]
         })))
     })
-    emitEvent(DataStoreEvents.RefreshDataComplete, { new: toAdd, removed: toRemove, updated: toUpdate })
+    if (toAdd.length !== 0 || toRemove.length !== 0 || toUpdate.length !== 0)
+        emitEvent(DataStoreEvents.RefreshDataComplete, { new: toAdd, removed: toRemove, updated: toUpdate })
 })

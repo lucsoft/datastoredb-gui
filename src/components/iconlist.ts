@@ -1,4 +1,4 @@
-import { WebGenElements, span, custom } from "@lucsoft/webgen";
+import { WebGenElements, custom } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { db } from '../data/IconsCache';
@@ -24,8 +24,7 @@ export async function renderIconlist(element: HTMLElement)
 {
     const data = await db.icons.orderBy('date').toArray()
 
-    element.innerHTML = "";
-
+    const elements: HTMLElement[] = [];
     data.forEach(x =>
     {
         const image = document.createElement('img')
@@ -42,6 +41,9 @@ export async function renderIconlist(element: HTMLElement)
             displayName: x.filename
         })
 
-        element.append(shell)
+        elements.push(shell)
     })
+
+    element.innerHTML = "";
+    element.append(...elements)
 }
