@@ -32,8 +32,14 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
     webGenSidebars.cards({}, { type: CardTypes.Headless, html: shell })
     registerEvent(DataStoreEvents.SidebarUpdate, (data) =>
     {
+        const normal = document.body.offsetWidth - (data.offset.left + 365) > 0;
         sidebar.style.top = data.offset.top + "px";
-        sidebar.style.left = data.offset.left + "px";
+        sidebar.style.left = (data.offset.left - (normal ? 0 : 365)) + "px";
+        if (normal)
+            sidebar.classList.remove('right')
+        else
+            sidebar.classList.add('right')
+
         sidebar.classList.add('open')
         sidebar.focus();
         variantsList.innerHTML = "";
