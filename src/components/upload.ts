@@ -1,34 +1,35 @@
-import type { ReloginData } from '@lucsoft/network-connector';
+import type { NetworkConnector } from '@lucsoft/network-connector';
 
-export function genform({ id, token }: ReloginData)
+export const uploadImage = (files: FileList, hmsys: NetworkConnector) => new Promise(done =>
 {
-
     const form = document.createElement('form');
     const fileUp = document.createElement('input');
     fileUp.type = "file";
     fileUp.name = "userfile";
     fileUp.multiple = true;
     fileUp.accept = ".png";
+    fileUp.files = files;
     const submit = document.createElement('input');
     submit.value = "test";
     submit.type = "submit";
     form.append(fileUp, submit);
+    const auth = hmsys.getAuth()!
     form.addEventListener('submit', (event) =>
     {
         event.preventDefault();
+        const data = new FormData(form);
+        form.remove()
         if (fileUp.value == "")
-            return;
+            return done(undefined);
         fetch('https://eu01.hmsys.de:444/api/@HomeSYS/DataStoreDB/file', {
             method: 'POST',
             headers: new Headers({
-                'Authorization': 'Basic ' + btoa(`${id}:${token}`),
+                'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
             }),
-            body: new FormData(form)
-        }).then(async (x) =>
-        {
-            console.log(await x.text());
-        });
-
+            body: data
+        }).then(() => done(undefined));
     });
-    return form;
-}
+    form.hidden = true;
+    document.body.append(form)
+    submit.click()
+});
