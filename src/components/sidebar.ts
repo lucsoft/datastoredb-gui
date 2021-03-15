@@ -23,9 +23,11 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
     const taglist = custom('ul', undefined, 'tags-list')
     const variantsLabel = span('Variants', 'variants-title')
     const add = span('add', 'material-icons-round')
+    add.onclick = () => web.elements.notify("Currently not implemented")
     const variantsList = custom('div', add, 'variants')
 
     const downloadAll = createAction("file_download", 'Download All Variants')
+    downloadAll.onclick = () => web.elements.notify("Currently not implemented")
     const deleteIcon = createAction("delete", "Delete this Icon", true)
     const extraData = span('Loading...', 'extra-data')
     shell.append(image, title, taglist, variantsLabel, variantsList, downloadAll, deleteIcon, extraData)
@@ -42,6 +44,8 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
 
         sidebar.classList.add('open')
         sidebar.focus();
+
+        deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: data.id })
         variantsList.innerHTML = "";
         variantsList.append(...data.alts.map((x: string) =>
         {
@@ -52,7 +56,7 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
         custom('img', undefined, 'alt-icon')
         variantsList.append()
         taglist.innerHTML = "";
-        taglist.append(...createTags(data.tags))
+        taglist.append(...createTags(web, data.tags))
         image.src = data.image
         title.innerText = data.displayName
         extraData.innerText = `Uploaded by Anonymous\nLast updated ${timeAgo(data.date)}`
@@ -60,10 +64,10 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
     return sidebar;
 }
 
-const createTags = (tags: string[]) =>
+const createTags = (web: WebGen, tags: string[]) =>
 {
     const add = span('add', 'material-icons-round')
-
+    add.onclick = () => web.elements.notify("Currently not implemented")
     return [ ...tags.map(x =>
         span('#' + x)
     ), add ];
