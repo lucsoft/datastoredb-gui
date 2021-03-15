@@ -18,8 +18,8 @@ export function renderMain(web: WebGen)
 
     const elements = web.elements.custom(main, { maxWidth: '75rem' })
     const hmsys = new NetworkConnector('eu01.hmsys.de:444')
-    elements.custom(createSidebar(web, hmsys))
 
+    elements.custom(createSidebar(web, hmsys))
     registerMasterDropArea(hmsys)
     createIncidentBar(elements, hmsys)
     renderHomeBar(elements)

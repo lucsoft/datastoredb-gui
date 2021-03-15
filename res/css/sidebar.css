@@ -173,3 +173,12 @@
     margin: 1.4rem 1.5rem 0 auto;
     animation: fadeInImageRight 300ms ease;
 }
+
+@media (prefers-color-scheme: dark) {
+    .sidebar .tags-list span {
+        background: rgb(255 255 255 / 5%);
+    }
+    .variants .material-icons-round {
+        background: rgb(255 255 255 / 5%);
+    }
+}
