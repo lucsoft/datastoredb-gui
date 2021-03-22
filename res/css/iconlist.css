@@ -7,7 +7,7 @@
     max-width: var(--max-width);
 }
 .image-list .shell img{
-    width: 64px;
+    height: 64px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;

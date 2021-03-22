@@ -52,31 +52,26 @@
 
 @keyframes fadeInImage {
     0% {
-        width: 4rem;
         height: 4rem;
         margin-left: 2.5rem;
     }
     30% {
-        width: 4rem;
         height: 4rem;
         margin-left: 2.5rem;
     }
 }
 @keyframes fadeInImageRight {
     0% {
-        width: 4rem;
         height: 4rem;
         margin-right: 2.5rem;
     }
     30% {
-        width: 4rem;
         height: 4rem;
         margin-right: 2.5rem;
     }
 }
 .sidebar .preview {
     display: block;
-    width: 7rem;
     height: 7rem;
     image-rendering: pixelated;
     margin: 1.4rem 0 0 1.5rem;
@@ -155,7 +150,6 @@
 }
 .variants .alt-preview {
     height: 62px;
-    width: 62px;
     image-rendering: pixelated;
 }
 .variants .material-icons-round {
