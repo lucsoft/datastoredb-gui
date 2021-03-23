@@ -1,5 +1,4 @@
 import { NetworkConnector } from "@lucsoft/network-connector";
-import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { uploadImage } from "./upload";
 
 export function registerMasterDropArea(hmsys: NetworkConnector) {
