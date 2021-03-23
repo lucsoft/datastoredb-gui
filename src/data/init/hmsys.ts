@@ -2,13 +2,12 @@ import { createLocalStorageProvider, EventTypes, NetworkConnector } from "@lucso
 import { noteCard, WebGenElements } from "@lucsoft/webgen";
 import * as config from '../../../config.json';
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
+import { db } from "../IconsCache";
 
-export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements)
-{
+export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements) {
     if (navigator.onLine == false)
         return;
-    hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) =>
-    {
+    hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
         const profileData: any = await hmsys.api.requestUserData("services");
         if (profileData.services.DataStoreDB == undefined)
             return elements.cards({}, noteCard({
@@ -24,13 +23,25 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGe
 
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
-
+    hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {
+        if (/apple/i.test(navigator.vendor))
+            emitEvent(DataStoreEvents.RefreshData, hmsys)
+        else {
+            await db.transaction('rw', db.icons, async () => {
+                await db.icons.delete(data.deleted)
+            })
+            emitEvent(DataStoreEvents.RefreshDataComplete, hmsys)
+        }
+        emitEvent(DataStoreEvents.SidebarUpdate, data.deleted)
+    })
+    hmsys.api.sync('@HomeSYS/DataStoreDB/newFile', () => {
+        emitEvent(DataStoreEvents.RefreshData, hmsys)
+    })
     hmsys.event({
         type: EventTypes.Disconnected,
-        action: () =>
-        {
-            if (navigator.onLine)
-                setTimeout(() => updateFirstTimeDatabase(hmsys, elements), 5000)
+        action: () => {
+            // if (navigator.onLine)
+            //     setTimeout(() => updateFirstTimeDatabase(hmsys, elements), 5000)
         }
     })
 }
