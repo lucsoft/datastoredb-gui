@@ -2,6 +2,7 @@ import { createLocalStorageProvider, EventTypes, NetworkConnector } from "@lucso
 import { noteCard, WebGenElements } from "@lucsoft/webgen";
 import * as config from '../../../config.json';
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
+import { disableGlobalDragAndDrop } from "../../components/dropareas";
 import { db } from "../IconsCache";
 
 export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements) {
@@ -15,11 +16,13 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGe
                 icon: '⛔'
             }));
 
-        if (profileData.services.DataStoreDB.upload != true)
+        if (profileData.services.DataStoreDB.upload != true) {
             elements.cards({}, noteCard({
                 title: 'Uploading with this account is disabled',
                 icon: '🚦'
             }));
+            disableGlobalDragAndDrop()
+        }
 
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });

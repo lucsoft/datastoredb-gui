@@ -3,12 +3,14 @@ import { DataStoreEvents, registerEvent } from "../common/eventmanager";
 import '../../res/css/sidebar.css';
 import { NetworkConnector } from "@lucsoft/network-connector";
 import { timeAgo } from "../common/date";
+import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 
 export const createSidebar = (web: WebGen, hmsys: NetworkConnector) => {
     const sidebar = document.createElement('article')
     let currentId: string | undefined = undefined;
     sidebar.classList.add('sidebar');
     sidebar.onblur = () => {
+        enableGlobalDragAndDrop()
         sidebar.classList.remove('open')
     }
     sidebar.tabIndex = 0;
@@ -53,7 +55,7 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) => {
 
         sidebar.classList.add('open')
         sidebar.focus();
-
+        disableGlobalDragAndDrop()
         deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: data.id })
         variantsList.innerHTML = "";
         variantsList.append(...data.alts.map((x: string) => {
@@ -71,7 +73,7 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) => {
             title.classList.add('small');
         else
             title.classList.remove('small');
-        extraData.innerText = `Uploaded by Anonymous\nLast updated ${timeAgo(data.date)}\nId: ${currentId}`
+        extraData.innerText = `by Anonymous • ${timeAgo(data.date)} • ${data.type}@${image.naturalWidth}x${image.naturalHeight}`
     })
     return sidebar;
 }

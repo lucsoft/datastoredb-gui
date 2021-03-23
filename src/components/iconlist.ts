@@ -16,8 +16,8 @@ function getOffset(el: HTMLElement) {
     const rect = el.getBoundingClientRect();
     return {
         bound: rect,
-        left: rect.left + window.screenX,
-        top: rect.top + window.screenY
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY
     };
 }
 
@@ -28,8 +28,8 @@ export async function renderIconlist(element: HTMLElement) {
     data.forEach((x: any) => {
         const image = document.createElement('img')
         const shell = custom('div', image, 'shell')
-
-        image.src = URL.createObjectURL(x.data)
+        image.src = URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type }))
+        image.loading = "lazy";
         image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
             offset: () => getOffset(image),
             image: image.src,
@@ -37,7 +37,8 @@ export async function renderIconlist(element: HTMLElement) {
             date: x.date,
             alts: [ image.src ],
             tags: x.tags,
-            displayName: x.filename
+            displayName: x.filename,
+            type: x.type
         })
 
         elements.push(shell)
