@@ -4,6 +4,7 @@ import '../../res/css/iconlist.css';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
+import { SidebarData } from "../types/sidebarTypes";
 export const createIconList = (elements: WebGenElements) => {
     const list = document.createElement('div');
     list.classList.add('image-list');
@@ -39,7 +40,7 @@ export async function renderIconlist(element: HTMLElement) {
             tags: x.tags,
             displayName: x.filename,
             type: x.type
-        })
+        } as SidebarData)
 
         elements.push(shell)
     })
