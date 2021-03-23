@@ -1,8 +1,7 @@
 import { HeadlessCard, WebGenElements } from '@lucsoft/webgen';
 import { CardTypes } from "@lucsoft/webgen/bin/types/card";
 import '../../res/css/homebar.css';
-export function renderHomeBar(ele: WebGenElements)
-{
+export function renderHomeBar(ele: WebGenElements) {
     const search = document.createElement('input')
     search.placeholder = "Search something...";
     const control = document.createElement('button')

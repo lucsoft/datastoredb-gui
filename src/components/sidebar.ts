@@ -4,12 +4,11 @@ import '../../res/css/sidebar.css';
 import { NetworkConnector } from "@lucsoft/network-connector";
 import { timeAgo } from "../common/date";
 
-export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
-{
+export const createSidebar = (web: WebGen, hmsys: NetworkConnector) => {
     const sidebar = document.createElement('article')
+    let currentId: string | undefined = undefined;
     sidebar.classList.add('sidebar');
-    sidebar.onblur = () =>
-    {
+    sidebar.onblur = () => {
         sidebar.classList.remove('open')
     }
     sidebar.tabIndex = 0;
@@ -32,11 +31,21 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
     const extraData = span('Loading...', 'extra-data')
     shell.append(image, title, taglist, variantsLabel, variantsList, downloadAll, deleteIcon, extraData)
     webGenSidebars.cards({}, { type: CardTypes.Headless, html: shell })
-    registerEvent(DataStoreEvents.SidebarUpdate, (data) =>
-    {
-        const normal = document.body.offsetWidth - (data.offset.left + 365) > 0;
-        sidebar.style.top = data.offset.top + "px";
-        sidebar.style.left = (data.offset.left - (normal ? 0 : 365)) + "px";
+    registerEvent(DataStoreEvents.SidebarUpdate, (data) => {
+        if (data === undefined) {
+            sidebar.blur()
+            return;
+        }
+        if (typeof data === 'string') {
+            if (currentId && currentId == data)
+                sidebar.blur()
+            return;
+        }
+        currentId = data.id;
+        const offset = data.offset();
+        const normal = document.body.offsetWidth - (offset.left + 365) > 0;
+        sidebar.style.top = offset.top + "px";
+        sidebar.style.left = (offset.left - (normal ? 0 : 365)) + "px";
         if (normal)
             sidebar.classList.remove('right')
         else
@@ -47,8 +56,7 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
 
         deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: data.id })
         variantsList.innerHTML = "";
-        variantsList.append(...data.alts.map((x: string) =>
-        {
+        variantsList.append(...data.alts.map((x: string) => {
             const image = custom('img', undefined, 'alt-preview') as HTMLImageElement
             image.src = x
             return image
@@ -59,21 +67,23 @@ export const createSidebar = (web: WebGen, hmsys: NetworkConnector) =>
         taglist.append(...createTags(web, data.tags))
         image.src = data.image
         title.innerText = data.displayName
-        extraData.innerText = `Uploaded by Anonymous\nLast updated ${timeAgo(data.date)}`
+        if (data.displayName.length > 20)
+            title.classList.add('small');
+        else
+            title.classList.remove('small');
+        extraData.innerText = `Uploaded by Anonymous\nLast updated ${timeAgo(data.date)}\nId: ${currentId}`
     })
     return sidebar;
 }
 
-const createTags = (web: WebGen, tags: string[]) =>
-{
+const createTags = (web: WebGen, tags: string[]) => {
     const add = span('add', 'material-icons-round')
     add.onclick = () => web.elements.notify("Currently not implemented")
     return [ ...tags.map(x =>
         span('#' + x)
     ), add ];
 }
-const createAction = (icon: string, text: string, isRed?: boolean) =>
-{
+const createAction = (icon: string, text: string, isRed?: boolean) => {
     const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
     element.append(span(icon, 'material-icons-round'), span(text, 'label'))
 

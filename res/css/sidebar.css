@@ -1,10 +1,10 @@
 .sidebar {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     opacity: 0;
     display: none;
-    margin: -3rem 0 0 -2.8rem;
+    margin: -4.5rem 0 0 -2.8rem;
     user-select: none;
 }
 .sidebar.right {
@@ -47,7 +47,6 @@
     box-shadow: 0px 10px 22px 0px rgb(0 0 0 / 30%);
     animation: fadeInCard 250ms ease;
     overflow: hidden;
-
 }
 
 @keyframes fadeInImage {
@@ -74,6 +73,7 @@
     display: block;
     height: 7rem;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
     margin: 1.4rem 0 0 1.5rem;
     animation: fadeInImage 300ms ease;
 }
@@ -81,7 +81,13 @@
     display: block;
     margin: 8px 1.5rem 0 1.5rem;
     font-size: 55px;
+    line-height: 3.2rem;
+    line-break: anywhere;
     font-weight: 700;
+}
+.sidebar .icon-title.small {
+    font-size: 30px;
+    line-height: 2rem;
 }
 .sidebar.right .icon-title  {
     text-align: right;
@@ -90,6 +96,7 @@
     margin: 6px 1.5rem 0 1.5rem;
     padding: 0;
     display: flex;
+    flex-flow: wrap;
     gap: 7px;
 }
 .sidebar.right .tags-list {
@@ -118,18 +125,18 @@
 .sidebar .action {
     display: flex;
     align-items: center;
-    height: 26px;
-    margin-bottom: 31px;
+    height: 20px;
+    margin-bottom: 25px;
 }
 .sidebar .action:hover {
     opacity: 0.9;
 }
 .sidebar .action span.material-icons-round {
-    font-size: 28px;
-    padding: 0 18px;
+    font-size: 26px;
+    padding: 0 15px 0 1.3rem;
 }
 .sidebar .action span.label {
-    font-size: 18px;
+    font-size: 16px;
     display: inline-flex;
     font-weight: 400;
 }
@@ -140,24 +147,26 @@
 .sidebar .extra-data {
     display: block;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 10px;
+    color: gray;
     margin: 0 0 1.5rem 1.5rem;
 }
 .variants {
     display: flex;
     gap: 12px;
-    margin: 6px 1.5rem 30px 1.5rem;
+    margin: 6px 1.5rem 25px 1.5rem;
 }
 .variants .alt-preview {
-    height: 62px;
+    height: 50px;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 .variants .material-icons-round {
-    margin: 15px 10px;
-    border-radius: 11px;
-    padding: 10px;
+    margin: 7px 5px;
+    border-radius: 10px;
+    padding: 8px;
     background: rgb(0 0 0 / 5%);
-    font-size: 20px;
+    font-size: 19px;
 }
 .variants .material-icons-round:hover {
     opacity: 0.8;
