@@ -9,6 +9,5 @@
 .image-list .shell img{
     height: 64px;
     image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
 }
