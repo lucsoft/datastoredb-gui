@@ -19,7 +19,7 @@ export function renderMain(web: WebGen) {
     createIncidentBar(elements, hmsys)
 
     elements.custom(createSidebar(web, hmsys))
-    renderHomeBar(web, shell)
+    renderHomeBar(web, shell, hmsys)
     registerMasterDropArea(hmsys)
     const list = createIconList(elements);
     registerEvent(DataStoreEvents.RefreshDataComplete, () => renderIconlist(list))

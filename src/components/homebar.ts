@@ -1,11 +1,13 @@
-import { createElement, img, mIcon, span, WebGen } from "@lucsoft/webgen";
+import { NetworkConnector } from "@lucsoft/network-connector";
+import { createElement, mIcon, span, WebGen } from "@lucsoft/webgen";
 import '../../res/css/homebar.css';
 import pandaIcon from '../../res/pandaicon.svg';
 
 import { DataStoreEvents, registerEvent } from "../common/eventmanager";
 import { ProfileData } from "../types/profileDataTypes";
+import { manualUploadImage } from "./upload";
 
-export function renderHomeBar(web: WebGen, shell: HTMLElement) {
+export function renderHomeBar(web: WebGen, shell: HTMLElement, net: NetworkConnector) {
     const container = createElement('div')
     shell.append(container)
     const search = document.createElement('input')
@@ -19,9 +21,8 @@ export function renderHomeBar(web: WebGen, shell: HTMLElement) {
     registerEvent(DataStoreEvents.RecivedProfileData, (data: ProfileData) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"
         upload.onclick = data.canUpload ? () => {
-            web.elements.notify("Currently not Implmented")
+            manualUploadImage(net);
         } : () => web.elements.notify("Uploading with this account is disabled")
     })
     container.append(search, upload, control)
-    // menu.last.style.gridTemplateColumns = "auto 12rem";
 }

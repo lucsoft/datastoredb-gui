@@ -3,9 +3,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const path = require('path');
-
-module.exports = (_, mode) =>
-{
+const TerserPlugin = require("terser-webpack-plugin");
+module.exports = (_, mode) => {
     const isProduction = (typeof mode.env.production === "boolean" && mode.env.production);
     return {
         entry: {
@@ -60,11 +59,16 @@ module.exports = (_, mode) =>
                 filename: 'index.html',
                 favicon: './res/favicon.ico',
                 minify: isProduction ? { minifyCSS: true, minifyJS: true, removeComments: true } : undefined
-            }),
+            })
         ],
         optimization: isProduction ? {
             minimize: true,
-            minimizer: [ new CssMinimizerPlugin() ]
+            minimizer: [ new TerserPlugin(), new CssMinimizerPlugin() ],
+            splitChunks: {
+                chunks: 'async',
+                maxAsyncRequests: 30,
+                maxInitialRequests: 30
+            }
         } : undefined
     }
 }
