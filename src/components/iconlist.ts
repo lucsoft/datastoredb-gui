@@ -1,5 +1,4 @@
 import { WebGenElements, custom } from "@lucsoft/webgen";
-import { electron } from "webpack";
 import '../../res/css/iconlist.css';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";

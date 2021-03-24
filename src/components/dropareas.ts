@@ -37,5 +37,3 @@ export function disableGlobalDragAndDrop() {
 export function enableGlobalDragAndDrop() {
     document.querySelector('html')?.classList.remove('disable-global-drop')
 }
-
-(global as any).test = this;

@@ -1,16 +1,46 @@
-.homebar card > input {
-    height: 1.6rem;
-    background: none;
-    margin: 0;
-    color: var(--on-card-text);
-    box-shadow: none;
-    padding: 1.1rem 1.3rem;
+.homebar {
+    display: grid;
+    margin: var(--gap) auto;
+    gap: var(--gap);
+    max-width: var(--max-width);
+    grid-template-columns: auto max-content max-content;
+    align-items: center;
 }
-.homebar card > button {
-    background: none;
+.homebar input {
+    background: var(--background-card);
     margin: 0;
-    width: 100%;
-    height: 100%;
+    font-size: 1.5rem;
+    padding: 1.3rem 1.2rem;
+    border-radius: var(--border-radius);
+    color: white;
     box-shadow: none;
-    padding: 1.2rem 1.5rem 1rem !important;
+}
+.homebar .webgen-icon, .homebar .webgen-svg svg {
+    padding: .9rem 1rem;
+    border-radius: var(--border-radius);
+    user-select: none;
+}
+
+.homebar .webgen-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+.homebar .webgen-svg svg {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+.homebar img {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+.homebar .webgen-icon:hover, .homebar .webgen-svg svg:hover {
+    background: var(--background-card);
+}
+@media (prefers-color-scheme: light) {
+    .homebar .webgen-icon {
+        color: black;
+    }
+    .homebar .webgen-svg svg {
+        fill: black;
+    }
 }

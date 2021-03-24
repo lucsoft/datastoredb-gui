@@ -1,9 +1,9 @@
-export enum DataStoreEvents
-{
+export enum DataStoreEvents {
     IncidentBar,
     RefreshData,
     RefreshDataComplete,
-    SidebarUpdate
+    SidebarUpdate,
+    RecivedProfileData
 }
 
 const events: DataStoreEvent[] = []
@@ -13,12 +13,10 @@ type DataStoreEvent = {
     action: (metaData: any) => void
 }
 
-export const registerEvent = (id: DataStoreEvents, action: (metaData: any) => void) =>
-{
+export const registerEvent = (id: DataStoreEvents, action: (metaData: any) => void) => {
     events.push({ id, action })
 }
 
-export const emitEvent = (id: DataStoreEvents, metaData: any) =>
-{
+export const emitEvent = (id: DataStoreEvents, metaData: any) => {
     events.filter(x => x.id === id).forEach(x => x.action(metaData))
 }

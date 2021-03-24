@@ -1,4 +1,4 @@
-export type SidebarData = {
+export type SidebarNormalData = {
     offset: () => {
         bound: DOMRect;
         left: number;
@@ -11,4 +11,5 @@ export type SidebarData = {
     tags: string[],
     displayName: string,
     type: string
-} | undefined | string
+};
+export type SidebarData = SidebarNormalData | undefined | string

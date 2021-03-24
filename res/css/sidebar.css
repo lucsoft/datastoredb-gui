@@ -81,11 +81,17 @@
 }
 .sidebar .icon-title {
     display: block;
-    margin: 8px 1.5rem 0 1.5rem;
+    margin: 0.2rem 1rem 0.2rem .9rem;
+    padding: 0.6rem 0.6rem 0.4rem 0.5rem;
     font-size: 55px;
     line-height: 3.2rem;
     line-break: anywhere;
     font-weight: 700;
+    border-radius: .2rem;
+    transition: background-color 250ms ease;
+}
+.sidebar .icon-title:hover {
+    background-color: rgb(0 0 0 / 5%);
 }
 .sidebar .icon-title.small {
     font-size: 30px;
@@ -116,7 +122,7 @@
 }
 .sidebar .tags-list span.material-icons-round {
     font-size: 18px;
-    padding: 3px 2px 3px 4px;
+    padding: 3px 2.5px;
 }
 .sidebar .variants-title {
     font-size: 18px;
@@ -185,5 +191,12 @@
     }
     .variants .material-icons-round {
         background: rgb(255 255 255 / 5%);
+    }
+    .sidebar .icon-title:hover {
+        background-color: rgb(255 255 255 / 5%);
+    }
+    .sidebar card {
+        background-color: rgb(30 30 30);
+        box-shadow: none;
     }
 }

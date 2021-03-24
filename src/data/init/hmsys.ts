@@ -1,29 +1,31 @@
 import { createLocalStorageProvider, EventTypes, NetworkConnector } from "@lucsoft/network-connector";
-import { noteCard, WebGenElements } from "@lucsoft/webgen";
+import { noteCard, WebGen, WebGenElements } from "@lucsoft/webgen";
 import * as config from '../../../config.json';
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../../components/dropareas";
+import { ProfileData } from "../../types/profileDataTypes";
 import { db } from "../IconsCache";
 
-export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements) {
+export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements, _web: WebGen) {
     if (navigator.onLine == false)
         return;
     hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
-        const profileData: any = await hmsys.api.requestUserData("services");
+        const profileData: any = await hmsys.api.requestUserData("services", "profile");
         if (profileData.services.DataStoreDB == undefined)
             return elements.cards({}, noteCard({
                 title: 'DataStoreDB is not setup for this account',
                 icon: '⛔'
             }));
 
-        if (profileData.services.DataStoreDB.upload != true) {
-            elements.cards({}, noteCard({
-                title: 'Uploading with this account is disabled',
-                icon: '🚦'
-            }));
-            disableGlobalDragAndDrop()
-        }
+        if (profileData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
 
+
+        emitEvent(DataStoreEvents.RecivedProfileData, {
+            canUpload: profileData.services.DataStoreDB.upload,
+            canRemove: profileData.services.DataStoreDB.remove,
+            featureEnabled: profileData.services.DataStoreDB != undefined,
+            username: profileData.client.username
+        } as ProfileData)
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
     hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {

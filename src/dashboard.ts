@@ -10,21 +10,19 @@ import '../res/css/master.css';
 import { registerMasterDropArea } from "./components/dropareas";
 import { DataStoreEvents, emitEvent, registerEvent } from "./common/eventmanager";
 
-export function renderMain(web: WebGen)
-{
-    const main = custom('article', undefined)
-    const shell = custom('div', main, 'masterShell')
+export function renderMain(web: WebGen) {
+    const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)
 
-    const elements = web.elements.custom(main, { maxWidth: '75rem' })
+    const elements = web.elements.custom(shell, { maxWidth: '75rem' })
     const hmsys = new NetworkConnector('eu01.hmsys.de:444')
+    createIncidentBar(elements, hmsys)
 
     elements.custom(createSidebar(web, hmsys))
+    renderHomeBar(web, shell)
     registerMasterDropArea(hmsys)
-    createIncidentBar(elements, hmsys)
-    renderHomeBar(elements)
     const list = createIconList(elements);
     registerEvent(DataStoreEvents.RefreshDataComplete, () => renderIconlist(list))
     emitEvent(DataStoreEvents.RefreshDataComplete, undefined)
-    updateFirstTimeDatabase(hmsys, elements);
+    updateFirstTimeDatabase(hmsys, elements, web);
 }
