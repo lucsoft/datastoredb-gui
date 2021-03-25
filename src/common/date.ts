@@ -4,8 +4,7 @@ const MONTH_NAMES = [
 ];
 
 
-function getFormattedDate(date: Date, prefomattedDate?: string, hideYear = false)
-{
+function getFormattedDate(date: Date, prefomattedDate?: string, hideYear = false) {
     const day = date.getDate();
     const month = MONTH_NAMES[ date.getMonth() ];
     const hours = date.getHours();
@@ -25,10 +24,9 @@ function getFormattedDate(date: Date, prefomattedDate?: string, hideYear = false
 
 
 // --- Main function
-export function timeAgo(dateParam: number)
-{
+export function timeAgo(dateParam?: number) {
     if (!dateParam)
-        return null;
+        return "unkown create date";
 
     const date = new Date(dateParam);
     const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000

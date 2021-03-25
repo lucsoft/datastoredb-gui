@@ -9,20 +9,23 @@ import './common/refreshData';
 import '../res/css/master.css';
 import { registerMasterDropArea } from "./components/dropareas";
 import { DataStoreEvents, emitEvent, registerEvent } from "./common/eventmanager";
+import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 
-export function renderMain(web: WebGen) {
+export function renderMain(web: RenderingX) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)
 
-    const elements = web.elements.custom(shell, { maxWidth: '75rem' })
     const hmsys = new NetworkConnector('eu01.hmsys.de:444')
-    createIncidentBar(elements, hmsys)
 
-    elements.custom(createSidebar(web, hmsys))
-    renderHomeBar(web, shell, hmsys)
+    const render = web.toCustom({ maxWidth: '75rem', shell }, {}, () => [
+        createIncidentBar(hmsys),
+        createSidebar(web, hmsys),
+        renderHomeBar(web, hmsys),
+        createIconList()
+    ])
     registerMasterDropArea(hmsys)
-    const list = createIconList(elements);
-    registerEvent(DataStoreEvents.RefreshDataComplete, () => renderIconlist(list))
+
+    registerEvent(DataStoreEvents.RefreshDataComplete, () => render.redraw())
     emitEvent(DataStoreEvents.RefreshDataComplete, undefined)
-    updateFirstTimeDatabase(hmsys, elements, web);
+    updateFirstTimeDatabase(hmsys, web);
 }

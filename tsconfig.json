@@ -5,9 +5,10 @@
         "module": "commonjs",
         "strict": true,
         "outDir": "bin",
-        "resolveJsonModule": true
-    },
-    "include": [
-        "./declarations.d.ts"
-    ]
+        "resolveJsonModule": true,
+        "typeRoots": [
+            "./declarations.d.ts",
+            "./node_modules/@types"
+        ]
+    }
 }

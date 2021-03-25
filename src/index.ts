@@ -1,4 +1,4 @@
 import { WebGen } from "@lucsoft/webgen";
-const web = new WebGen()
+const web = WebGen().render
 
 import('./dashboard').then(x => x.renderMain(web))

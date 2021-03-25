@@ -13,40 +13,30 @@ form.append(fileUp, submit);
 form.hidden = true;
 document.body.append(form)
 
-
+const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, form: HTMLFormElement, done: (data?: undefined) => void) => {
+    if (fileUp.value == "")
+        return done();
+    const data = new FormData(form);
+    const auth = hmsys.getAuth()!
+    fetch('https://eu01.hmsys.de:444/api/@HomeSYS/DataStoreDB/file', {
+        method: 'POST',
+        headers: new Headers({
+            'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
+        }),
+        body: data
+    }).then(() => done());
+}
 export const uploadImage = (files: FileList, hmsys: NetworkConnector) => new Promise(done => {
 
     fileUp.files = files;
-    const auth = hmsys.getAuth()!
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        const data = new FormData(form);
-        if (fileUp.value == "")
-            return done(undefined);
-        fetch('https://eu01.hmsys.de:444/api/@HomeSYS/DataStoreDB/file', {
-            method: 'POST',
-            headers: new Headers({
-                'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
-            }),
-            body: data
-        }).then(() => done(undefined));
+        fetchUploadFiles(fileUp, hmsys, form, done)
     });
     submit.click()
 });
 
-export const manualUploadImage = (hmsys: NetworkConnector) => new Promise(done => {
+export const manualUploadImage = (hmsys: NetworkConnector): Promise<undefined> => new Promise((done) => {
     fileUp.click()
-    const auth = hmsys.getAuth()!
-    fileUp.onchange = () => {
-        const data = new FormData(form);
-        if (fileUp.value == "")
-            return done(undefined);
-        fetch('https://eu01.hmsys.de:444/api/@HomeSYS/DataStoreDB/file', {
-            method: 'POST',
-            headers: new Headers({
-                'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
-            }),
-            body: data
-        }).then(() => done(undefined));
-    }
+    fileUp.onchange = () => fetchUploadFiles(fileUp, hmsys, form, done)
 });

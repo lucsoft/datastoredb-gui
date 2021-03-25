@@ -24,10 +24,12 @@
 .homebar .webgen-icon {
     font-size: 2.5rem;
     line-height: 1;
+    color: var(--on-background-text);
 }
 .homebar .webgen-svg svg {
     width: 2.5rem;
     height: 2.5rem;
+    fill: var(--on-background-text);
 }
 .homebar img {
     width: 2.5rem;
@@ -35,12 +37,7 @@
 }
 .homebar .webgen-icon:hover, .homebar .webgen-svg svg:hover {
     background: var(--background-card);
-}
-@media (prefers-color-scheme: light) {
-    .homebar .webgen-icon {
-        color: black;
-    }
-    .homebar .webgen-svg svg {
-        fill: black;
-    }
+    color: var(--on-card-text);
+    fill: var(--on-card-text);
+
 }

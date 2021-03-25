@@ -1,24 +1,24 @@
 import { createLocalStorageProvider, EventTypes, NetworkConnector } from "@lucsoft/network-connector";
-import { noteCard, WebGen, WebGenElements } from "@lucsoft/webgen";
+import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
 import * as config from '../../../config.json';
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../../components/dropareas";
 import { ProfileData } from "../../types/profileDataTypes";
 import { db } from "../IconsCache";
 
-export function updateFirstTimeDatabase(hmsys: NetworkConnector, elements: WebGenElements, _web: WebGen) {
+export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX) {
     if (navigator.onLine == false)
         return;
     hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
         const profileData: any = await hmsys.api.requestUserData("services", "profile");
         if (profileData.services.DataStoreDB == undefined)
-            return elements.cards({}, noteCard({
-                title: 'DataStoreDB is not setup for this account',
-                icon: '⛔'
-            }));
+            web.toDialog({
+                title: "DataStoreDB is unavailable",
+                content: span("This Account dosn't have access to DataStoreDB. Change your Account."),
+                buttons: [ [ 'okay', DialogActionAfterSubmit.RemoveClose ] ]
+            }).open()
 
         if (profileData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
-
 
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: profileData.services.DataStoreDB.upload,
