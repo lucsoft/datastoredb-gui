@@ -6,114 +6,131 @@ import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 import { SidebarData, SidebarNormalData } from "../types/sidebarTypes";
 import { ProfileData } from "../types/profileDataTypes";
-type opt<TypeT> = undefined | TypeT;
-export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderElement => ({
-    draw: () => {
-        const sidebar = createElement('article')
-        let currentId: string | undefined = undefined;
-        let offset: SidebarNormalData[ "offset" ] | undefined = undefined;
-        const sidebarCard = web.toCustom({ shell: sidebar }, {
-            iconTitle: "",
-            id: undefined as opt<string>,
-            imageBlobUrl: undefined as opt<string>,
-            imageType: undefined as opt<string>,
-            createDate: undefined as opt<number>,
-            username: undefined as opt<string>,
-            canUpload: false,
-            canRemove: false,
-            tags: undefined as opt<string[]>,
-            imageVariants: undefined as opt<string[]>
-        }, () => [
-            (_, data) => Card({}, {
-                getSize: () => ({}),
-                draw: (card) => {
 
-                    const shell = custom('div', undefined, 'shell')
-                    const image = img(data.imageBlobUrl, 'preview')
-                    const title = span(data.iconTitle, 'icon-title')
-                    const taglist = custom('ul', undefined, 'tags-list')
-                    taglist.innerHTML = "";
-                    taglist.append(...createTags(data.tags))
+type SideBarType = {
+    sidebarCurrentId?: string
+    showSidebar?: boolean
+    iconTitle?: string
+    id?: string
+    imageBlobUrl?: string
+    imageType?: string
+    createDate?: number
+    tags?: string[]
+    imageVariants?: string[]
+    offset?: SidebarNormalData[ "offset" ]
+    canUpload?: boolean
+    username?: string
+    canRemove?: boolean
+};
+export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderElement => {
 
-                    const add = mIcon('add')
-                    const variantsList = custom('div', add, 'variants')
-                    variantsList.innerHTML = "";
-                    if (data.imageVariants) variantsList.append(...data.imageVariants.map(src => img(src, 'alt-preview')))
-                    if (data.canUpload) variantsList.append(add)
+    return {
+        draw: () => {
+            const sidebar = createElement('article')
+            sidebar.classList.add('sidebar');
+            sidebar.tabIndex = 0;
 
+            const shell = custom('div', undefined, 'shell')
+            const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, () => [
+                (_, state) => Card({}, {
+                    getSize: () => ({}),
+                    draw: (card) => {
+                        const image = img(state.imageBlobUrl, 'preview')
+                        const title = span(state.iconTitle, 'icon-title')
+                        const taglist = custom('ul', undefined, 'tags-list')
+                        taglist.innerHTML = "";
 
-                    const downloadAll = createAction("file_download", 'Download All Variants')
-                    const deleteIcon = createAction("delete", "Delete this Icon", true)
-                    deleteIcon.style.display = data.canRemove ? 'flex' : 'none';
-                    deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: data.id })
+                        if (state.offset && state.showSidebar)
+                            updatePosition(sidebar, state.offset!)
+                        conditionalCSSClass(sidebar, state.showSidebar, 'open')
+                        taglist.append(...createTags(state.tags))
+                        if (state.showSidebar)
+                            sidebar.focus();
 
-                    sidebar.classList.add('sidebar');
-                    sidebar.onblur = () => {
-                        if (data.canUpload) enableGlobalDragAndDrop();
-                        sidebar.classList.remove('open')
+                        const add = mIcon('add')
+                        const variantsList = custom('div', add, 'variants')
+                        variantsList.innerHTML = "";
+                        if (state.imageVariants) variantsList.append(...state.imageVariants.map(src => img(src, 'alt-preview')))
+                        if (state.canUpload) variantsList.append(add)
+
+                        const downloadAll = createAction("file_download", 'Download All Variants')
+                        const deleteIcon = createAction("delete", "Delete this Icon", true)
+                        deleteIcon.style.display = state.canRemove ? 'flex' : 'none';
+                        deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id })
+
+                        sidebar.onblur = () => {
+                            if (state.canUpload) enableGlobalDragAndDrop();
+                            sidebarX.forceRedraw({
+                                showSidebar: false
+                            })
+                            sidebar.classList.remove('open')
+                        }
+                        add.onclick = () => web.notify("Currently not implemented")
+                        downloadAll.onclick = () => web.notify("Currently not implemented")
+
+                        conditionalCSSClass(title, (state.iconTitle?.length ?? 0) > 20, 'small')
+                        shell.innerHTML = "";
+                        shell.append(
+                            image,
+                            title,
+                            taglist,
+                            span('Variants', 'variants-title'),
+                            variantsList,
+                            downloadAll,
+                            deleteIcon,
+                            span(`by ${state.username} • ${timeAgo(state.createDate)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data')
+                        )
+
+                        card.append(shell)
+                        return card;
                     }
-                    sidebar.tabIndex = 0;
-                    add.onclick = () => web.notify("Currently not implemented")
-                    downloadAll.onclick = () => web.notify("Currently not implemented")
+                })
+            ])
 
-                    conditionalCSSClass(title, data.iconTitle.length > 20, 'small')
-                    shell.append(
-                        image,
-                        title,
-                        taglist,
-                        span('Variants', 'variants-title'),
-                        variantsList,
-                        downloadAll,
-                        deleteIcon,
-                        span(`by ${data.username} • ${timeAgo(data.createDate)} • ${data.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data')
-                    )
-                    card.append(shell)
-                    return card;
+            registerEvent(DataStoreEvents.RecivedProfileData, (data: ProfileData) => {
+                sidebarX.forceRedraw({
+                    canUpload: data.canUpload,
+                    username: data.username,
+                    canRemove: data.canRemove
+                })
+            })
+            addEventListener('resize', () => {
+                if (sidebarX.getState()?.showSidebar) sidebarX.indexRedraw(0)
+            }, { passive: true })
+            registerEvent(DataStoreEvents.SidebarUpdate, (data: SidebarData) => {
+                if (data === undefined) {
+                    sidebarX.forceRedraw({
+                        showSidebar: false
+
+                    })
+                    return;
                 }
-            })
-        ])
+                if (typeof data === 'string') {
 
-        registerEvent(DataStoreEvents.RecivedProfileData, (data: ProfileData) => {
-            console.log(data);
-            sidebarCard.redraw({
-                canUpload: data.canUpload,
-                username: data.username,
-                canRemove: data.canRemove
-            })
-            console.log(sidebarCard.getState())
-        })
-        addEventListener('resize', () => {
-            if (offset && sidebar.classList.contains('open')) updatePosition(sidebar, offset)
-        }, { passive: true })
-        registerEvent(DataStoreEvents.SidebarUpdate, (data: SidebarData) => {
-            if (data === undefined) {
-                sidebar.blur()
-                return;
-            }
-            if (typeof data === 'string') {
-                if (currentId && currentId == data) sidebar.blur()
-                return;
-            }
-            currentId = data.id
-            offset = data.offset
-            updatePosition(sidebar, data.offset)
-            sidebar.classList.add('open')
-            sidebar.focus();
-            disableGlobalDragAndDrop()
+                    if (sidebarX.getState()?.id && sidebarX.getState()?.id == data) sidebarX.forceRedraw({
+                        showSidebar: false
+                    })
+                    return;
+                }
+                disableGlobalDragAndDrop()
 
-            sidebarCard.redraw({
-                iconTitle: data.displayName,
-                imageBlobUrl: data.image,
-                id: data.id,
-                tags: data.tags,
-                createDate: data.date,
-                imageType: data.type,
-                imageVariants: data.alts
+                sidebarX.forceRedraw({
+                    showSidebar: true,
+                    sidebarCurrentId: data.id,
+                    iconTitle: data.displayName,
+                    imageBlobUrl: data.image,
+                    id: data.id,
+                    tags: data.tags,
+                    createDate: data.date,
+                    imageType: data.type,
+                    imageVariants: data.alts,
+                    offset: data.offset
+                })
             })
-        })
-        return sidebar;
+            return sidebar;
+        }
     }
-})
+}
 const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" ]) => {
     const offset = data();
     const normal = document.body.offsetWidth - (offset.left + 365) > 0;
@@ -122,7 +139,7 @@ const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" 
     conditionalCSSClass(sidebar, !normal, 'right')
 }
 const createTags = (tags?: string[]) => {
-    const add = mIcon('add')
+    const add = mIcon('edit')
     if (tags)
         return [ ...tags.map(x => span('#' + x)), add ];
     else

@@ -1,0 +1,1 @@
+export type optional<TypeT> = undefined | TypeT;

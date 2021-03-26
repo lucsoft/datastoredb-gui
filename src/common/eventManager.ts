@@ -6,7 +6,7 @@ export enum DataStoreEvents {
     RecivedProfileData
 }
 
-const events: DataStoreEvent[] = []
+let events: DataStoreEvent[] = []
 
 type DataStoreEvent = {
     id: DataStoreEvents

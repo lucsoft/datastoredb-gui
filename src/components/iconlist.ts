@@ -4,14 +4,17 @@ import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
 import { SidebarData } from "../types/sidebarTypes";
-export const createIconList = (): RenderElement => ({
-    draw: () => {
-        const list = document.createElement('div');
-        list.classList.add('image-list');
-        renderIconlist(list)
-        return list;
+export const createIconList = (): RenderElement => {
+
+    return {
+        draw: () => {
+            const list = document.createElement('div');
+            renderIconlist(list)
+            list.classList.add('image-list');
+            return list;
+        }
     }
-});
+};
 
 function getOffset(el: HTMLElement) {
     const rect = el.getBoundingClientRect();
