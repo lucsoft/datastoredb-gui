@@ -3,4 +3,6 @@ export type ProfileData = {
     featureEnabled: boolean
     canUpload: boolean
     canRemove: boolean
+    userId: string
+    createDate: number
 }

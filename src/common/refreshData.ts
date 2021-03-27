@@ -1,7 +1,7 @@
 import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
-export let lastFilesCollected: any | undefined = undefined;
+export let lastFilesCollected: Icon[] | undefined = undefined;
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
     const oldData = await db.icons.toArray();

@@ -4,8 +4,7 @@ import '../../res/css/sidebar.css';
 import { NetworkConnector } from "@lucsoft/network-connector";
 import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
-import { SidebarData, SidebarNormalData } from "../types/sidebarTypes";
-import { ProfileData } from "../types/profileDataTypes";
+import { SidebarNormalData } from "../types/sidebarTypes";
 
 type SideBarType = {
     showSidebar?: boolean
@@ -30,8 +29,8 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
             sidebar.tabIndex = 0;
 
             const shell = custom('div', undefined, 'shell')
-            const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, () => [
-                (_, state) => Card({}, {
+            const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, [
+                (state) => Card({}, {
                     getSize: () => ({}),
                     draw: (card) => {
                         const image = img(state.imageBlobUrl, 'preview')
@@ -86,7 +85,7 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
                 })
             ])
 
-            registerEvent(DataStoreEvents.RecivedProfileData, (data: ProfileData) => {
+            registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
                 sidebarX.forceRedraw({
                     canUpload: data.canUpload,
                     username: data.username,
@@ -97,7 +96,7 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
                 const state = sidebarX.getState();
                 if (state?.showSidebar && state.offset) updatePosition(sidebar, state.offset)
             }, { passive: true })
-            registerEvent(DataStoreEvents.SidebarUpdate, (data: SidebarData) => {
+            registerEvent(DataStoreEvents.SidebarUpdate, (data) => {
                 const currentState = sidebarX.getState();
                 if (data === undefined) {
                     sidebarX.forceRedraw({ showSidebar: false })

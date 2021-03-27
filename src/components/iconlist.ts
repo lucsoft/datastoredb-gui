@@ -1,12 +1,15 @@
 import { custom } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
-import { DataStoreEvents, emitEvent } from "../common/eventmanager";
+import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
 import { SidebarData } from "../types/sidebarTypes";
 export const createIconList = () => {
     const list = document.createElement('div');
     renderIconlist(list)
+    registerEvent(DataStoreEvents.RefreshDataComplete, () => {
+        renderIconlist(list)
+    })
     list.classList.add('image-list');
     return list;
 };
@@ -20,8 +23,9 @@ function getOffset(el: HTMLElement) {
     };
 }
 
+export const getStoredData = async () => /apple/i.test(navigator.vendor) ? lastFilesCollected ?? [] : await db.icons.orderBy('date').toArray();
 export async function renderIconlist(element: HTMLElement) {
-    const data = /apple/i.test(navigator.vendor) ? lastFilesCollected : await db.icons.orderBy('date').toArray()
+    const data = await getStoredData();
 
     const elements: HTMLElement[] = [];
     data.forEach((x: any) => {

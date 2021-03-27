@@ -9,10 +9,12 @@ export const createIncidentBar = (hmsys: NetworkConnector): RenderElement => ({
             type: EventTypes.Disconnected,
             action: () =>
                 emitEvent(DataStoreEvents.IncidentBar, {
+                    type: "bad",
                     message: `You got disconnected to the HmSYS Network. Trying to reconnect...`
                 })
         })
         addEventListener("offline", () => emitEvent(DataStoreEvents.IncidentBar, {
+            type: "bad",
             message: 'You are Offline. Uploading is currently disabled.'
         }))
 

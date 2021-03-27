@@ -1,0 +1,32 @@
+.dialog > .datastore-dialog {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    gap: var(--gap);
+}
+
+.dialog > .datastore-dialog img {
+    width: 100%;
+}
+
+.datastore-dialog .copyright-notice {
+    font-size: 0.6rem;
+    line-height: 1.1;
+    display: block;
+    color: var(--on-card-subtext);
+    margin-top: var(--gap);
+}
+.profile-badge {
+    margin-bottom: 0.4rem;
+}
+.profile-badge .username {
+    display: block;
+    line-height: 0.7;
+}
+.profile-badge .id {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+.account-details {
+    font-size: 0.9rem;
+    line-height: 1.2;
+}

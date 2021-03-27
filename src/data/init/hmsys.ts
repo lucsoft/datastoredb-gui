@@ -19,12 +19,14 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX
             }).open()
 
         if (profileData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
-
+        console.log(profileData)
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: profileData.services.DataStoreDB.upload,
             canRemove: profileData.services.DataStoreDB.remove,
             featureEnabled: profileData.services.DataStoreDB != undefined,
-            username: profileData.client.username
+            username: profileData.client.username,
+            userId: profileData.client.id,
+            createDate: profileData.client.createDate
         } as ProfileData)
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
@@ -35,7 +37,7 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX
             await db.transaction('rw', db.icons, async () => {
                 await db.icons.delete(data.deleted)
             })
-            emitEvent(DataStoreEvents.RefreshDataComplete, hmsys)
+            emitEvent(DataStoreEvents.RefreshDataComplete, { removed: data.deleted })
         }
         emitEvent(DataStoreEvents.SidebarUpdate, data.deleted)
     })

@@ -4,6 +4,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const path = require('path');
 const TerserPlugin = require("terser-webpack-plugin");
+const webpack = require('webpack');
+const package = require('./package.json');
+const { execSync } = require('child_process')
 module.exports = (_, mode) => {
     const isProduction = (typeof mode.env.production === "boolean" && mode.env.production);
     return {
@@ -59,7 +62,13 @@ module.exports = (_, mode) => {
                 filename: 'index.html',
                 favicon: './res/favicon.ico',
                 minify: isProduction ? { minifyCSS: true, minifyJS: true, removeComments: true } : undefined
+            }),
+            new webpack.DefinePlugin({
+                VERSION: JSON.stringify(package.version.toString()),
+                COMPILED_AD: JSON.stringify(new Date()),
+                LAST_COMMIT: JSON.stringify(execSync("git rev-parse HEAD").toString().trim())
             })
+
         ],
         optimization: isProduction ? {
             minimize: true,
