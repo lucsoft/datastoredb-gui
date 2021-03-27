@@ -8,7 +8,6 @@ import { SidebarData, SidebarNormalData } from "../types/sidebarTypes";
 import { ProfileData } from "../types/profileDataTypes";
 
 type SideBarType = {
-    sidebarCurrentId?: string
     showSidebar?: boolean
     iconTitle?: string
     id?: string
@@ -95,28 +94,23 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
                 })
             })
             addEventListener('resize', () => {
-                if (sidebarX.getState()?.showSidebar) sidebarX.indexRedraw(0)
+                const state = sidebarX.getState();
+                if (state?.showSidebar && state.offset) updatePosition(sidebar, state.offset)
             }, { passive: true })
             registerEvent(DataStoreEvents.SidebarUpdate, (data: SidebarData) => {
+                const currentState = sidebarX.getState();
                 if (data === undefined) {
-                    sidebarX.forceRedraw({
-                        showSidebar: false
-
-                    })
+                    sidebarX.forceRedraw({ showSidebar: false })
                     return;
                 }
                 if (typeof data === 'string') {
-
-                    if (sidebarX.getState()?.id && sidebarX.getState()?.id == data) sidebarX.forceRedraw({
-                        showSidebar: false
-                    })
+                    if (currentState && currentState.id && currentState.id == data) sidebarX.forceRedraw({ showSidebar: false })
                     return;
                 }
                 disableGlobalDragAndDrop()
 
                 sidebarX.forceRedraw({
                     showSidebar: true,
-                    sidebarCurrentId: data.id,
                     iconTitle: data.displayName,
                     imageBlobUrl: data.image,
                     id: data.id,
