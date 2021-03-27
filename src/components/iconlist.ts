@@ -1,19 +1,14 @@
-import { custom, RenderElement } from "@lucsoft/webgen";
+import { custom } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
 import { SidebarData } from "../types/sidebarTypes";
-export const createIconList = (): RenderElement => {
-
-    return {
-        draw: () => {
-            const list = document.createElement('div');
-            renderIconlist(list)
-            list.classList.add('image-list');
-            return list;
-        }
-    }
+export const createIconList = () => {
+    const list = document.createElement('div');
+    renderIconlist(list)
+    list.classList.add('image-list');
+    return list;
 };
 
 function getOffset(el: HTMLElement) {
