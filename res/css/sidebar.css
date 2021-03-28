@@ -91,7 +91,8 @@
     transition: background-color 250ms ease;
 }
 .sidebar .icon-title:hover {
-    background-color: rgb(0 0 0 / 5%);
+    background: var(--on-card-background);
+    box-shadow: var(--box-shadow);
 }
 .sidebar .icon-title.small {
     font-size: 30px;
@@ -111,7 +112,8 @@
     flex-direction: row-reverse;
 }
 .sidebar .tags-list span {
-    background: rgb(0 0 0 / 5%);
+    background: var(--on-card-background);
+    box-shadow: var(--box-shadow);
     border-radius: 7px;
     font-size: 14px;
     padding: 4px 7px 4px;
@@ -173,7 +175,8 @@
     margin: 7px 5px;
     border-radius: 10px;
     padding: 8px;
-    background: rgb(0 0 0 / 5%);
+    background: var(--on-card-background);
+    box-shadow: var(--box-shadow);
     font-size: 19px;
 }
 .variants .material-icons-round:hover {
@@ -183,20 +186,4 @@
 .sidebar.right .preview {
     margin: 1.4rem 1.5rem 0 auto;
     animation: fadeInImageRight 300ms ease;
-}
-
-@media (prefers-color-scheme: dark) {
-    .sidebar .tags-list span {
-        background: rgb(255 255 255 / 5%);
-    }
-    .variants .material-icons-round {
-        background: rgb(255 255 255 / 5%);
-    }
-    .sidebar .icon-title:hover {
-        background-color: rgb(255 255 255 / 5%);
-    }
-    .sidebar card {
-        background-color: rgb(30 30 30);
-        box-shadow: none;
-    }
 }
