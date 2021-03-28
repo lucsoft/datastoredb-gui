@@ -1,4 +1,5 @@
 import { WebGen } from "@lucsoft/webgen";
-const web = WebGen().render
+import { renderMain } from "./dashboard";
+const web = WebGen()
 
-import('./dashboard').then(x => x.renderMain(web))
+renderMain(web.render, web.theme)
