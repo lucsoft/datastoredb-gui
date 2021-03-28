@@ -19,7 +19,6 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX
             }).open()
 
         if (profileData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
-        console.log(profileData)
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: profileData.services.DataStoreDB.upload,
             canRemove: profileData.services.DataStoreDB.remove,

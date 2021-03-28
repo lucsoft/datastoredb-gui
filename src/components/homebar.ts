@@ -1,23 +1,53 @@
 import { NetworkConnector } from "@lucsoft/network-connector";
-import { createElement, mIcon, RenderingX, span } from "@lucsoft/webgen";
+import { createElement, custom, mIcon, RenderingX, span, conditionalCSSClass } from "@lucsoft/webgen";
+import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import '../../res/css/homebar.css';
 import pandaIcon from '../../res/pandaicon.svg';
 
-import { DataStoreEvents, registerEvent } from "../common/eventmanager";
+import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
+import { Icon } from "../data/IconsCache";
 import { controlPanelContent, controlPanelDialog } from "./controlpanel";
 import { getStoredData } from "./iconlist";
+import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
+import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";
 
-export const renderHomeBar = (web: RenderingX, net: NetworkConnector) => {
+export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Style) => {
+    let iconData: Icon[] = [];
+    getStoredData().then((data) => {
+        iconData = data;
+        control.forceRedraw({
+            iconCount: data?.length ?? undefined
+        })
+    })
     const container = createElement('div')
     const search = document.createElement('input')
     search.placeholder = "Search something...";
     const settings = span(undefined, 'webgen-svg')
+    const icon2 = span(undefined, 'webgen-svg')
+    const tagSelector = custom('ul', span('Pro Tip: Use ! or # to filter for tags', 'help'), 'tag-selector');
+    let tagSelectIndex = 0;
+    search.onfocus = () => conditionalCSSClass(tagSelector, true, 'show')
+    search.onblur = () => conditionalCSSClass(tagSelector, false, 'show')
+
+    const filteredUpdate = () => {
+        emitEvent(DataStoreEvents.SearchBarUpdated, {
+            tags: search.value.match(/([#|-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [],
+            filteredText: search.value.replaceAll(/([#|-|!][\w|\d|.]*\u200b)/g, '').trim()
+        })
+    }
+
+    search.onkeyup = SearchHandleOnKeyboardUpEvent(tagSelector, tagSelectIndex, search, iconData, filteredUpdate)
+
+    search.onkeydown = SearchHandleOnKeyboardDownEvent(tagSelector, tagSelectIndex, search)
     fetch(pandaIcon).then(x => x.text())
-        .then(x => settings.innerHTML = x)
+        .then(x => {
+            settings.innerHTML = x
+            icon2.innerHTML = x
+        })
     const upload = mIcon("cloud_queue")
     container.classList.add('homebar')
-    const control = controlPanelContent(web);
+    const control = controlPanelContent(icon2, web, style);
     control.getShell().classList.add('datastore-dialog');
     const dialog = controlPanelDialog(web, control);
     settings.onclick = () => dialog.open()
@@ -34,20 +64,16 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector) => {
             createDate: data.createDate
         })
     })
-    getStoredData().then((data) => {
-        control.forceRedraw({
-            iconCount: data?.length ?? undefined
-        })
-    })
 
     registerEvent(DataStoreEvents.RefreshDataComplete, () => {
         getStoredData().then((data) => {
+            iconData = data;
             control.forceRedraw({
                 iconCount: data?.length ?? undefined
             })
         })
     });
 
-    container.append(search, upload, settings)
+    container.append(search, upload, settings, tagSelector)
     return container;
 }

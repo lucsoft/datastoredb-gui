@@ -4,14 +4,15 @@
     gap: var(--gap);
 }
 
-.dialog > .datastore-dialog img {
-    width: 100%;
+.dialog > .datastore-dialog svg {
+    fill: var(--on-card-text);
 }
 
 .datastore-dialog .copyright-notice {
     font-size: 0.6rem;
     line-height: 1.1;
     display: block;
+    width: 28rem;
     color: var(--on-card-subtext);
     margin-top: var(--gap);
 }
@@ -29,4 +30,5 @@
 .account-details {
     font-size: 0.9rem;
     line-height: 1.2;
+    margin-bottom: 1rem;
 }

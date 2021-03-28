@@ -1,4 +1,5 @@
 .homebar {
+    position: relative;
     display: grid;
     margin: var(--gap) auto;
     gap: var(--gap);
@@ -12,8 +13,45 @@
     font-size: 1.5rem;
     padding: 1.3rem 1.2rem;
     border-radius: var(--border-radius);
-    color: white;
+    color: var(--on-card-text);
     box-shadow: none;
+}
+.homebar .tag-selector {
+    position: absolute;
+    top: 5rem;
+    margin: 0;
+    display: none;
+    z-index: 100;
+    padding: 0.8rem 1.1rem;
+    box-shadow: var(--background-card);
+    border-radius: var(--border-radius);
+    background: var(--background-card);
+    color: var(--on-card-text);
+}
+.homebar .tag-selector.show {
+    display: block;
+}
+.homebar .tag-selector span {
+    display: block;
+    font-size: .9rem;
+    margin: 0rem -1.1rem;
+    padding: 0rem 1.8rem 0 1.1rem;
+    transition: all 350ms ease;
+}
+.homebar .tag-selector span.selected, .homebar .tag-selector span:not(.help):hover {
+    background-color: var(--on-card-background);
+    margin: 0.1rem -1.1rem;
+    font-size: 1.1rem;
+    padding: 0.2rem 0.7rem .2rem 1.1rem;
+    transition: all 150ms ease;
+}
+.homebar .tag-selector .help {
+    font-weight: 400;
+    color: var(--default-secondary-color);
+    font-size: .8rem;
+    text-align: center;
+    margin: 0.4rem 0 .2rem;
+    padding: 0;
 }
 .homebar .webgen-icon, .homebar .webgen-svg svg {
     padding: .9rem 1rem;

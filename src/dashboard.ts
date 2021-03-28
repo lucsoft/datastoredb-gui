@@ -9,8 +9,9 @@ import './common/refreshData';
 import '../res/css/master.css';
 import { registerMasterDropArea } from "./components/dropareas";
 import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
+import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
-export function renderMain(web: RenderingX) {
+export function renderMain(web: RenderingX, style: Style) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)
 
@@ -19,7 +20,7 @@ export function renderMain(web: RenderingX) {
     web.toCustom({ maxWidth: '75rem', shell }, {}, () => [
         createIncidentBar(hmsys),
         createSidebar(web, hmsys),
-        renderHomeBar(web, hmsys),
+        renderHomeBar(web, hmsys, style),
         createIconList()
     ])
     registerMasterDropArea(hmsys)
