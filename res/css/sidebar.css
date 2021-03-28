@@ -86,6 +86,7 @@
     font-size: 55px;
     line-height: 3.2rem;
     line-break: anywhere;
+    user-select: text;
     font-weight: 700;
     border-radius: .2rem;
     transition: background-color 250ms ease;
@@ -135,8 +136,7 @@
 .sidebar .action {
     display: flex;
     align-items: center;
-    height: 20px;
-    margin-bottom: 25px;
+    margin-bottom: 1rem;
 }
 .sidebar .action:hover {
     opacity: 0.9;

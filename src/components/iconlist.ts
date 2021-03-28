@@ -1,17 +1,41 @@
-import { img } from "@lucsoft/webgen";
+import { custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
-import { db } from '../data/IconsCache';
+import { db, Icon } from '../data/IconsCache';
+import lostPanda from '../../res/lostpanda.svg';
+import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
     renderIconlist(list, currentSearchRequest)
-    // registerEvent(DataStoreEvents.RefreshDataComplete, () => {
-    //     renderIconlist(list, [])
-    // })
-    registerEvent(DataStoreEvents.SearchBarUpdated, (data) => {
+
+    registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
+        const storedData = await getStoredData();
+
+        if (data.new && data.new.length > 0) {
+            if (!checkIfCacheIsAllowed())
+                list.innerHTML = ""
+
+            const newData = data.new
+                .map(id => storedData.find(sd => sd.id == id)!)
+                .filter(x => tagFiltering(x, currentSearchRequest))
+                .filter(x => simpleTextFiltering(x, currentSearchRequest))
+
+            if (list.children[ 0 ]?.classList.contains('empty-list') && newData.length > 0)
+                list.innerHTML = "";
+
+            list.append(...newData
+                .map(icon => renderSingleIcon(icon)))
+        }
+        if (data.removed && data.removed.length > 0) {
+            data.removed.forEach(x => list.querySelector(`[id="${x}"]`)?.remove())
+        }
+    })
+    registerEvent(DataStoreEvents.SearchBarUpdated, async (data) => {
+        if ((await getStoredData()).length == 0)
+            return;
         if (currentSearchRequest.filteredText != data.filteredText
             || JSON.stringify(currentSearchRequest.execludeTags) != JSON.stringify(data.execludeTags)
             || JSON.stringify(currentSearchRequest.includeTags) != JSON.stringify(data.includeTags)
@@ -33,7 +57,12 @@ function getOffset(el: HTMLElement) {
     };
 }
 
-export const getStoredData = async () => /apple/i.test(navigator.vendor) ? lastFilesCollected ?? [] : await db.icons.orderBy('date').toArray();
+const lostPandaImage = custom('div', undefined, 'lost-panda')
+fetch(lostPanda).then(x => x.text())
+    .then(x => {
+        lostPandaImage.innerHTML = x
+    })
+export const getStoredData = async () => !checkIfCacheIsAllowed() ? lastFilesCollected ?? [] : await db.icons.orderBy('date').toArray();
 export async function renderIconlist(element: HTMLElement, filterOptions: {
     includeTags: string[];
     execludeTags: string[];
@@ -41,26 +70,54 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
 }) {
     const data = await getStoredData();
 
-    const elements: HTMLElement[] = [];
-    data.filter(x => compareArray(x.tags, filterOptions.includeTags) && execludeCompareArray(x.tags, filterOptions.execludeTags))
-        .filter(x => x.filename.toLowerCase().startsWith(filterOptions.filteredText.toLowerCase()))
-        .forEach((x: any) => {
-            const image = img(URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type })), 'icon')
-            image.loading = "lazy";
-            image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
-                offset: () => getOffset(image),
-                image: image.src,
-                id: x.id,
-                date: x.date,
-                alts: [ image.src ],
-                tags: x.tags,
-                displayName: x.filename,
-                type: x.type
-            })
-
-            elements.push(image)
-        })
-
+    const elements = data.filter(icon => tagFiltering(icon, filterOptions))
+        .filter(icon => simpleTextFiltering(icon, filterOptions))
+        .map((icon) => renderSingleIcon(icon))
     element.innerHTML = "";
+    if (elements.length == 0) {
+        const shell = custom('div', undefined, 'empty-list')
+        if (data.length == 0) {
+            shell.append(span('Welcome!', 'title'), span('The Pandas are preparing your Files.', 'subtitle'), lostPandaImage)
+            setTimeout(() => {
+                const data = element.querySelector('.empty-list .subtitle')
+                if (data) {
+                    element.innerHTML = "";
+                    const shell = custom('div', undefined, 'empty-list')
+                    shell.append(span('Upload some files.', 'title'), span('Our Pandas need to pay rent.', 'subtitle'), lostPandaImage)
+                    element.append(shell)
+                }
+            }, 800)
+        }
+        else
+            shell.append(span('Oh no!', 'title'), span('Our Pandas couldn\'t fullfill what you need.', 'subtitle'), lostPandaImage)
+
+        element.append(shell)
+    }
     element.append(...elements)
+}
+
+const renderSingleIcon = (icon: Icon) => {
+    const image = img(URL.createObjectURL(new File([ icon.data ], icon.filename, { type: icon.type })), 'icon');
+    image.loading = "lazy";
+    image.setAttribute('id', icon.id);
+    image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
+        offset: () => getOffset(image),
+        image: image.src,
+        id: icon.id,
+        date: icon.date,
+        alts: [ image.src ],
+        tags: icon.tags,
+        displayName: icon.filename,
+        type: icon.type
+    });
+
+    return image;
+}
+
+function simpleTextFiltering(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }): unknown {
+    return icon.filename.toLowerCase().startsWith(filterOptions.filteredText.toLowerCase());
+}
+
+function tagFiltering(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }): unknown {
+    return compareArray(icon.tags, filterOptions.includeTags) && execludeCompareArray(icon.tags, filterOptions.execludeTags);
 }

@@ -30,9 +30,34 @@
     min-width: 64px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    animation: fadeIcon 400ms ease;
+    animation: fadeIcon 300ms ease;
     transition: transform 150ms ease;
 }
 .image-list .icon:hover {
     transform: scale(1.05);
+}
+
+.empty-list {
+    color: var(--on-background-text);
+    animation: fadeIcon 200ms ease;
+
+}
+.empty-list .title {
+    display: block;
+    text-align: center;
+    font-size: 2.9rem;
+    font-weight: 500;
+    margin-top: 2rem;
+}
+.empty-list .subtitle {
+    display: block;
+    text-align: center;
+    margin: 0.5rem 0 3rem;
+}
+.empty-list .lost-panda svg {
+    display: block;
+    width: 30vw;
+    margin: 0 auto;
+    max-width: 20rem;
+    fill: var(--on-background-text);
 }
