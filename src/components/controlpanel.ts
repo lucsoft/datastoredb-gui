@@ -1,9 +1,9 @@
-import { createElement, custom, DialogActionAfterSubmit, img, RenderingX, RenderingXResult, span } from "@lucsoft/webgen";
-import pandaIcon from '../../res/pandaicon.svg';
+import { createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
 import { envData } from "../common/envdata";
 import { ControlPanelType } from "../types/controlPanel";
 import { timeAgo } from "../common/date";
+import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
 const renderUserProfile = (state: ControlPanelType) => {
     const shell = custom('div', undefined, 'profile-badge');
@@ -27,8 +27,8 @@ const list = (element: HTMLElement[], classList?: string[]) => {
         list.append(...element)
     return list;
 }
-export const controlPanelContent = (web: RenderingX) => web.toCustom({ shell: createElement('div') }, {} as ControlPanelType, [
-    img(pandaIcon),
+export const controlPanelContent = (webgenIcon: HTMLElement, web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {} as ControlPanelType, [
+    webgenIcon,
     (state) => list([
         renderUserProfile(state),
         list([
@@ -36,6 +36,12 @@ export const controlPanelContent = (web: RenderingX) => web.toCustom({ shell: cr
             span(`Assinged ${state.iconCount} Icons\n`),
             span(state.canRemove && state.canUpload ? 'You have full control over DataStoreDB' : `You have limited functionality for full access switch to a admin account.`)
         ], [ 'account-details' ]),
+        multiStateSwitch("small",
+            { title: "Dimmed", action: () => theme.updateTheme(SupportedThemes.gray) },
+            { title: "Dark", action: () => theme.updateTheme(SupportedThemes.dark) },
+            { title: "White", action: () => theme.updateTheme(SupportedThemes.white) },
+            { title: "System", action: () => theme.updateTheme(SupportedThemes.auto) },
+        ),
         renderCopryrightNotice()
     ])
 ])
