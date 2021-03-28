@@ -1,15 +1,18 @@
-import { custom } from "@lucsoft/webgen";
+import { img } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
+import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
-import { SidebarData } from "../types/sidebarTypes";
 export const createIconList = () => {
     const list = document.createElement('div');
-    renderIconlist(list)
-    registerEvent(DataStoreEvents.RefreshDataComplete, () => {
-        renderIconlist(list)
-    })
+    renderIconlist(list, { execludeTags: [], includeTags: [], filteredText: "" })
+    // registerEvent(DataStoreEvents.RefreshDataComplete, () => {
+    //     renderIconlist(list, [])
+    // })
+    registerEvent(DataStoreEvents.SearchBarUpdated, (data) => {
+        renderIconlist(list, data)
+    });
     list.classList.add('image-list');
     return list;
 };
@@ -24,14 +27,16 @@ function getOffset(el: HTMLElement) {
 }
 
 export const getStoredData = async () => /apple/i.test(navigator.vendor) ? lastFilesCollected ?? [] : await db.icons.orderBy('date').toArray();
-export async function renderIconlist(element: HTMLElement) {
+export async function renderIconlist(element: HTMLElement, filterOptions: {
+    includeTags: string[];
+    execludeTags: string[];
+    filteredText: string;
+}) {
     const data = await getStoredData();
 
     const elements: HTMLElement[] = [];
-    data.forEach((x: any) => {
-        const image = document.createElement('img')
-        const shell = custom('div', image, 'shell')
-        image.src = URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type }))
+    data.filter(x => compareArray(x.tags, filterOptions.includeTags) && execludeCompareArray(x.tags, filterOptions.execludeTags)).forEach((x: any) => {
+        const image = img(URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type })), 'icon')
         image.loading = "lazy";
         image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
             offset: () => getOffset(image),
@@ -42,9 +47,9 @@ export async function renderIconlist(element: HTMLElement) {
             tags: x.tags,
             displayName: x.filename,
             type: x.type
-        } as SidebarData)
+        })
 
-        elements.push(shell)
+        elements.push(image)
     })
 
     element.innerHTML = "";

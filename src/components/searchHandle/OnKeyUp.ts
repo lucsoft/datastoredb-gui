@@ -1,8 +1,7 @@
 import { conditionalCSSClass, span } from "@lucsoft/webgen";
+import { compareArray, execludeCompareArray } from "../../common/arrayCompare";
 import { Icon } from "../../data/IconsCache";
 
-const contains = (allEntries: string[], requiredEntries: string[]) =>
-    allEntries.filter((v) => requiredEntries.includes(v)).length === requiredEntries.length;
 let getWidth = (fontSize: string, value: string) => {
     let div = document.createElement('div');
     div.innerHTML = value;
@@ -19,24 +18,26 @@ let getWidth = (fontSize: string, value: string) => {
 };
 export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex: (value?: number) => number, search: HTMLInputElement, iconData: () => Icon[], filteredUpdate: () => void) => (e: KeyboardEvent) => {
 
-    const possibleNewTag = search.value.match(/[#|!|-][\w|\d|.]?$/g);
+    const possibleNewTag = search.value.match(/[#|!|-][\w|\d|.]*$/g);
     tagSelector.style.left = (getWidth("1.5rem", search.value)).toString() + "px";
-    const tags = search.value.match(/([#|-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [];
+    const includeTags = search.value.match(/(#[\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [];
+    const execludeTags = search.value.match(/([-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [];
 
     conditionalCSSClass(tagSelector, !!possibleNewTag || search.value.length == 0, 'show')
     if ((e.key == "Enter" || e.key == "Tab") && possibleNewTag) {
-        search.value += tagSelector.children[ tagIndex() ].getAttribute('value')!.substr(possibleNewTag[ 0 ].length - 1) + "\u200b "
+        search.value = search.value.substring(0, search.value.length - possibleNewTag[ 0 ].length + 1)
+            + tagSelector.children[ tagIndex() ].getAttribute('value') + "\u200b "
         search.onkeyup?.(e)
         filteredUpdate();
     }
     else if (!possibleNewTag) {
         tagSelector.innerHTML = "";
         tagSelector.append(span('Pro Tip: Use ! or # to filter for tags', 'help'))
-        if (e.key.length == 1 || (e.key == "Backspace" && search.value.length > 0)) {
+        if (e.key.length == 1 || search.value.length > 0) {
             filteredUpdate()
         }
     }
-    else if (!(e.key == "ArrowDown" || e.key == "ArrowUp") && possibleNewTag && iconData) {
+    else if (!(e.key == "ArrowDown" || e.key == "ArrowUp") && possibleNewTag && iconData && e.key.length == 1) {
         const unsortedData: [ label: string, counter: number ][] = [];
         tagIndex(0)
         iconData()
@@ -50,15 +51,23 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex
             })
         tagSelector.innerHTML = "";
         const sortedData = unsortedData
-            .filter(sorted => (iconData().filter(x => contains(x.tags, [ ...tags, sorted[ 0 ] ])).length > 0))
+            .filter(sorted => (iconData().filter(x => {
+                if (possibleNewTag[ 0 ].startsWith('#'))
+                    return compareArray(x.tags, [ ...includeTags, sorted[ 0 ] ]) && execludeCompareArray(x.tags, [ ...execludeTags ])
+                else
+                    return execludeTags.includes(sorted[ 0 ]) ? false : compareArray(x.tags, [ ...includeTags ]) && execludeCompareArray(x.tags, [ ...execludeTags, sorted[ 0 ] ])
+
+            }).length > 0))
             .sort((a, b) => b[ 1 ] - a[ 1 ])
-            .filter(x => !tags.find(y => y.toLowerCase() == x[ 0 ].toLowerCase()))
+            .filter(x => !includeTags.find(y => y.toLowerCase() == x[ 0 ].toLowerCase()))
             .map(([ label, count ], index) => {
 
-                const spanLabel = span(`${label} (${count})`)
+                const spanLabel = span(`${label} ${count - 1 ? `(${count})` : ''}`)
                 spanLabel.setAttribute('value', label)
                 spanLabel.onclick = () => {
-                    search.value += tagSelector.children[ index ].innerHTML.substr(possibleNewTag[ 0 ].length - 1) + "\u200b "
+                    console.log('clicked')
+                    search.value = search.value.substring(0, search.value.length - possibleNewTag[ 0 ].length + 1)
+                        + tagSelector.children[ index ].getAttribute('value') + "\u200b "
                     search.onkeyup?.(e)
                 }
                 return spanLabel

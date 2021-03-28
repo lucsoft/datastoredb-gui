@@ -28,11 +28,12 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Sty
     const tagSelector = custom('ul', span('Pro Tip: Use ! or # to filter for tags', 'help'), 'tag-selector');
     let tagSelectIndex = 0;
     search.onfocus = () => conditionalCSSClass(tagSelector, true, 'show')
-    search.onblur = () => conditionalCSSClass(tagSelector, false, 'show')
+    search.onblur = () => tagSelector.children.length == 1 && tagSelector.classList.contains('show') ? conditionalCSSClass(tagSelector, false, 'show') : undefined
 
     const filteredUpdate = () => {
         emitEvent(DataStoreEvents.SearchBarUpdated, {
-            tags: search.value.match(/([#|-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [],
+            includeTags: search.value.match(/(#[\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [],
+            execludeTags: search.value.match(/([-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [],
             filteredText: search.value.replaceAll(/([#|-|!][\w|\d|.]*\u200b)/g, '').trim()
         })
     }
@@ -45,7 +46,7 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Sty
     search.onkeydown = SearchHandleOnKeyboardDownEvent(tagSelector, (val) => {
         if (val !== undefined) return tagSelectIndex = val
         return tagSelectIndex
-    }, search)
+    }, search, filteredUpdate)
     fetch(pandaIcon).then(x => x.text())
         .then(x => {
             settings.innerHTML = x
@@ -80,6 +81,10 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Sty
         })
     });
 
+    registerEvent(DataStoreEvents.SearchBarAddTag, (data) => {
+        search.value += ` #${data}\u200b `;
+        filteredUpdate();
+    })
     container.append(search, upload, settings, tagSelector)
     return container;
 }

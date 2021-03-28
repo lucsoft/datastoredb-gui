@@ -1,4 +1,4 @@
-export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSelectIndex: (val?: number) => number, search: HTMLInputElement) => (e: KeyboardEvent): void => {
+export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSelectIndex: (val?: number) => number, search: HTMLInputElement, filteredUpdate: () => void) => (e: KeyboardEvent): void => {
 
     if (e.key == "Tab")
         e.preventDefault();
@@ -24,6 +24,11 @@ export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSel
             .match(/[#|!|-][\w|\d|.]*\u200b $/);
         if (match)
             search.value = search.value.replace(match[ 0 ], '');
+        if (search.value.length == 0) {
+            filteredUpdate()
+        }
+    } else if (e.key == "Backspace" && search.value.length == 1) {
+        filteredUpdate()
     }
     else if ((e.key == "ArrowLeft" && search.value.substr(0, search.selectionStart ?? 0).endsWith('\u200b ')) || (e.key == "ArrowRight" && search.value.substr(search.selectionStart ?? 0).match(/^[#|!|-].*\u200b /))) {
         e.preventDefault();
