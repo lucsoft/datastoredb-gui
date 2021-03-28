@@ -9,7 +9,8 @@ export const enum DataStoreEvents {
     SidebarUpdate,
     RecivedProfileData,
     IconDataLoaded,
-    SearchBarUpdated
+    SearchBarUpdated,
+    SearchBarAddTag
 }
 
 let events: DataStoreEvent[] = []
@@ -26,7 +27,8 @@ type DataStoreEventType<TypeT> =
     & (TypeT extends DataStoreEvents.RefreshData ? NetworkConnector : unknown)
     & (TypeT extends DataStoreEvents.SidebarUpdate ? SidebarData : unknown)
     & (TypeT extends DataStoreEvents.RefreshDataComplete ? { new?: string[], removed?: string[], updated?: string[] } : unknown)
-    & (TypeT extends DataStoreEvents.SearchBarUpdated ? { tags: string[], filteredText: string } : unknown)
+    & (TypeT extends DataStoreEvents.SearchBarUpdated ? { includeTags: string[], execludeTags: string[], filteredText: string } : unknown)
+    & (TypeT extends DataStoreEvents.SearchBarAddTag ? string : unknown)
 
 export const registerEvent = <TypeT extends DataStoreEvents>(id: TypeT, action: (metaData: DataStoreEventType<TypeT>) => void) => {
     events.push({ id, action })

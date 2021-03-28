@@ -1,5 +1,5 @@
-import { Card, conditionalCSSClass, createElement, custom, img, mIcon, RenderElement, RenderingX, span } from "@lucsoft/webgen"
-import { DataStoreEvents, registerEvent } from "../common/eventmanager";
+import { Card, conditionalCSSClass, createElement, custom, img, mIcon, RenderElement, RenderingX, RenderingXResult, span } from "@lucsoft/webgen"
+import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import '../../res/css/sidebar.css';
 import { NetworkConnector } from "@lucsoft/network-connector";
 import { timeAgo } from "../common/date";
@@ -41,7 +41,7 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
                         if (state.offset && state.showSidebar)
                             updatePosition(sidebar, state.offset!)
                         conditionalCSSClass(sidebar, state.showSidebar, 'open')
-                        taglist.append(...createTags(state.tags))
+                        taglist.append(...createTags(() => sidebarX, state.tags))
                         if (state.showSidebar)
                             sidebar.focus();
 
@@ -123,6 +123,24 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
             return sidebar;
         }
     }
+
+}
+
+const createTags = (sidebarX: () => RenderingXResult<SideBarType>, tags?: string[]) => {
+    const add = mIcon('edit')
+    if (tags)
+        return [ ...tags.map(x => {
+            const tag = span('#' + x)
+            tag.onclick = () => {
+                sidebarX().forceRedraw({
+                    showSidebar: false
+                })
+                emitEvent(DataStoreEvents.SearchBarAddTag, x);
+            }
+            return tag
+        }), add ];
+    else
+        return [ add ];
 }
 const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" ]) => {
     const offset = data();
@@ -131,13 +149,7 @@ const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" 
     sidebar.style.left = (offset.left - (normal ? 0 : 365)) + "px";
     conditionalCSSClass(sidebar, !normal, 'right')
 }
-const createTags = (tags?: string[]) => {
-    const add = mIcon('edit')
-    if (tags)
-        return [ ...tags.map(x => span('#' + x)), add ];
-    else
-        return [ add ];
-}
+
 const createAction = (icon: string, text: string, isRed?: boolean) => {
     const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
     element.append(mIcon(icon), span(text, 'label'))
