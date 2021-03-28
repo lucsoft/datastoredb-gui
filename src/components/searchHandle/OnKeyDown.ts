@@ -1,22 +1,22 @@
-export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSelectIndex: number, search: HTMLInputElement) => (e: KeyboardEvent): void => {
+export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSelectIndex: (val?: number) => number, search: HTMLInputElement) => (e: KeyboardEvent): void => {
+
     if (e.key == "Tab")
         e.preventDefault();
     else if ((e.key == "ArrowDown" || e.key == "ArrowUp") && tagSelector.children.length >= 2) {
         e.preventDefault();
         tagSelector.querySelectorAll('.selected')[ 0 ]?.classList.remove('selected');
         if (e.key == "ArrowUp") {
-            if (tagSelectIndex != 0)
-                tagSelectIndex--;
+            if (tagSelectIndex() != 0)
+                tagSelectIndex(tagSelectIndex() - 1)
             else
-                tagSelectIndex = tagSelector.children.length - 2;
+                tagSelectIndex(tagSelector.children.length - 2)
         } else {
-            if (tagSelectIndex == tagSelector.children.length - 2)
-                tagSelectIndex = 0;
-
+            if (tagSelectIndex() == tagSelector.children.length - 2)
+                tagSelectIndex(0);
             else
-                tagSelectIndex++;
+                tagSelectIndex(tagSelectIndex() + 1)
         }
-        tagSelector.querySelectorAll('*')[ tagSelectIndex ].classList.add('selected');
+        tagSelector.querySelectorAll('*')[ tagSelectIndex() ].classList.add('selected');
     }
     else if (e.key == "Backspace" && search.value.substr(0, search.selectionStart ?? 0).endsWith('\u200b ')) {
         e.preventDefault();

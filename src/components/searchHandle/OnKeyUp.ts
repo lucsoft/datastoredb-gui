@@ -17,7 +17,7 @@ let getWidth = (fontSize: string, value: string) => {
     div.remove();
     return width;
 };
-export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagSelectIndex: number, search: HTMLInputElement, iconData: Icon[], filteredUpdate: () => void) => (e: KeyboardEvent) => {
+export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex: (value?: number) => number, search: HTMLInputElement, iconData: () => Icon[], filteredUpdate: () => void) => (e: KeyboardEvent) => {
 
     const possibleNewTag = search.value.match(/[#|!|-][\w|\d|.]?$/g);
     tagSelector.style.left = (getWidth("1.5rem", search.value)).toString() + "px";
@@ -25,7 +25,7 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagSelec
 
     conditionalCSSClass(tagSelector, !!possibleNewTag || search.value.length == 0, 'show')
     if ((e.key == "Enter" || e.key == "Tab") && possibleNewTag) {
-        search.value += tagSelector.children[ tagSelectIndex ].getAttribute('value')!.substr(possibleNewTag[ 0 ].length - 1) + "\u200b "
+        search.value += tagSelector.children[ tagIndex() ].getAttribute('value')!.substr(possibleNewTag[ 0 ].length - 1) + "\u200b "
         search.onkeyup?.(e)
         filteredUpdate();
     }
@@ -38,8 +38,8 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagSelec
     }
     else if (!(e.key == "ArrowDown" || e.key == "ArrowUp") && possibleNewTag && iconData) {
         const unsortedData: [ label: string, counter: number ][] = [];
-        tagSelectIndex = 0;
-        iconData
+        tagIndex(0)
+        iconData()
             .map(x => x.tags)
             .flat()
             .filter(x => x.toLowerCase().startsWith(possibleNewTag[ 0 ].replace(/[#|!|-]/, '').toLowerCase()))
@@ -50,7 +50,7 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagSelec
             })
         tagSelector.innerHTML = "";
         const sortedData = unsortedData
-            .filter(sorted => (iconData.filter(x => contains(x.tags, [ ...tags, sorted[ 0 ] ])).length > 0))
+            .filter(sorted => (iconData().filter(x => contains(x.tags, [ ...tags, sorted[ 0 ] ])).length > 0))
             .sort((a, b) => b[ 1 ] - a[ 1 ])
             .filter(x => !tags.find(y => y.toLowerCase() == x[ 0 ].toLowerCase()))
             .map(([ label, count ], index) => {
@@ -65,7 +65,7 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagSelec
             })
         if (sortedData.length > 0) {
             tagSelector.append(...sortedData, span('Press [TAB] to submit', 'help'))
-            tagSelector.querySelectorAll('*')[ tagSelectIndex ].classList.add('selected')
+            tagSelector.querySelectorAll('*')[ tagIndex() ].classList.add('selected')
         } else
             tagSelector.append(span('Sorry, we don\'t have no any more tags', 'help'))
     }

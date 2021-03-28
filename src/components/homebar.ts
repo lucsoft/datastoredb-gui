@@ -37,9 +37,15 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Sty
         })
     }
 
-    search.onkeyup = SearchHandleOnKeyboardUpEvent(tagSelector, tagSelectIndex, search, iconData, filteredUpdate)
+    search.onkeyup = SearchHandleOnKeyboardUpEvent(tagSelector, (val) => {
+        if (val !== undefined) return tagSelectIndex = val
+        return tagSelectIndex
+    }, search, () => iconData, filteredUpdate)
 
-    search.onkeydown = SearchHandleOnKeyboardDownEvent(tagSelector, tagSelectIndex, search)
+    search.onkeydown = SearchHandleOnKeyboardDownEvent(tagSelector, (val) => {
+        if (val !== undefined) return tagSelectIndex = val
+        return tagSelectIndex
+    }, search)
     fetch(pandaIcon).then(x => x.text())
         .then(x => {
             settings.innerHTML = x
