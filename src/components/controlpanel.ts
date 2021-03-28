@@ -15,8 +15,7 @@ const renderCopryrightNotice = () => {
     const shell = span([
         `DataStoreDB-GUI v${envData.version} (${envData.lastCommit.substr(0, 8)}, ${new Date(envData.compiledDate).toLocaleDateString()})`,
         `© 2020–${new Date(envData.compiledDate).getFullYear()} lucsoft\n`,
-        'This programm is published under the terms of the CC0 license',
-        'and may include these products: \nHmSYS, @lucsoft/network-connector and @lucsoft/webgen'
+        'This programm is published under the terms of the CC0 license and may include these products: \nHmSYS, @lucsoft/network-connector and @lucsoft/webgen'
     ].join('\n'));
     shell.classList.add('copyright-notice');
     return shell;

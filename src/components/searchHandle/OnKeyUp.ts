@@ -33,9 +33,7 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex
     else if (!possibleNewTag) {
         tagSelector.innerHTML = "";
         tagSelector.append(span('Pro Tip: Use ! or # to filter for tags', 'help'))
-        if (e.key.length == 1 || search.value.length > 0) {
-            filteredUpdate()
-        }
+        filteredUpdate()
     }
     else if (!(e.key == "ArrowDown" || e.key == "ArrowUp") && possibleNewTag && iconData && e.key.length == 1) {
         const unsortedData: [ label: string, counter: number ][] = [];
@@ -65,7 +63,6 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex
                 const spanLabel = span(`${label} ${count - 1 ? `(${count})` : ''}`)
                 spanLabel.setAttribute('value', label)
                 spanLabel.onclick = () => {
-                    console.log('clicked')
                     search.value = search.value.substring(0, search.value.length - possibleNewTag[ 0 ].length + 1)
                         + tagSelector.children[ index ].getAttribute('value') + "\u200b "
                     search.onkeyup?.(e)

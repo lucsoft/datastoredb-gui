@@ -1,6 +1,7 @@
 .dialog > .datastore-dialog {
     display: grid;
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 28% auto;
+    max-width: 31rem;
     gap: var(--gap);
 }
 
@@ -11,8 +12,7 @@
 .datastore-dialog .copyright-notice {
     font-size: 0.6rem;
     line-height: 1.1;
-    display: block;
-    width: 28rem;
+    display: inline-block;
     color: var(--on-card-subtext);
     margin-top: var(--gap);
 }

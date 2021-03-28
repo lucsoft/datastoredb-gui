@@ -27,8 +27,6 @@ export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSel
         if (search.value.length == 0) {
             filteredUpdate()
         }
-    } else if (e.key == "Backspace" && search.value.length == 1) {
-        filteredUpdate()
     }
     else if ((e.key == "ArrowLeft" && search.value.substr(0, search.selectionStart ?? 0).endsWith('\u200b ')) || (e.key == "ArrowRight" && search.value.substr(search.selectionStart ?? 0).match(/^[#|!|-].*\u200b /))) {
         e.preventDefault();

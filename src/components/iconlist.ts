@@ -6,12 +6,19 @@ import { lastFilesCollected } from "../common/refreshData";
 import { db } from '../data/IconsCache';
 export const createIconList = () => {
     const list = document.createElement('div');
-    renderIconlist(list, { execludeTags: [], includeTags: [], filteredText: "" })
+    let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
+    renderIconlist(list, currentSearchRequest)
     // registerEvent(DataStoreEvents.RefreshDataComplete, () => {
     //     renderIconlist(list, [])
     // })
     registerEvent(DataStoreEvents.SearchBarUpdated, (data) => {
-        renderIconlist(list, data)
+        if (currentSearchRequest.filteredText != data.filteredText
+            || JSON.stringify(currentSearchRequest.execludeTags) != JSON.stringify(data.execludeTags)
+            || JSON.stringify(currentSearchRequest.includeTags) != JSON.stringify(data.includeTags)
+        ) {
+            currentSearchRequest = data;
+            renderIconlist(list, data)
+        }
     });
     list.classList.add('image-list');
     return list;
@@ -35,22 +42,24 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
     const data = await getStoredData();
 
     const elements: HTMLElement[] = [];
-    data.filter(x => compareArray(x.tags, filterOptions.includeTags) && execludeCompareArray(x.tags, filterOptions.execludeTags)).forEach((x: any) => {
-        const image = img(URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type })), 'icon')
-        image.loading = "lazy";
-        image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
-            offset: () => getOffset(image),
-            image: image.src,
-            id: x.id,
-            date: x.date,
-            alts: [ image.src ],
-            tags: x.tags,
-            displayName: x.filename,
-            type: x.type
-        })
+    data.filter(x => compareArray(x.tags, filterOptions.includeTags) && execludeCompareArray(x.tags, filterOptions.execludeTags))
+        .filter(x => x.filename.toLowerCase().startsWith(filterOptions.filteredText.toLowerCase()))
+        .forEach((x: any) => {
+            const image = img(URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type })), 'icon')
+            image.loading = "lazy";
+            image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
+                offset: () => getOffset(image),
+                image: image.src,
+                id: x.id,
+                date: x.date,
+                alts: [ image.src ],
+                tags: x.tags,
+                displayName: x.filename,
+                type: x.type
+            })
 
-        elements.push(image)
-    })
+            elements.push(image)
+        })
 
     element.innerHTML = "";
     element.append(...elements)
