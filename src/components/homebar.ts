@@ -5,6 +5,7 @@ import '../../res/css/homebar.css';
 import pandaIcon from '../../res/pandaicon.svg';
 
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
+import { hmsys } from "../dashboard";
 import { Icon } from "../data/IconsCache";
 import { controlPanelContent, controlPanelDialog } from "./controlpanel";
 import { getStoredData } from "./iconlist";
@@ -12,7 +13,7 @@ import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";
 
-export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Style) => {
+export const renderHomeBar = (web: RenderingX, style: Style) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
         iconData = data;
@@ -61,7 +62,7 @@ export const renderHomeBar = (web: RenderingX, net: NetworkConnector, style: Sty
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"
         upload.onclick = data.canUpload ? () => {
-            manualUploadImage(net);
+            manualUploadImage(hmsys);
         } : () => web.notify("Uploading with this account is disabled")
         control.forceRedraw({
             username: data.username,

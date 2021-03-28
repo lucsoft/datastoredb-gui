@@ -1,7 +1,7 @@
-import { NetworkConnector } from "@lucsoft/network-connector";
+import { hmsys } from "../dashboard";
 import { uploadImage } from "./upload";
 
-export function registerMasterDropArea(hmsys: NetworkConnector) {
+export function registerMasterDropArea() {
     const html = document.querySelector('html')!;
 
     html.ondrop = (e: DragEvent) => {

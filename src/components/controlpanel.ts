@@ -1,9 +1,14 @@
-import { createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
+import { Button, createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
 import { envData } from "../common/envdata";
 import { ControlPanelType } from "../types/controlPanel";
 import { timeAgo } from "../common/date";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
+import { db } from "../data/IconsCache";
+import { DataStoreEvents, emitEvent } from "../common/eventmanager";
+import { NetworkConnector } from "@lucsoft/network-connector";
+import { hmsys } from "../dashboard";
+import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 
 const renderUserProfile = (state: ControlPanelType) => {
     const shell = custom('div', undefined, 'profile-badge');
@@ -36,19 +41,35 @@ export const controlPanelContent = (webgenIcon: HTMLElement, web: RenderingX, th
             span(state.canRemove && state.canUpload ? 'You have full control over DataStoreDB' : `You have limited functionality for full access switch to a admin account.`)
         ], [ 'account-details' ]),
         multiStateSwitch("small",
-            { title: "Dimmed", action: () => theme.updateTheme(SupportedThemes.gray) },
-            { title: "Dark", action: () => theme.updateTheme(SupportedThemes.dark) },
-            { title: "White", action: () => theme.updateTheme(SupportedThemes.white) },
-            { title: "System", action: () => theme.updateTheme(SupportedThemes.auto) },
+            { title: "Dimmed", action: () => updateTheme(theme, SupportedThemes.gray) },
+            { title: "Dark", action: () => updateTheme(theme, SupportedThemes.dark) },
+            { title: "White", action: () => updateTheme(theme, SupportedThemes.white) },
+            { title: "System", action: () => updateTheme(theme, SupportedThemes.auto) },
         ),
         renderCopryrightNotice()
     ])
 ])
-
+const updateTheme = (theme: Style, selected: SupportedThemes) => {
+    theme.updateTheme(selected)
+    localStorage.setItem('webgen-theme', selected.toString());
+}
 export const controlPanelDialog = (web: RenderingX, control: RenderingXResult<any>) => web.toDialog({
     title: "DataStoreDB",
     content: control,
     buttons: [
+        [ 'Cleare Cache', () => {
+            return new Promise((done) => {
+                if (checkIfCacheIsAllowed())
+                    db.delete().then(() => {
+                        setTimeout(() => {
+                            location.href = location.href;
+                            done(DialogActionAfterSubmit.Close)
+                        }, 500)
+                    })
+                else
+                    location.href = location.href;
+            });
+        } ],
         [ 'Report a Problem', () => {
             open("https://github.com/lucsoft/datastoredb-gui/issues/new")
             return undefined;

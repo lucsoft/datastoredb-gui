@@ -5,6 +5,7 @@ import { NetworkConnector } from "@lucsoft/network-connector";
 import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 import { SidebarNormalData } from "../types/sidebarTypes";
+import { hmsys } from "../dashboard";
 
 type SideBarType = {
     showSidebar?: boolean
@@ -20,7 +21,7 @@ type SideBarType = {
     username?: string
     canRemove?: boolean
 };
-export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderElement => {
+export const createSidebar = (web: RenderingX): RenderElement => {
 
     return {
         draw: () => {
@@ -52,7 +53,7 @@ export const createSidebar = (web: RenderingX, hmsys: NetworkConnector): RenderE
                         if (state.canUpload) variantsList.append(add)
 
                         const downloadAll = createAction("file_download", 'Download All Variants')
-                        const deleteIcon = createAction("delete", "Delete this Icon", true)
+                        const deleteIcon = createAction("delete", "Delete " + state.iconTitle, true)
                         deleteIcon.style.display = state.canRemove ? 'flex' : 'none';
                         deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id })
 

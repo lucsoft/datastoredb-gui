@@ -1,6 +1,7 @@
 import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
+import { checkIfCacheIsAllowed } from "./checkIfCacheAllowed";
 export let lastFilesCollected: Icon[] | undefined = undefined;
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
@@ -27,7 +28,7 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
         ...data.files.find((x: Icon) => x.id == entry),
         data: toAddBlobs[ index ]
     }))
-    if (!/apple/i.test(navigator.vendor)) {
+    if (checkIfCacheIsAllowed()) {
         try {
             await db.transaction('rw', db.icons, async () => {
                 await db.icons.bulkDelete(toRemove)

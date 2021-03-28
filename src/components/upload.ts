@@ -24,15 +24,18 @@ const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, for
             'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
         }),
         body: data
-    }).then(() => done());
+    }).then(() => {
+        done()
+        fileUp.value = "";
+    });
 }
 export const uploadImage = (files: FileList, hmsys: NetworkConnector) => new Promise(done => {
 
     fileUp.files = files;
-    form.addEventListener('submit', (event) => {
+    form.onsubmit = (event) => {
         event.preventDefault();
         fetchUploadFiles(fileUp, hmsys, form, done)
-    });
+    };
     submit.click()
 });
 

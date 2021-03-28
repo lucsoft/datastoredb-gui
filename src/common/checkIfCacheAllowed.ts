@@ -1,0 +1,1 @@
+export const checkIfCacheIsAllowed = () => !/apple/i.test(navigator.vendor)

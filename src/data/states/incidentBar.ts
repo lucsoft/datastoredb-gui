@@ -1,24 +1,24 @@
-import { EventTypes, NetworkConnector } from "@lucsoft/network-connector"
-import { RenderElement } from "@lucsoft/webgen"
-import { DataStoreEvents, emitEvent, registerEvent } from "../../common/eventmanager"
+import { EventTypes } from "@lucsoft/network-connector"
+import { DialogActionAfterSubmit, RenderElement, RenderingX, span } from "@lucsoft/webgen"
+import { DataStoreEvents, registerEvent } from "../../common/eventmanager"
 import '../../../res/css/incidentbar.css'
+import { hmsys } from "../../dashboard"
 
-export const createIncidentBar = (hmsys: NetworkConnector): RenderElement => ({
+export const createIncidentBar = (web: RenderingX): RenderElement => ({
     draw: () => {
         hmsys.event({
             type: EventTypes.Disconnected,
             action: () =>
-                emitEvent(DataStoreEvents.IncidentBar, {
-                    type: "bad",
-                    message: `You got disconnected to the HmSYS Network. Trying to reconnect...`
-                })
+                web.toDialog({
+                    title: 'Disconnected!',
+                    content: span('You got disconnected to the HmSYS Network.'),
+                    buttons: [
+                        [ 'ignore', DialogActionAfterSubmit.RemoveClose ],
+                        [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.RemoveClose; } ]
+                    ]
+                }).open()
         })
-        addEventListener("offline", () => emitEvent(DataStoreEvents.IncidentBar, {
-            type: "bad",
-            message: 'You are Offline. Uploading is currently disabled.'
-        }))
 
-        addEventListener("online", () => emitEvent(DataStoreEvents.IncidentBar, { type: "good", message: 'You are back online! Trying to reconnect to HmSYS' }))
         const element = document.createElement('span')
         element.classList.add('incident-bar');
 

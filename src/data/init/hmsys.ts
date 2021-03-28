@@ -1,12 +1,14 @@
-import { createLocalStorageProvider, EventTypes, NetworkConnector } from "@lucsoft/network-connector";
+import { createLocalStorageProvider, EventTypes } from "@lucsoft/network-connector";
 import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
 import * as config from '../../../config.json';
+import { checkIfCacheIsAllowed } from "../../common/checkIfCacheAllowed";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../../components/dropareas";
+import { hmsys } from "../../dashboard";
 import { ProfileData } from "../../types/profileDataTypes";
 import { db } from "../IconsCache";
 
-export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX) {
+export function updateFirstTimeDatabase(web: RenderingX) {
     if (navigator.onLine == false)
         return;
     hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
@@ -30,13 +32,13 @@ export function updateFirstTimeDatabase(hmsys: NetworkConnector, web: RenderingX
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
     hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {
-        if (/apple/i.test(navigator.vendor))
+        if (!checkIfCacheIsAllowed())
             emitEvent(DataStoreEvents.RefreshData, hmsys)
         else {
             await db.transaction('rw', db.icons, async () => {
                 await db.icons.delete(data.deleted)
             })
-            emitEvent(DataStoreEvents.RefreshDataComplete, { removed: data.deleted })
+            emitEvent(DataStoreEvents.RefreshDataComplete, { removed: [ data.deleted ] })
         }
         emitEvent(DataStoreEvents.SidebarUpdate, data.deleted)
     })

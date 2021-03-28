@@ -11,18 +11,18 @@ import { registerMasterDropArea } from "./components/dropareas";
 import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
+export const hmsys = new NetworkConnector('eu01.hmsys.de:444')
 export function renderMain(web: RenderingX, style: Style) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)
 
-    const hmsys = new NetworkConnector('eu01.hmsys.de:444')
 
     web.toCustom({ maxWidth: '75rem', shell }, {}, () => [
-        createIncidentBar(hmsys),
-        createSidebar(web, hmsys),
-        renderHomeBar(web, hmsys, style),
+        createIncidentBar(web),
+        createSidebar(web),
+        renderHomeBar(web, style),
         createIconList()
     ])
-    registerMasterDropArea(hmsys)
-    updateFirstTimeDatabase(hmsys, web);
+    registerMasterDropArea()
+    updateFirstTimeDatabase(web);
 }
