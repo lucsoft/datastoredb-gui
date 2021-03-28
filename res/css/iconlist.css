@@ -7,13 +7,32 @@
     max-width: var(--max-width);
 }
 
-.image-list .shell img{
+@keyframes fadeIcon {
+    0% {
+        opacity: 0.01;
+        filter: blur(4px);
+        transform: scale(0.95);
+    }
+    50% {
+        opacity: 0.2;
+        filter: blur(4px);
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+}
+
+.image-list .icon{
     height: 64px;
     min-width: 64px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    animation: fadeIcon 400ms ease;
     transition: transform 150ms ease;
 }
-.image-list .shell img:hover {
+.image-list .icon:hover {
     transform: scale(1.05);
 }
