@@ -15,8 +15,8 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         const profileData: any = await hmsys.api.requestUserData("services", "profile");
         if (profileData.services.DataStoreDB == undefined)
             web.toDialog({
-                title: "DataStoreDB is unavailable",
-                content: span("This Account dosn't have access to DataStoreDB. Change your Account."),
+                title: "Panda 2.0 is unavailable",
+                content: span("This Account dosn't have access to Panda 2.0. Change your Account."),
                 buttons: [ [ 'okay', DialogActionAfterSubmit.RemoveClose ] ]
             }).open()
 
@@ -44,12 +44,5 @@ export function updateFirstTimeDatabase(web: RenderingX) {
     })
     hmsys.api.sync('@HomeSYS/DataStoreDB/newFile', () => {
         emitEvent(DataStoreEvents.RefreshData, hmsys)
-    })
-    hmsys.event({
-        type: EventTypes.Disconnected,
-        action: () => {
-            // if (navigator.onLine)
-            //     setTimeout(() => updateFirstTimeDatabase(hmsys, elements), 5000)
-        }
     })
 }
