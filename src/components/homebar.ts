@@ -1,4 +1,3 @@
-import { NetworkConnector } from "@lucsoft/network-connector";
 import { createElement, custom, mIcon, RenderingX, span, conditionalCSSClass } from "@lucsoft/webgen";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import '../../res/css/homebar.css';
@@ -12,18 +11,18 @@ import { getStoredData } from "./iconlist";
 import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";
-
+import { supportedIcontypes } from '../../config.json';
 export const renderHomeBar = (web: RenderingX, style: Style) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
-        iconData = data;
+        iconData = data.filter(icon => supportedIcontypes.includes(icon.type))
         control.forceRedraw({
             iconCount: data?.length ?? undefined
         })
     })
     const container = createElement('div')
     const search = document.createElement('input')
-    search.placeholder = "Search something...";
+    search.placeholder = "Search for Icons, Images and more...";
     const settings = span(undefined, 'webgen-svg')
     const icon2 = span(undefined, 'webgen-svg')
     const tagSelector = custom('ul', span('Pro Tip: Use ! or # to filter for tags', 'help'), 'tag-selector');
@@ -75,7 +74,7 @@ export const renderHomeBar = (web: RenderingX, style: Style) => {
 
     registerEvent(DataStoreEvents.RefreshDataComplete, () => {
         getStoredData().then((data) => {
-            iconData = data;
+            iconData = data.filter(icon => supportedIcontypes.includes(icon.type))
             control.forceRedraw({
                 iconCount: data?.length ?? undefined
             })

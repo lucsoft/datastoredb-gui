@@ -6,13 +6,14 @@ import { lastFilesCollected } from "../common/refreshData";
 import { db, Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
+import { supportedIcontypes } from "../../config.json";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
     renderIconlist(list, currentSearchRequest)
 
     registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
-        const storedData = await getStoredData();
+        const storedData: Icon[] = await getStoredData();
 
         if (data.new && data.new.length > 0) {
             if (!checkIfCacheIsAllowed())
@@ -20,6 +21,7 @@ export const createIconList = () => {
 
             const newData = data.new
                 .map(id => storedData.find(sd => sd.id == id)!)
+                .filter(icon => supportedIconType(icon))
                 .filter(x => tagFiltering(x, currentSearchRequest))
                 .filter(x => simpleTextFiltering(x, currentSearchRequest))
 
@@ -68,9 +70,11 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
     execludeTags: string[];
     filteredText: string;
 }) {
-    const data = await getStoredData();
+    const data: Icon[] = await getStoredData();
 
-    const elements = data.filter(icon => tagFiltering(icon, filterOptions))
+    const elements = data
+        .filter(icon => supportedIconType(icon))
+        .filter(icon => tagFiltering(icon, filterOptions))
         .filter(icon => simpleTextFiltering(icon, filterOptions))
         .map((icon) => renderSingleIcon(icon))
     element.innerHTML = "";
@@ -86,7 +90,7 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
                     shell.append(span('Upload some files.', 'title'), span('Our Pandas need to pay rent.', 'subtitle'), lostPandaImage)
                     element.append(shell)
                 }
-            }, 800)
+            }, 2000)
         }
         else
             shell.append(span('Oh no!', 'title'), span('Our Pandas couldn\'t fullfill what you need.', 'subtitle'), lostPandaImage)
@@ -114,8 +118,12 @@ const renderSingleIcon = (icon: Icon) => {
     return image;
 }
 
+function supportedIconType(icon: Icon) {
+    return supportedIcontypes.includes(icon.type);
+}
+
 function simpleTextFiltering(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }): unknown {
-    return icon.filename.toLowerCase().startsWith(filterOptions.filteredText.toLowerCase());
+    return icon.filename.toLowerCase().includes(filterOptions.filteredText.toLowerCase());
 }
 
 function tagFiltering(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }): unknown {
