@@ -40,7 +40,6 @@
 .empty-list {
     color: var(--on-background-text);
     animation: fadeIcon 200ms ease;
-
 }
 .empty-list .title {
     display: block;
@@ -60,4 +59,17 @@
     margin: 0 auto;
     max-width: 20rem;
     fill: var(--on-background-text);
+}
+
+@supports not (list-style-type: "")  {
+    .empty-list {
+        position: absolute;
+        margin: 0 auto;
+        width: var(--max-width);
+        animation: fadeIcon 200ms ease;
+    }
+    .image-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+    }
 }
