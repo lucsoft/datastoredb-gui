@@ -1,13 +1,10 @@
-import { Button, createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
+import { createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
 import { envData } from "../common/envdata";
 import { ControlPanelType } from "../types/controlPanel";
 import { timeAgo } from "../common/date";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { db } from "../data/IconsCache";
-import { DataStoreEvents, emitEvent } from "../common/eventmanager";
-import { NetworkConnector } from "@lucsoft/network-connector";
-import { hmsys } from "../dashboard";
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 
 const renderUserProfile = (state: ControlPanelType) => {
@@ -38,7 +35,7 @@ export const controlPanelContent = (webgenIcon: HTMLElement, web: RenderingX, th
         list([
             span(`Account created ${timeAgo(state.createDate)}\n`),
             span(`Assinged ${state.iconCount} Icons\n`),
-            span(state.canRemove && state.canUpload ? 'You have full control over DataStoreDB' : `You have limited functionality for full access switch to a admin account.`)
+            span(state.canRemove && state.canUpload ? 'You have full control over Panda 2.0' : `You have limited functionality for full access switch to a admin account.`)
         ], [ 'account-details' ]),
         multiStateSwitch("small",
             { title: "Dimmed", action: () => updateTheme(theme, SupportedThemes.gray) },
@@ -54,8 +51,9 @@ const updateTheme = (theme: Style, selected: SupportedThemes) => {
     localStorage.setItem('webgen-theme', selected.toString());
 }
 export const controlPanelDialog = (web: RenderingX, control: RenderingXResult<any>) => web.toDialog({
-    title: "DataStoreDB",
+    title: "Panda 2.0",
     content: control,
+    userRequestClose: () => DialogActionAfterSubmit.Close,
     buttons: [
         [ 'Cleare Cache', () => {
             return new Promise((done) => {

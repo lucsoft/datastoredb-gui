@@ -11,9 +11,12 @@ export const createIncidentBar = (web: RenderingX): RenderElement => ({
             action: () =>
                 web.toDialog({
                     title: 'Disconnected!',
+                    userRequestClose: () => {
+                        location.href = location.href;
+                        return DialogActionAfterSubmit.Close;
+                    },
                     content: span('You got disconnected to the HmSYS Network.'),
                     buttons: [
-                        [ 'ignore', DialogActionAfterSubmit.RemoveClose ],
                         [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.RemoveClose; } ]
                     ]
                 }).open()
