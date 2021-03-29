@@ -65,7 +65,13 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                             sidebar.classList.remove('open')
                         }
                         add.onclick = () => web.notify("Currently not implemented")
-                        downloadAll.onclick = () => web.notify("Currently not implemented")
+                        downloadAll.onclick = () => {
+                            const download = document.createElement('a')
+                            download.download = ""
+                            download.href = state.imageBlobUrl ?? '';
+                            download.download = state.iconTitle ?? '';
+                            download.click();
+                        }
 
                         conditionalCSSClass(title, (state.iconTitle?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
