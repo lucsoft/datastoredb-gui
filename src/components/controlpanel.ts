@@ -6,6 +6,8 @@ import { timeAgo } from "../common/date";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { db } from "../data/IconsCache";
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
+import { PandaIcon } from "./pandaIcon";
+import { list } from "../common/list";
 
 const renderUserProfile = (state: ControlPanelType) => {
     const shell = custom('div', undefined, 'profile-badge');
@@ -22,14 +24,9 @@ const renderCopryrightNotice = () => {
     shell.classList.add('copyright-notice');
     return shell;
 }
-const list = (element: HTMLElement[], classList?: string[]) => {
-    const list = createElement('div');
-    list.classList.add(...classList ?? []),
-        list.append(...element)
-    return list;
-}
-export const controlPanelContent = (webgenIcon: HTMLElement, web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {} as ControlPanelType, [
-    webgenIcon,
+
+export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {} as ControlPanelType, [
+    PandaIcon(),
     (state) => list([
         renderUserProfile(state),
         list([

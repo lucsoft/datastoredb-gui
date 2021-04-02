@@ -1,7 +1,6 @@
 import { createElement, custom, mIcon, RenderingX, span, conditionalCSSClass } from "@lucsoft/webgen";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import '../../res/css/homebar.css';
-import pandaIcon from '../../res/pandaicon.svg';
 
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { hmsys } from "../dashboard";
@@ -12,6 +11,7 @@ import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";
 import { supportedIcontypes } from '../../config.json';
+import { PandaIcon } from "./pandaIcon";
 export const renderHomeBar = (web: RenderingX, style: Style) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
@@ -23,8 +23,7 @@ export const renderHomeBar = (web: RenderingX, style: Style) => {
     const container = createElement('div')
     const search = document.createElement('input')
     search.placeholder = "Search for Icons, Images and more...";
-    const settings = span(undefined, 'webgen-svg')
-    const icon2 = span(undefined, 'webgen-svg')
+    const settings = PandaIcon().draw()
     const tagSelector = custom('ul', span('Pro Tip: Use ! or # to filter for tags', 'help'), 'tag-selector');
     let tagSelectIndex = 0;
     search.onfocus = () => conditionalCSSClass(tagSelector, true, 'show')
@@ -47,14 +46,9 @@ export const renderHomeBar = (web: RenderingX, style: Style) => {
         if (val !== undefined) return tagSelectIndex = val
         return tagSelectIndex
     }, search, filteredUpdate)
-    fetch(pandaIcon).then(x => x.text())
-        .then(x => {
-            settings.innerHTML = x
-            icon2.innerHTML = x
-        })
     const upload = mIcon("cloud_queue")
     container.classList.add('homebar')
-    const control = controlPanelContent(icon2, web, style);
+    const control = controlPanelContent(web, style);
     control.getShell().classList.add('datastore-dialog');
     const dialog = controlPanelDialog(web, control);
     settings.onclick = () => dialog.open()

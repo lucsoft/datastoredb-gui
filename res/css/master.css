@@ -14,21 +14,6 @@ html, body {
     padding: 0;
 }
 
-@keyframes dropFeedbackShow {
-    0% {
-        backdrop-filter: blur(0px);
-        background: rgb(0 0 0 / 0%);
-    }
-}
-html.drop-feedback::after {
-    content: ' ';
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    backdrop-filter: blur(10px);
-    background: rgb(0 0 0 / 40%);
-    display: block;
-    animation: dropFeedbackShow 250ms ease;
+.panda-icon svg {
+    fill: var(--on-card-text);
 }

@@ -23,6 +23,6 @@ export function renderMain(web: RenderingX, style: Style) {
         renderHomeBar(web, style),
         createIconList()
     ])
-    registerMasterDropArea()
+    registerMasterDropArea(web)
     updateFirstTimeDatabase(web);
 }
