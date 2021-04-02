@@ -1,0 +1,21 @@
+{
+    "short_name": "Panda 2.0",
+    "name": "Panda 2.0",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "background_color": "#0a0a0a",
+    "theme_color": "#0a0a0a",
+    "icons": [
+        {
+            "src": "/images/PandaX144.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "/images/PandaX512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}
