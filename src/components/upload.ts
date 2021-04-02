@@ -1,9 +1,10 @@
 import type { NetworkConnector } from '@lucsoft/network-connector';
-
+import * as config from '../../config.json';
 const form = document.createElement('form');
 const fileUp = document.createElement('input');
 fileUp.type = "file";
 fileUp.name = "userfile";
+fileUp.accept = config.supportedIcontypes.join(',');
 fileUp.multiple = true;
 
 const submit = document.createElement('input');
@@ -13,6 +14,7 @@ form.append(fileUp, submit);
 form.hidden = true;
 document.body.append(form)
 
+export const resetFiles = () => form.reset();
 const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, form: HTMLFormElement, done: (data?: undefined) => void) => {
     if (fileUp.value == "")
         return done();
