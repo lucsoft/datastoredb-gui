@@ -12,20 +12,23 @@ export function registerMasterDropArea() {
             uploadImage(e.dataTransfer.files, hmsys)
     }
     html.ondragover = (e) => {
-        if (html.classList.contains('disable-global-drop')) return;
+        if (html.classList.contains('disable-global-drop') || e.dataTransfer?.types[ 0 ] != "Files") return;
         html.classList.add('drop-feedback')
         e.preventDefault()
     }
 
-    html.ondragenter = () => {
-        if (html.classList.contains('disable-global-drop')) return;
-        if (html.classList.contains('drop-feedback')) return;
+    html.ondragenter = (e) => {
+        if (html.classList.contains('disable-global-drop')
+            || html.classList.contains('drop-feedback')
+            || e.dataTransfer?.types[ 0 ] != "Files") return;
         html.classList.add('drop-feedback')
     }
     html.ondragleave = (e: DragEvent) => {
         if (html.classList.contains('disable-global-drop')) return;
         if (e.offsetX != 0) return;
         html.classList.remove('drop-feedback')
+        resetFiles();
+        dialog.close(false)
     }
 }
 
