@@ -74,29 +74,10 @@ module.exports = (_, mode) => {
             new CopyWebpackPlugin({
                 patterns: [
                     { from: 'static/images', to: 'images' },
-                    { from: 'static/manifest', to: 'manifest' }
+                    { from: 'static/manifest', to: 'manifest' },
+                    { from: 'static/service-worker', to: 'sw' },
                 ]
-            }),
-            new WorkboxPlugin.GenerateSW({
-                // these options encourage the ServiceWorkers to get in there fast
-                // and not allow any straggling "old" SWs to hang around
-                clientsClaim: true,
-                skipWaiting: true
-            }),
-            // new WebpackPwaManifest({
-            //     name: 'Panda 2.0',
-            //     short_name: 'Panda',
-            //     description: 'Manage and track Icons, Images and more',
-            //     background_color: '#ffffff',
-            //     crossorigin: 'use-credentials',
-            //     icons: [
-            //         {
-            //             src: path.resolve('res/pandaDesktopIcon.png'),
-            //             size: [ 96, 128, 192, 256, 384, 512 ],
-            //             purpose: 'maskable'
-            //         }
-            //     ]
-            // })
+            })
 
         ],
         optimization: isProduction ? {
