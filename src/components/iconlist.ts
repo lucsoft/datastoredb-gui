@@ -104,17 +104,20 @@ const renderSingleIcon = (icon: Icon) => {
     const image = img(URL.createObjectURL(new File([ icon.data ], icon.filename, { type: icon.type })), 'icon');
     image.loading = "lazy";
     image.setAttribute('id', icon.id);
-    image.onclick = () => emitEvent(DataStoreEvents.SidebarUpdate, {
-        offset: () => getOffset(image),
-        image: image.src,
-        id: icon.id,
-        date: icon.date,
-        alts: [ image.src ],
-        tags: icon.tags,
-        displayName: icon.filename,
-        type: icon.type
-    });
-
+    image.onclick = async () => {
+        const cachedData = (await getStoredData()).find(x => x.id == icon.id);
+        if (cachedData == undefined) return;
+        emitEvent(DataStoreEvents.SidebarUpdate, {
+            offset: () => getOffset(image),
+            image: image.src,
+            id: icon.id,
+            date: cachedData.date,
+            alts: [ image.src ],
+            tags: cachedData.tags,
+            displayName: cachedData.filename,
+            type: icon.type
+        })
+    };
     return image;
 }
 
