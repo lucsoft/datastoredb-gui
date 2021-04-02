@@ -49,10 +49,11 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: profileData.services.DataStoreDB.upload,
             canRemove: profileData.services.DataStoreDB.remove,
+            canEdit: profileData.services.DataStoreDB.edit,
             featureEnabled: profileData.services.DataStoreDB != undefined,
             username: profileData.client.username,
             userId: profileData.client.id,
-            createDate: profileData.client.createDate
+            createDate: profileData.client.createDate,
         } as ProfileData)
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });

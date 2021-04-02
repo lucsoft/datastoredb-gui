@@ -23,7 +23,6 @@
 @keyframes fadeInInnerCardRight {
     0% {
         margin-bottom: -15rem;
-        /* margin-right: -7rem; */
     }
 }
 .sidebar .shell {
