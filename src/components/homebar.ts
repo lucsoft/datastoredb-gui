@@ -6,7 +6,7 @@ import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanage
 import { hmsys } from "../dashboard";
 import { Icon } from "../data/IconsCache";
 import { controlPanelContent, controlPanelDialog } from "./controlpanel";
-import { getStoredData } from "./iconlist";
+import { getStoredData } from "./../common/refreshData";
 import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";

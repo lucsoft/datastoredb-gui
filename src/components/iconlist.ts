@@ -2,11 +2,11 @@ import { custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
-import { lastFilesCollected } from "../common/refreshData";
-import { db, Icon } from '../data/IconsCache';
+import { Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 import { supportedIcontypes } from "../../config.json";
+import { getStoredData } from "../common/refreshData";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
@@ -63,8 +63,7 @@ const lostPandaImage = custom('div', undefined, 'lost-panda')
 fetch(lostPanda).then(x => x.text())
     .then(x => {
         lostPandaImage.innerHTML = x
-    })
-export const getStoredData = async () => !checkIfCacheIsAllowed() ? lastFilesCollected ?? [] : await db.icons.orderBy('date').toArray();
+    });
 export async function renderIconlist(element: HTMLElement, filterOptions: {
     includeTags: string[];
     execludeTags: string[];

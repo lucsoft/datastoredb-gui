@@ -3,6 +3,7 @@ import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 import { checkIfCacheIsAllowed } from "./checkIfCacheAllowed";
 export let lastFilesCollected: Icon[] | undefined = undefined;
+export const getStoredData = async () => !checkIfCacheIsAllowed() ? lastFilesCollected ?? [] : await db.icons.orderBy('id').toArray()
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
     const oldData = await db.icons.toArray();
