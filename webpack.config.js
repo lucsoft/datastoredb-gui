@@ -75,10 +75,14 @@ module.exports = (_, mode) => {
                 patterns: [
                     { from: 'static/images', to: 'images' },
                     { from: 'static/manifest', to: 'manifest' },
-                    { from: 'static/service-worker', to: 'sw' },
                 ]
+            }),
+            new WorkboxPlugin.GenerateSW({
+                cacheId: 'datastoredb-gui',
+                mode: isProduction ? 'production' : 'development',
+                clientsClaim: true,
+                skipWaiting: true
             })
-
         ],
         optimization: isProduction ? {
             minimize: true,
