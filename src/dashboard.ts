@@ -18,7 +18,7 @@ export function renderMain(web: RenderingX, style: Style) {
 
 
     web.toCustom({ maxWidth: '75rem', shell }, {}, () => [
-        createIncidentBar(web),
+        createIncidentBar(web, style),
         createSidebar(web),
         renderHomeBar(web, style),
         createIconList()

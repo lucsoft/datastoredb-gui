@@ -23,7 +23,7 @@ type DataStoreEvent = {
 
 type DataStoreEventType<TypeT> =
     (TypeT extends DataStoreEvents.RecivedProfileData ? ProfileData : unknown)
-    & (TypeT extends DataStoreEvents.IncidentBar ? (undefined | { type: "good", message: string } | { type: "bad", message: string }) : unknown)
+    & (TypeT extends DataStoreEvents.IncidentBar ? (undefined | { message: string }) : unknown)
     & (TypeT extends DataStoreEvents.RefreshData ? NetworkConnector : unknown)
     & (TypeT extends DataStoreEvents.SidebarUpdate ? SidebarData : unknown)
     & (TypeT extends DataStoreEvents.RefreshDataComplete ? { new?: string[], removed?: string[], updated?: string[] } : unknown)

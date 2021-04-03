@@ -1,11 +1,17 @@
 import { EventTypes } from "@lucsoft/network-connector"
-import { DialogActionAfterSubmit, RenderElement, RenderingX, span } from "@lucsoft/webgen"
+import { DialogActionAfterSubmit, RenderElement, RenderingX, span, SupportedThemes } from "@lucsoft/webgen"
 import { DataStoreEvents, registerEvent } from "../common/eventmanager"
 import '../../res/css/incidentbar.css'
 import { hmsys } from "../dashboard"
+import { Style } from "@lucsoft/webgen/bin/lib/Style"
+import { updateColorBar, updateColorBarTheme } from "../common/themeColorBar"
 
-export const createIncidentBar = (web: RenderingX): RenderElement => ({
+export const createIncidentBar = (web: RenderingX, style: Style): RenderElement => ({
     draw: () => {
+        style.onThemeUpdate((e) => {
+            updateColorBarTheme(e)
+        })
+
         hmsys.event({
             type: EventTypes.Disconnected,
             action: () =>
@@ -27,16 +33,13 @@ export const createIncidentBar = (web: RenderingX): RenderElement => ({
         element.classList.add('incident-bar');
 
         registerEvent(DataStoreEvents.IncidentBar, (data) => {
-            if (data == undefined)
+            if (data == undefined) {
+                updateColorBarTheme(Number(localStorage.getItem('webgen-theme') ?? SupportedThemes.auto))
                 element.classList.remove('active')
-            else if (data.type == "good") {
-                element.classList.remove('active')
-                element.classList.add('good')
-                element.innerText = data.message;
-                setTimeout(() => element.classList.remove('good'), 5000)
             }
             else {
-                element.classList.add('active', data.type ?? 'bad')
+                updateColorBar("#e48208")
+                element.classList.add('active')
                 element.innerText = data.message;
             }
         })

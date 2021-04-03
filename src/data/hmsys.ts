@@ -11,14 +11,12 @@ import { db } from "./IconsCache";
 export function updateFirstTimeDatabase(web: RenderingX) {
     if (navigator.onLine == false) {
         emitEvent(DataStoreEvents.IncidentBar, {
-            type: "bad",
             message: "Panda 2.0 is currently in offline."
         })
         return;
     }
     window.addEventListener('offline', () => {
         emitEvent(DataStoreEvents.IncidentBar, {
-            type: "bad",
             message: "Panda 2.0 is currently in offline."
         })
     })

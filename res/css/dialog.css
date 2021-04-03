@@ -32,3 +32,18 @@
     line-height: 1.2;
     margin-bottom: 1rem;
 }
+
+@media (display-mode: standalone) {
+
+    @keyframes fadeBackdrop {
+        from {
+            backdrop-filter: blur(0px);
+        }
+        to {
+            backdrop-filter: blur(4px);
+        }
+    }
+    .dialog-backdrop.open {
+        background-color: transparent !important;
+    }
+}

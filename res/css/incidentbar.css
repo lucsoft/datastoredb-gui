@@ -16,11 +16,3 @@
 
     background: #e48208;
 }
-
-.incident-bar.good {
-    background: #148e50;
-    padding: 1.5rem 1.5rem;
-    opacity: 1;
-    height: auto;
-    margin-bottom: 2rem;
-}
