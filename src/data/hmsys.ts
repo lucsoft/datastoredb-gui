@@ -9,15 +9,16 @@ import { ProfileData } from "../types/profileDataTypes";
 import { db, Icon } from "./IconsCache";
 
 export function updateFirstTimeDatabase(web: RenderingX) {
+    const backDialog = web.toDialog({
+        title: 'You are Back!',
+        content: span('It looks like you are back! Lets join the HmSYS Network.'),
+        buttons: [
+            [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.Close; } ]
+        ]
+    })
     window.addEventListener('online', () => {
         emitEvent(DataStoreEvents.IncidentBar, undefined)
-        web.toDialog({
-            title: 'You are Back!',
-            content: span('It looks like you are back! Lets join the HmSYS Network.'),
-            buttons: [
-                [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.RemoveClose; } ]
-            ]
-        }).open()
+        backDialog.open()
     })
     if (navigator.onLine == false) {
         emitEvent(DataStoreEvents.IncidentBar, {
