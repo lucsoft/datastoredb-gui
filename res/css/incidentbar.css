@@ -6,7 +6,7 @@
     transition: all 250ms ease;
     font-size: 1rem;
     background: transparent;
-    line-height: 2;
+    line-height: 1.5;
 }
 .incident-shell.active {
     padding: .8rem 1.5rem;

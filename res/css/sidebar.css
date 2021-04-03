@@ -36,6 +36,9 @@
 }
 .sidebar cardlist {
     margin: 0;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 @keyframes fadeInCard {
     from {
@@ -93,6 +96,9 @@
     font-weight: 700;
     border-radius: .2rem;
     transition: background-color 250ms ease;
+    user-select: text;
+    -moz-user-select: text;
+    -webkit-user-select: text;
 }
 .sidebar .icon-title.editable:hover {
     background: var(--on-card-background);
@@ -224,5 +230,16 @@
         width: 100%;
         margin: 1rem;
         transform: none;
+    }
+}
+
+@supports not (list-style-type: "")  {
+    .tags-list span {
+        display: inline-block;
+        margin-right: 7px;
+    }
+    .sidebar.right .tags-list {
+        margin-right: 0;
+        margin-left: 7px;
     }
 }

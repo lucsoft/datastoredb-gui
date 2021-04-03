@@ -5,6 +5,9 @@
     gap: .7rem;
     margin: 0 auto;
     max-width: var(--max-width);
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 @keyframes fadeIcon {
@@ -71,5 +74,8 @@
     .image-list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+    }
+    .image-list .icon {
+        width: 100%;
     }
 }

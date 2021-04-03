@@ -64,6 +64,9 @@
     max-width: 3rem;
     transition: all 250ms ease;
     overflow: hidden;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 .homebar .webgen-svg {
     display: flex;
