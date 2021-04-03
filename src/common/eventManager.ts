@@ -10,7 +10,8 @@ export const enum DataStoreEvents {
     RecivedProfileData,
     IconDataLoaded,
     SearchBarUpdated,
-    SearchBarAddTag
+    SearchBarAddTag,
+    ConnectionLost
 }
 
 let events: DataStoreEvent[] = []

@@ -48,8 +48,8 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     getSize: () => ({}),
                     draw: (card) => {
                         const image = img(state.imageBlobUrl, 'preview')
-                        const title = span(state.iconTitle, 'icon-title')
-                        title.contentEditable = state.canEdit ? "true" : "none";
+                        const title = span(state.iconTitle, 'icon-title', state.canEdit ? 'editable' : 'static')
+                        title.contentEditable = state.canEdit ? "true" : "false";
                         title.onblur = () => {
                             if (title.innerText != state.iconTitle)
                                 hmsys.api.trigger('@HomeSYS/DataStoreDB', { type: "updateFile", id: state.id, filename: title.innerText })
@@ -103,7 +103,14 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     }
                 })
             ])
-
+            registerEvent(DataStoreEvents.ConnectionLost, () => {
+                sidebarX.forceRedraw({
+                    canEdit: false,
+                    canRemove: false,
+                    canUpload: false
+                })
+                disableGlobalDragAndDrop()
+            })
             registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
                 sidebarX.forceRedraw({
                     canUpload: data.canUpload,
@@ -145,7 +152,6 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     return;
                 }
                 disableGlobalDragAndDrop()
-                console.log(data)
                 sidebarX.forceRedraw({
                     showSidebar: true,
                     iconTitle: data.displayName,
@@ -165,8 +171,9 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 }
 
 const createTags = (sidebarX: () => RenderingXResult<SideBarType>, state: SideBarType) => {
-    const add = mIcon('edit')
-    add.onclick = () => sidebarX().forceRedraw({ editTags: true })
+    const add = state.canEdit == true ? mIcon('edit') : ""
+    if (add)
+        add.onclick = () => sidebarX().forceRedraw({ editTags: true })
     if (state.editTags != true && state.tags)
         return [ ...state.tags.map(x => {
             const tag = span('#' + x)
