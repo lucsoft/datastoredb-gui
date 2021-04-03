@@ -17,7 +17,7 @@ export function renderMain(web: RenderingX, style: Style) {
     document.body.append(shell)
 
 
-    web.toCustom({ maxWidth: '75rem', shell }, {}, () => [
+    web.toCustom({ shell }, {}, () => [
         createIncidentBar(web, style),
         createSidebar(web),
         renderHomeBar(web, style),

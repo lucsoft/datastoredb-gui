@@ -9,30 +9,27 @@ import { ProfileData } from "../types/profileDataTypes";
 import { db } from "./IconsCache";
 
 export function updateFirstTimeDatabase(web: RenderingX) {
-    if (navigator.onLine == false) {
-        emitEvent(DataStoreEvents.IncidentBar, {
-            message: "Panda 2.0 is currently in offline."
-        })
-        return;
-    }
-    window.addEventListener('offline', () => {
-        emitEvent(DataStoreEvents.IncidentBar, {
-            message: "Panda 2.0 is currently in offline."
-        })
-    })
     window.addEventListener('online', () => {
         emitEvent(DataStoreEvents.IncidentBar, undefined)
         web.toDialog({
             title: 'You are Back!',
-            userRequestClose: () => {
-                location.href = location.href;
-                return DialogActionAfterSubmit.Close;
-            },
             content: span('It looks like you are back! Lets join the HmSYS Network.'),
             buttons: [
                 [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.RemoveClose; } ]
             ]
         }).open()
+    })
+    if (navigator.onLine == false) {
+        emitEvent(DataStoreEvents.IncidentBar, {
+            message: "Connect to the Internet to interact with Panda 2.0"
+        })
+        return;
+    }
+    window.addEventListener('offline', () => {
+        emitEvent(DataStoreEvents.IncidentBar, {
+            message: "Connect to the Internet to interact with Panda 2.0"
+        })
+        emitEvent(DataStoreEvents.ConnectionLost, undefined);
     })
     hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
         const profileData: any = await hmsys.api.requestUserData("services", "profile");
