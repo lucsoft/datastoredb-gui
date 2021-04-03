@@ -19,7 +19,7 @@ let getWidth = (fontSize: string, value: string) => {
 export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex: (value?: number) => number, search: HTMLInputElement, iconData: () => Icon[], filteredUpdate: () => void) => (e: KeyboardEvent) => {
 
     const possibleNewTag = search.value.match(/[#|!|-][\w|\d|.]*$/g);
-    tagSelector.style.left = (getWidth("1.5rem", search.value)).toString() + "px";
+    tagSelector.style.left = (getWidth(search.style.fontSize, search.value)).toString() + "px";
     const includeTags = search.value.match(/(#[\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [];
     const execludeTags = search.value.match(/([-|!][\w|\d|.]*\u200b)/g)?.map(x => x.substring(1, x.length - 1)) ?? [];
 
