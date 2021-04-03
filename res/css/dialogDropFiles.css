@@ -1,0 +1,75 @@
+.dialog-dropfiles.dialog-content {
+    display: grid;
+    justify-items: center;
+    margin: 0;
+}
+.dialog-dropfiles .panda-icon svg {
+    display: block;
+    margin: 48px 73px 33px;
+    width: 110px;
+}
+
+.dialog-dropfiles .dropfilestitle {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    max-width: 170px;
+    margin: 0 0 40px 0;
+}
+
+.dropwizard {
+    max-width: 27rem;
+}
+.dropwizard img {
+    display: block;
+    max-width: 8rem;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.dropwizard .icon-title {
+    display: block;
+    margin: .8rem 0;
+    padding: .2rem;
+    font-size: 3rem;
+    line-height: 3.2rem;
+    line-break: anywhere;
+    user-select: text;
+    font-weight: 700;
+    border-radius: .2rem;
+    transition: background-color 250ms ease;
+}
+.dropwizard .icon-title:hover, .dropwizard .icon-title:focus {
+    background: var(--on-card-background);
+    box-shadow: var(--box-shadow);
+}
+
+.dropwizard .tags-list {
+    padding: 0;
+    display: flex;
+    margin-bottom: 1rem;
+    flex-flow: wrap;
+    gap: 7px;
+}
+
+.dropwizard .tags-list span {
+    background: var(--on-card-background);
+    box-shadow: var(--box-shadow);
+    border-radius: 7px;
+    font-size: 14px;
+    padding: 4px 7px 4px;
+    font-weight: 500;
+}
+
+.dropwizard .tags-list span:hover {
+    opacity: 0.8;
+}
+.dropwizard .tags-list span.material-icons-round {
+    font-size: 15px;
+    padding: 4px 5px;
+}
+.dropwizard .tags-input {
+    display: block;
+    margin: 0 0 1rem 0;
+}

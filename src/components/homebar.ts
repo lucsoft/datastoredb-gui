@@ -12,7 +12,8 @@ import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
 import { manualUploadImage } from "./upload";
 import { supportedIcontypes } from '../../config.json';
 import { PandaIcon } from "./pandaIcon";
-export const renderHomeBar = (web: RenderingX, style: Style) => {
+import { UploadWizard } from "../types/UploadWizard";
+export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: UploadWizard) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
         iconData = data.filter(icon => supportedIcontypes.includes(icon.type))
@@ -55,7 +56,9 @@ export const renderHomeBar = (web: RenderingX, style: Style) => {
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"
         upload.onclick = data.canUpload ? () => {
-            manualUploadImage(hmsys);
+            manualUploadImage(hmsys, (files) => {
+                if (files) uploadWizard.handleAuto(files)
+            });
         } : () => web.notify("Uploading with this account is disabled")
         control.forceRedraw({
             username: data.username,
