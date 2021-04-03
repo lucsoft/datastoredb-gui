@@ -1,12 +1,12 @@
-import { createLocalStorageProvider, EventTypes } from "@lucsoft/network-connector";
+import { createLocalStorageProvider } from "@lucsoft/network-connector";
 import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
-import * as config from '../../../config.json';
-import { checkIfCacheIsAllowed } from "../../common/checkIfCacheAllowed";
-import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
-import { disableGlobalDragAndDrop } from "../../components/dropareas";
-import { hmsys } from "../../dashboard";
-import { ProfileData } from "../../types/profileDataTypes";
-import { db } from "../IconsCache";
+import * as config from '../../config.json';
+import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
+import { DataStoreEvents, emitEvent } from "../common/eventmanager";
+import { disableGlobalDragAndDrop } from "../components/dropareas";
+import { hmsys } from "../dashboard";
+import { ProfileData } from "../types/profileDataTypes";
+import { db } from "./IconsCache";
 
 export function updateFirstTimeDatabase(web: RenderingX) {
     if (navigator.onLine == false) {
@@ -87,7 +87,6 @@ export function updateFirstTimeDatabase(web: RenderingX) {
                     date: data.date
                 })
             })
-            console.log(await db.icons.filter(x => x.id == data.id).first());
         }
         emitEvent(DataStoreEvents.RefreshDataComplete, { updated: [ data.id ] })
     })

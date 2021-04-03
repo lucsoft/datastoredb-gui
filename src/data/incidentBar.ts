@@ -1,8 +1,8 @@
 import { EventTypes } from "@lucsoft/network-connector"
 import { DialogActionAfterSubmit, RenderElement, RenderingX, span } from "@lucsoft/webgen"
-import { DataStoreEvents, registerEvent } from "../../common/eventmanager"
-import '../../../res/css/incidentbar.css'
-import { hmsys } from "../../dashboard"
+import { DataStoreEvents, registerEvent } from "../common/eventmanager"
+import '../../res/css/incidentbar.css'
+import { hmsys } from "../dashboard"
 
 export const createIncidentBar = (web: RenderingX): RenderElement => ({
     draw: () => {
