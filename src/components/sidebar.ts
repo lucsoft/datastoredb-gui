@@ -57,7 +57,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         const taglist = custom('ul', undefined, 'tags-list')
                         taglist.innerHTML = "";
 
-                        if (state.offset && state.showSidebar)
+                        if (state.offset && state.showSidebar && matchMedia('(min-width: 700px)').matches)
                             updatePosition(sidebar, state.offset!)
                         conditionalCSSClass(sidebar, state.showSidebar, 'open')
                         taglist.append(...createTags(() => sidebarX, state))
@@ -135,7 +135,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
             })
             addEventListener('resize', () => {
                 const state = sidebarX.getState();
-                if (state?.showSidebar && state.offset) updatePosition(sidebar, state.offset)
+                if (state?.showSidebar && state.offset && matchMedia('(min-width: 700px)').matches) updatePosition(sidebar, state.offset)
             }, { passive: true })
             registerEvent(DataStoreEvents.SidebarUpdate, (data) => {
                 const currentState = sidebarX.getState();
@@ -208,7 +208,7 @@ const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" 
     const normal = document.body.offsetWidth - (offset.left + 320) > 0;
     sidebar.style.top = offset.top + "px";
     sidebar.style.left = (offset.left - (normal ? 0 : 365)) + "px";
-    conditionalCSSClass(sidebar, !normal, 'right')
+    conditionalCSSClass(sidebar, !normal && matchMedia('(min-width: 700px)').matches, 'right')
 }
 
 const createAction = (icon: string, text: string, isRed?: boolean) => {

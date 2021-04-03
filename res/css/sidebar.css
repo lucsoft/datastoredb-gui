@@ -6,6 +6,7 @@
     display: none;
     margin: -3rem 0 0 -2.8rem;
     user-select: none;
+    z-index: 20;
 }
 .sidebar.right {
     margin: -3rem 0 0 6.5rem;
@@ -30,7 +31,6 @@
     animation: fadeInInnerCard 400ms ease;
 }
 .sidebar.right .shell {
-    width: 365px;
     justify-items: end;
     animation: fadeInInnerCardRight 400ms ease;
 }
@@ -38,15 +38,19 @@
     margin: 0;
 }
 @keyframes fadeInCard {
-    0% {
+    from {
         transform: translate(0,20%);
+    }
+}
+@keyframes fadeInCardSlim {
+    from {
+        transform: translate(0,-10%);
     }
 }
 .sidebar card {
     box-shadow: 0px 10px 22px 0px rgb(0 0 0 / 30%);
     animation: fadeInCard 250ms ease;
     overflow: hidden;
-    z-index: 10;
     margin-bottom: 1.5rem;
 }
 
@@ -90,9 +94,12 @@
     border-radius: .2rem;
     transition: background-color 250ms ease;
 }
-.sidebar .icon-title:hover {
+.sidebar .icon-title.editable:hover {
     background: var(--on-card-background);
     box-shadow: var(--box-shadow);
+}
+.sidebar .icon-title:not(.editable) {
+    cursor: pointer;
 }
 .sidebar .icon-title.small {
     font-size: 30px;
@@ -185,4 +192,37 @@
 .sidebar.right .preview {
     margin: 1.4rem 1.5rem 0 auto;
     animation: fadeInImageRight 300ms ease;
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        top: 2rem !important;
+        left: 50% !important;
+        margin: 0;
+        transform: translate(-50%, 0);
+        max-width: 365px;
+        width: 100%;
+    }
+    .sidebar card {
+        animation: fadeInCardSlim 250ms ease;
+    }
+    .sidebar .shell {
+        max-width: 365px;
+        width: 100%;
+        animation: fadeInInnerCardRight 400ms ease;
+    }
+
+    .sidebar .preview {
+        animation: none;
+    }
+}
+@media (max-width: 410px) {
+    .sidebar {
+        top: 2rem !important;
+        left: 0 !important;
+        right: 0;
+        width: 100%;
+        margin: 1rem;
+        transform: none;
+    }
 }
