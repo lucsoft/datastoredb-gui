@@ -6,7 +6,7 @@ import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../components/dropareas";
 import { hmsys } from "../dashboard";
 import { ProfileData } from "../types/profileDataTypes";
-import { db } from "./IconsCache";
+import { db, Icon } from "./IconsCache";
 
 export function updateFirstTimeDatabase(web: RenderingX) {
     window.addEventListener('online', () => {
@@ -72,17 +72,31 @@ export function updateFirstTimeDatabase(web: RenderingX) {
             emitEvent(DataStoreEvents.RefreshData, hmsys)
         else {
             const oldIcon = await db.icons.filter(x => x.id == data.id).first();
-            if (oldIcon == undefined) return;
+            console.log(oldIcon);
+            if (oldIcon == undefined) {
+                const id = setInterval(async () => {
+                    const oldIcon = await db.icons.filter(x => x.id == data.id).first();
+                    if (oldIcon != undefined) {
+                        clearInterval(id);
+                        await updateIcon(oldIcon, data);
+                    }
+                }, 100)
+                return;
+            };
 
-            await db.transaction('rw', db.icons, async () => {
-                await db.icons.put({
-                    ...oldIcon,
-                    filename: data.filename ?? oldIcon.filename,
-                    tags: data.tags ?? oldIcon.tags,
-                    date: data.date
-                })
-            })
+            await updateIcon(oldIcon, data);
         }
         emitEvent(DataStoreEvents.RefreshDataComplete, { updated: [ data.id ] })
     })
+
+    async function updateIcon(oldIcon: Icon, data: { filename: string; id: string; tags: string[]; date: number; }) {
+        await db.transaction('rw', db.icons, async () => {
+            await db.icons.put({
+                ...oldIcon,
+                filename: data.filename ?? oldIcon.filename,
+                tags: data.tags ?? oldIcon.tags,
+                date: data.date
+            });
+        });
+    }
 }
