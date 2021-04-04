@@ -57,7 +57,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         const taglist = custom('ul', undefined, 'tags-list')
                         taglist.innerHTML = "";
 
-                        if (state.offset && state.showSidebar && matchMedia('(min-width: 700px)').matches)
+                        if (state.offset && state.showSidebar)
                             updatePosition(sidebar, state.offset!)
                         conditionalCSSClass(sidebar, state.showSidebar, 'open')
                         taglist.append(...createTags(() => sidebarX, state))
