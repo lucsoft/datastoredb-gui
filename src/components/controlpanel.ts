@@ -65,7 +65,7 @@ export const controlPanelDialog = (web: RenderingX, control: RenderingXResult<an
                     location.href = location.href;
             });
         } ],
-        [ 'Report a Problem', () => {
+        [ 'Report a bug', () => {
             open("https://github.com/lucsoft/datastoredb-gui/issues/new")
             return undefined;
         } ],
