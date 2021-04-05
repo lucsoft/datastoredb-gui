@@ -1,1 +1,1 @@
-export const checkIfCacheIsAllowed = () => !/apple/i.test(navigator.vendor)
+export const checkIfCacheIsAllowed = () => !matchMedia('not (list-style-type: "")').matches;
