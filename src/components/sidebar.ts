@@ -1,4 +1,4 @@
-import { Card, conditionalCSSClass, createElement, custom, img, input, mIcon, RenderElement, RenderingX, RenderingXResult, span } from "@lucsoft/webgen"
+import { Card, conditionalCSSClass, createElement, custom, DialogActionAfterSubmit, img, input, mIcon, RenderElement, RenderingX, RenderingXResult, span } from "@lucsoft/webgen"
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import '../../res/css/sidebar.css';
 import { timeAgo } from "../common/date";
@@ -73,7 +73,19 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         const downloadAll = createAction("file_download", 'Download All Variants')
                         const deleteIcon = createAction("delete", "Delete " + state.iconTitle, true)
                         deleteIcon.style.display = state.canRemove ? 'flex' : 'none';
-                        deleteIcon.onclick = () => hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id })
+                        deleteIcon.onclick = () => web.toDialog({
+                            title: 'Are you sure?',
+                            userRequestClose: () => DialogActionAfterSubmit.RemoveClose,
+                            content: span('Deleteing this File will be gone forever. (wich is a very long time)'),
+                            buttons: [
+                                [ 'closed', DialogActionAfterSubmit.RemoveClose ],
+                                [ 'Delete', () => {
+                                    hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id });
+                                    return DialogActionAfterSubmit.RemoveClose;
+                                }
+                                ]
+                            ]
+                        }).open()
 
                         add.onclick = () => web.notify("Currently not implemented")
 

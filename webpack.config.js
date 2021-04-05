@@ -78,6 +78,7 @@ module.exports = (_, mode) => {
                 ]
             }),
             new WorkboxPlugin.GenerateSW({
+                cleanupOutdatedCaches: true,
                 cacheId: 'datastoredb-gui',
                 mode: isProduction ? 'production' : 'development',
                 clientsClaim: true,
