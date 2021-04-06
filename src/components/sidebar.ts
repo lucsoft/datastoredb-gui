@@ -8,6 +8,7 @@ import { hmsys } from "../dashboard";
 import { getStoredData } from "../common/refreshData";
 
 type SideBarType = {
+    showVariableView?: boolean
     showSidebar?: boolean
     iconTitle?: string
     id?: string
@@ -47,13 +48,11 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 (state) => Card({}, {
                     getSize: () => ({}),
                     draw: (card) => {
+
                         const image = img(state.imageBlobUrl, 'preview')
                         const title = span(state.iconTitle, 'icon-title', state.canEdit ? 'editable' : 'static')
                         title.contentEditable = state.canEdit ? "true" : "false";
-                        title.onblur = () => {
-                            if (title.innerText != state.iconTitle)
-                                hmsys.api.trigger('@HomeSYS/DataStoreDB', { type: "updateFile", id: state.id, filename: title.innerText })
-                        }
+                        title.onblur = handleBlurEventOfIconTitle(title, state)
                         const taglist = custom('ul', undefined, 'tags-list')
                         taglist.innerHTML = "";
 
@@ -61,8 +60,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                             updatePosition(sidebar, state.offset!)
                         conditionalCSSClass(sidebar, state.showSidebar, 'open')
                         taglist.append(...createTags(() => sidebarX, state))
-                        if (state.showSidebar)
-                            sidebar.focus();
+                        if (state.showSidebar) sidebar.focus();
 
                         const add = mIcon('add')
                         const variantsList = custom('div', add, 'variants')
@@ -73,42 +71,27 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         const downloadAll = createAction("file_download", 'Download All Variants')
                         const deleteIcon = createAction("delete", "Delete " + state.iconTitle, true)
                         deleteIcon.style.display = state.canRemove ? 'flex' : 'none';
-                        deleteIcon.onclick = () => web.toDialog({
-                            title: 'Are you sure?',
-                            userRequestClose: () => DialogActionAfterSubmit.RemoveClose,
-                            content: span('Deleteing this File will be gone forever. (wich is a very long time)'),
-                            buttons: [
-                                [ 'closed', DialogActionAfterSubmit.RemoveClose ],
-                                [ 'Delete', () => {
-                                    hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id });
-                                    return DialogActionAfterSubmit.RemoveClose;
-                                }
-                                ]
-                            ]
-                        }).open()
+                        deleteIcon.onclick = createDeleteDialog(web, state)
 
-                        add.onclick = () => web.notify("Currently not implemented")
+                        add.onclick = () => sidebarX.forceRedraw({ showVariableView: true })
 
-                        downloadAll.onclick = () => {
-                            const download = document.createElement('a')
-                            download.download = ""
-                            download.href = state.imageBlobUrl ?? '';
-                            download.download = state.iconTitle ?? '';
-                            download.click();
-                        }
+                        downloadAll.onclick = handleAllVariantsDownload(state)
 
                         conditionalCSSClass(title, (state.iconTitle?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
-                        shell.append(
-                            image,
-                            title,
-                            taglist,
-                            span('Variants', 'variants-title'),
-                            variantsList,
-                            downloadAll,
-                            deleteIcon,
-                            span(`by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data')
-                        )
+                        if (state.showVariableView) {
+                            shell.append()
+                        } else
+                            shell.append(
+                                image,
+                                title,
+                                taglist,
+                                span('Variants', 'variants-title'),
+                                variantsList,
+                                downloadAll,
+                                deleteIcon,
+                                span(`by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data')
+                            )
 
                         card.append(shell)
                         return card;
@@ -227,4 +210,37 @@ const createAction = (icon: string, text: string, isRed?: boolean) => {
     const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
     element.append(mIcon(icon), span(text, 'label'))
     return element;
+}
+
+function handleAllVariantsDownload(state: SideBarType): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
+    return () => {
+        const download = document.createElement('a');
+        download.download = "";
+        download.href = state.imageBlobUrl ?? '';
+        download.download = state.iconTitle ?? '';
+        download.click();
+    };
+}
+
+function handleBlurEventOfIconTitle(title: HTMLElement, state: SideBarType): ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null {
+    return () => {
+        if (title.innerText != state.iconTitle)
+            hmsys.api.trigger('@HomeSYS/DataStoreDB', { type: "updateFile", id: state.id, filename: title.innerText });
+    };
+}
+
+function createDeleteDialog(web: RenderingX, state: SideBarType): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
+    return () => web.toDialog({
+        title: 'Are you sure?',
+        userRequestClose: () => DialogActionAfterSubmit.RemoveClose,
+        content: span('Deleteing this File will be gone forever. (wich is a very long time)'),
+        buttons: [
+            [ 'closed', DialogActionAfterSubmit.RemoveClose ],
+            [ 'Delete', () => {
+                hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id });
+                return DialogActionAfterSubmit.RemoveClose;
+            }
+            ]
+        ]
+    }).open();
 }
