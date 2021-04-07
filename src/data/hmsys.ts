@@ -68,7 +68,7 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     })
 
-    hmsys.api.sync('@HomeSYS/DataStoreDB/updateFile', async (data: { filename: string, id: string, tags: string[], date: number }) => {
+    hmsys.api.sync('@HomeSYS/DataStoreDB/updateFile', async (data: { filename: string, id: string, tags: string[], date: number, variantFrom: string }) => {
         if (!checkIfCacheIsAllowed())
             emitEvent(DataStoreEvents.RefreshData, hmsys)
         else {
@@ -90,13 +90,14 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         emitEvent(DataStoreEvents.RefreshDataComplete, { updated: [ data.id ] })
     })
 
-    async function updateIcon(oldIcon: Icon, data: { filename: string; id: string; tags: string[]; date: number; }) {
+    async function updateIcon(oldIcon: Icon, data: { filename: string; id: string; tags: string[]; date: number; variantFrom: string }) {
         await db.transaction('rw', db.icons, async () => {
             await db.icons.put({
                 ...oldIcon,
                 filename: data.filename ?? oldIcon.filename,
                 tags: data.tags ?? oldIcon.tags,
-                date: data.date
+                date: data.date,
+                variantFrom: data.variantFrom ?? oldIcon.variantFrom
             });
         });
     }

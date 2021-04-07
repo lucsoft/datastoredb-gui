@@ -5,8 +5,8 @@ class IconsCache extends Dexie {
 
     constructor() {
         super("DataStoreDB");
-        this.version(1).stores({
-            icon: 'id,filename,date,tags,type,data'
+        this.version(2).stores({
+            icon: 'id,filename,date,tags,type,data,variantFrom'
         })
         this.icons = this.table("icon")
     }
@@ -18,6 +18,7 @@ export interface Icon {
     id: string
     tags: string[]
     type: string
+    variantFrom: string
     data: Blob
 }
 

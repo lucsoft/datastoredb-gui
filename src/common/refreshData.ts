@@ -13,6 +13,7 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
         if (
             thing.tags.toString() == x.tags.toString()
             && thing.filename == x.filename
+            && thing.variantFrom == x.variantFrom
             && thing.date == x.date
         )
             return false;
