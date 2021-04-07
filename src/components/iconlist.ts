@@ -111,7 +111,7 @@ const renderSingleIcon = (icon: Icon) => {
             image: image.src,
             id: icon.id,
             date: cachedData.date,
-            alts: [ image.src ],
+            alts: cachedAllData.filter(x => x.variantFrom == icon.id).map(x => URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type }))),
             tags: cachedData.tags,
             displayName: cachedData.filename,
             type: icon.type
