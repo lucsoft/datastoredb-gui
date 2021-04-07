@@ -6,6 +6,7 @@ import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 import { SidebarNormalData } from "../types/sidebarTypes";
 import { hmsys } from "../dashboard";
 import { getStoredData } from "../common/refreshData";
+import { list } from "../common/list";
 
 type SideBarType = {
     showVariableView?: boolean
@@ -18,6 +19,8 @@ type SideBarType = {
     editTags?: boolean
     tags?: string[]
     imageVariants?: string[]
+    isVariantFrom?: [ id: string, url: string, name: string ]
+    possiableVariants?: [ id: string, url: string, name: string ][]
     offset?: SidebarNormalData[ "offset" ]
     canUpload?: boolean
     username?: string
@@ -39,7 +42,8 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
 
                 sidebarX.forceRedraw({
-                    showSidebar: false
+                    showSidebar: false,
+                    showVariableView: false
                 })
                 sidebar.classList.remove('open')
 
@@ -51,6 +55,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
                         const image = img(state.imageBlobUrl, 'preview')
                         const title = span(state.iconTitle, 'icon-title', state.canEdit ? 'editable' : 'static')
+                        const details = span(`by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data');
                         title.contentEditable = state.canEdit ? "true" : "false";
                         title.onblur = handleBlurEventOfIconTitle(title, state)
                         const taglist = custom('ul', undefined, 'tags-list')
@@ -61,37 +66,38 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         conditionalCSSClass(sidebar, state.showSidebar, 'open')
                         taglist.append(...createTags(() => sidebarX, state))
                         if (state.showSidebar) sidebar.focus();
+                        image.onload = () => details.innerText = `by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`;
 
                         const add = mIcon('add')
                         const variantsList = custom('div', add, 'variants')
                         variantsList.innerHTML = "";
                         if (state.imageVariants) variantsList.append(...state.imageVariants.map(src => img(src, 'alt-preview')))
                         if (state.canUpload) variantsList.append(add)
-
-                        const downloadAll = createAction("file_download", 'Download All Variants')
-                        const deleteIcon = createAction("delete", "Delete " + state.iconTitle, true)
-                        deleteIcon.style.display = state.canRemove ? 'flex' : 'none';
-                        deleteIcon.onclick = createDeleteDialog(web, state)
-
                         add.onclick = () => sidebarX.forceRedraw({ showVariableView: true })
-
-                        downloadAll.onclick = handleAllVariantsDownload(state)
 
                         conditionalCSSClass(title, (state.iconTitle?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
                         if (state.showVariableView) {
-                            shell.append()
-                        } else
+                            renderVariableView(sidebarX, shell, state);
+                        } else {
                             shell.append(
                                 image,
                                 title,
-                                taglist,
-                                span('Variants', 'variants-title'),
-                                variantsList,
-                                downloadAll,
-                                deleteIcon,
-                                span(`by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data')
-                            )
+                                taglist)
+                            if (!state.isVariantFrom)
+                                shell.append(
+                                    span('Variants', 'variants-title'),
+                                    variantsList,
+                                    createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(state))
+                                )
+                            else
+                                shell.append(
+                                    createAction("update_disabled", `Remove this Variant from ${state.isVariantFrom[ 2 ]}`, true)
+                                )
+                            if (state.canRemove)
+                                shell.append(createAction("delete", "Delete " + state.iconTitle, true, createDeleteDialog(web, state)))
+                            shell.append(details)
+                        }
 
                         card.append(shell)
                         return card;
@@ -136,13 +142,13 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 const currentState = sidebarX.getState();
                 if (data === undefined) {
                     if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
-                    sidebarX.forceRedraw({ showSidebar: false })
+                    sidebarX.forceRedraw({ showSidebar: false, showVariableView: false })
                     return;
                 }
                 if (typeof data === 'string') {
                     if (currentState && currentState.id && currentState.id == data) {
                         if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
-                        sidebarX.forceRedraw({ showSidebar: false })
+                        sidebarX.forceRedraw({ showSidebar: false, showVariableView: false })
                     }
                     return;
                 }
@@ -156,6 +162,9 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     lastUpdated: data.date,
                     imageType: data.type,
                     imageVariants: data.alts,
+                    isVariantFrom: data.isVariantFrom,
+                    showVariableView: currentState.id == data.id ? currentState.showVariableView : false,
+                    possiableVariants: data.possiableAlts,
                     offset: data.offset
                 })
             })
@@ -174,7 +183,8 @@ const createTags = (sidebarX: () => RenderingXResult<SideBarType>, state: SideBa
             const tag = span('#' + x)
             tag.onclick = () => {
                 sidebarX().forceRedraw({
-                    showSidebar: false
+                    showSidebar: false,
+                    showVariableView: false
                 })
                 emitEvent(DataStoreEvents.SearchBarAddTag, x);
             }
@@ -206,10 +216,37 @@ const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" 
     conditionalCSSClass(sidebar, !normal && matchMedia('(min-width: 700px)').matches, 'right')
 }
 
-const createAction = (icon: string, text: string, isRed?: boolean) => {
+const createAction = (icon: string, text: string, isRed?: boolean, onClick?: null | ((this: GlobalEventHandlers, ev: MouseEvent) => any)) => {
     const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
+    if (onClick)
+        element.onclick = onClick;
     element.append(mIcon(icon), span(text, 'label'))
     return element;
+}
+
+function renderVariableView(sidebarX: RenderingXResult<SideBarType>, shell: HTMLElement, state: SideBarType) {
+    const header = list([
+        mIcon("arrow_back_ios_new"),
+        span("Variants")
+    ], [ "header" ]);
+    const manuelUploadButton = custom("button", "Select your File", "one");
+    const droparea = list([
+        span("Drop a new Image here"),
+        span("or"),
+        manuelUploadButton
+    ], [ "drop-area" ]);
+    header.onclick = () => sidebarX.forceRedraw({ showVariableView: false });
+    shell.append(
+        header,
+        droparea
+    );
+    console.log(state.possiableVariants);
+    if (state.possiableVariants && (state.possiableVariants.length) > 0) {
+        shell.append(
+            span("Recommended", "variants-title"),
+            list(state.possiableVariants.map(x => img(x[ 1 ], "alt-preview")), [ "variants" ])
+        );
+    }
 }
 
 function handleAllVariantsDownload(state: SideBarType): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
