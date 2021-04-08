@@ -37,8 +37,15 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
             const shell = custom('div', undefined, 'shell')
             document.body.addEventListener('click', (e) => {
-                if ((e as any).path?.includes?.(sidebar)
-                    || ![ document.body, document.querySelector('.image-list') ].includes(e.target as Element)) return
+                // TODO Switch to a backdrop to get the a simpler click event thing
+                if (![ document.body,
+                document.querySelector('.incident-shell'),
+                document.querySelector('.image-list'),
+                document.querySelector('.homebar'),
+                document.querySelector('.masterShell article'),
+                ...document.querySelectorAll('.image-list *'),
+                ...document.querySelectorAll('.homebar *')
+                ].includes(e.target as Element)) return
                 if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
 
                 sidebarX.forceRedraw({
@@ -231,9 +238,9 @@ function renderVariableView(sidebarX: RenderingXResult<SideBarType>, shell: HTML
     ], [ "header" ]);
     const manuelUploadButton = custom("button", "Select your File", "one");
     const droparea = list([
-        span("Drop a new Image here"),
-        span("or"),
-        manuelUploadButton
+        span("Drop a new Image here", "firstLine"),
+        span("or", "secondLand"),
+        custom("center", manuelUploadButton)
     ], [ "drop-area" ]);
     header.onclick = () => sidebarX.forceRedraw({ showVariableView: false });
     shell.append(
