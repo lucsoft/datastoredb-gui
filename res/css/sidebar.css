@@ -115,7 +115,7 @@
     text-align: right;
 }
 .sidebar .tags-list {
-    margin: 6px 1.5rem 0 1.5rem;
+    margin: 6px 1.5rem 21px 1.5rem;
     padding: 0;
     display: flex;
     flex-flow: wrap;
@@ -143,7 +143,7 @@
     font-size: 18px;
     display: block;
     font-weight: 500;
-    margin: 21px 1.5rem 0 1.5rem;
+    margin: 0 1.5rem 0 1.5rem;
 }
 .sidebar .action {
     display: flex;
@@ -176,6 +176,7 @@
 .variants {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
     margin: 6px 1.5rem 25px 1.5rem;
 }
 .variants .alt-preview {
@@ -198,6 +199,42 @@
 .sidebar.right .preview {
     margin: 1.4rem 1.5rem 0 auto;
     animation: fadeInImageRight 300ms ease;
+}
+
+.header {
+    margin: 0 1.5rem 0 1.5rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+}
+.header span {
+    font-size: 18px;
+    margin-left: -0.2rem;
+}
+.header:hover {
+    opacity: 0.9;
+}
+.header span:last-child {
+    font-size: 18px;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+.drop-area span.firstLine {
+    display: block;
+    text-align: center;
+    font-weight: 400;
+    margin: 0.5rem 0 0 0;
+}
+.drop-area button {
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.5rem;
+}
+
+.drop-area span.secondLand {
+    display: block;
+    text-align: center;
+    font-weight: 400;
+    margin: 0.8rem 0 0.7rem;
 }
 
 @media (max-width: 700px) {
