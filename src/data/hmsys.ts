@@ -97,7 +97,7 @@ export function updateFirstTimeDatabase(web: RenderingX) {
                 filename: data.filename ?? oldIcon.filename,
                 tags: data.tags ?? oldIcon.tags,
                 date: data.date,
-                variantFrom: data.variantFrom ?? oldIcon.variantFrom
+                variantFrom: data.variantFrom
             });
         });
     }

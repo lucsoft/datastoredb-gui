@@ -42,7 +42,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
             })
             const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, [
-                ({ currentIcon, canEdit, username, canRemove, canUpload, offset, showSidebar, showVariableView, editTags, imageVariants, variantFrom }) => Card({}, {
+                ({ currentIcon, canEdit, username, canRemove, canUpload, offset, showSidebar, showVariableView, editTags, imageVariants, variantFrom, possiableVariants }) => Card({}, {
                     getSize: () => ({}),
                     draw: (card) => {
 
@@ -69,8 +69,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
                         conditionalCSSClass(title, (currentIcon?.filename?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
-                        if (showVariableView)
-                            renderVariableView(sidebarX, shell, currentIcon);
+                        if (showVariableView) renderVariableView(sidebarX, shell, currentIcon, possiableVariants);
                         else {
                             shell.append(
                                 image,
@@ -82,9 +81,9 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                                     variantsList,
                                     createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(currentIcon))
                                 )
-                            else if (variantFrom)
+                            else if (variantFrom && currentIcon)
                                 shell.append(
-                                    createAction("update_disabled", `Remove this Variant from ${variantFrom.filename}`, true)
+                                    createAction("update_disabled", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon))
                                 )
                             if (canRemove && currentIcon)
                                 shell.append(createAction("delete", "Delete " + currentIcon.filename, true, createDeleteDialog(web, currentIcon)))
@@ -145,6 +144,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     return;
                 }
                 disableGlobalDragAndDrop()
+                console.log(data.possiableVariants, data.currentIcon);
                 sidebarX.forceRedraw({
                     showSidebar: true,
                     currentIcon: data.currentIcon,
@@ -230,6 +230,12 @@ function handleBlurEventOfIconTitle(title: HTMLElement, icon?: Icon): ((this: Gl
         if (icon && title.innerText != icon.filename)
             triggerUpdate(icon.id, { filename: title.innerText })
     };
+}
+
+function createRemovedRef(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
+    return () => {
+        triggerUpdate(icon.id, { variantFrom: null })
+    }
 }
 
 function createDeleteDialog(web: RenderingX, icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
