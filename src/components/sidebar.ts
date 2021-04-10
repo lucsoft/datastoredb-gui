@@ -6,11 +6,12 @@ import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 import { SidebarNormalData, SideBarType } from "../types/sidebarTypes";
 import { hmsys } from "../dashboard";
 import { getStoredData } from "../common/refreshData";
-import { isVariantFrom } from "../common/iconData/variants";
+import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
 import { Icon } from "../data/IconsCache";
 import { getImageSourceFromIcon, getImageSourceFromIconOpt } from "../common/iconData/getImageUrlFromIcon";
 import { triggerUpdate } from "../common/api";
 import { renderVariableView } from "./sidebar/variableView";
+import { sidebarGenerateTags } from "./sidebar/tags";
 
 
 export const createSidebar = (web: RenderingX): RenderElement => {
@@ -56,7 +57,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
                         if (offset && showSidebar) updatePosition(sidebar, offset)
                         conditionalCSSClass(sidebar, showSidebar, 'open')
-                        taglist.append(...createTags(() => sidebarX, currentIcon, canEdit, editTags))
+                        taglist.append(...sidebarGenerateTags(() => sidebarX, currentIcon, canEdit, editTags))
                         if (showSidebar) sidebar.focus();
                         image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
 
@@ -167,40 +168,6 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
 }
 
-const createTags = (sidebarX: () => RenderingXResult<SideBarType>, icon?: Icon, canEdit?: boolean, editTags?: boolean) => {
-    const add = canEdit == true ? mIcon('edit') : ""
-    if (add)
-        add.onclick = () => sidebarX().forceRedraw({ editTags: true })
-    if (editTags != true && icon?.tags)
-        return [ ...icon.tags.map(x => {
-            const tag = span('#' + x)
-            tag.onclick = () => {
-                sidebarX().forceRedraw({
-                    showSidebar: false,
-                    showVariableView: false
-                })
-                emitEvent(DataStoreEvents.SearchBarAddTag, x);
-            }
-            return tag
-        }), add ];
-    else if (editTags == true) {
-        const tagsInput = input({
-            value: icon?.tags.join(' ')
-        })
-        tagsInput.autofocus = true;
-        tagsInput.onblur = () => {
-            const newData = tagsInput.value.split(/_| |-|%20|,/)
-            if (JSON.stringify(newData) != JSON.stringify(icon?.tags))
-                triggerUpdate(icon!.id, { tags: newData })
-            sidebarX().forceRedraw({
-                editTags: false
-            })
-        }
-        return [ tagsInput ];
-    }
-    else
-        return [ add ];
-}
 const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" ]) => {
     const offset = data();
     const normal = document.body.offsetWidth - (offset.left + 320) > 0;
