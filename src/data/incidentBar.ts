@@ -1,12 +1,12 @@
 import { EventTypes } from "@lucsoft/network-connector"
-import { createElement, custom, RenderElement, RenderingX, SupportedThemes } from "@lucsoft/webgen"
+import { createElement, custom, RenderElement, SupportedThemes } from "@lucsoft/webgen"
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager"
 import '../../res/css/incidentbar.css'
 import { hmsys } from "../dashboard"
 import { Style } from "@lucsoft/webgen/bin/lib/Style"
 import { updateColorBar, updateColorBarTheme } from "../common/themeColorBar"
 
-export const createIncidentBar = (web: RenderingX, style: Style): RenderElement => ({
+export const createIncidentBar = (style: Style): RenderElement => ({
     draw: () => {
         style.onThemeUpdate((e) => {
             updateColorBarTheme(e)

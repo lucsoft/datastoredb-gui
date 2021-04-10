@@ -20,7 +20,7 @@ export function renderMain(web: RenderingX, style: Style) {
     const wizard = generateUploadWizard(web);
 
     web.toCustom({ shell }, {}, () => [
-        createIncidentBar(web, style),
+        createIncidentBar(style),
         createSidebar(web),
         renderHomeBar(web, style, wizard),
         createIconList()

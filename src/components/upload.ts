@@ -42,7 +42,7 @@ export const uploadImage = (files: FileList, hmsys: NetworkConnector): Promise<r
     submit.click()
 });
 
-export const manualUploadImage = (hmsys: NetworkConnector, onchange: (file: FileList | null) => void) => new Promise((done) => {
+export const manualUploadImage = (onchange: (file: FileList | null) => void) => {
     fileUp.click()
     fileUp.onchange = () => onchange(fileUp.files)
-});
+};

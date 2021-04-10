@@ -3,7 +3,6 @@ import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import '../../res/css/homebar.css';
 
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
-import { hmsys } from "../dashboard";
 import { Icon } from "../data/IconsCache";
 import { controlPanelContent, controlPanelDialog } from "./controlpanel";
 import { getStoredData } from "./../common/refreshData";
@@ -56,7 +55,7 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"
         upload.onclick = data.canUpload ? () => {
-            manualUploadImage(hmsys, (files) => {
+            manualUploadImage((files) => {
                 if (files) uploadWizard.handleAuto(files)
             });
         } : () => web.notify("Uploading with this account is disabled")

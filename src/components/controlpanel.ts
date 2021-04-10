@@ -1,4 +1,4 @@
-import { createElement, custom, DialogActionAfterSubmit, img, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
+import { createElement, custom, DialogActionAfterSubmit, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
 import { envData } from "../common/envdata";
 import { ControlPanelType } from "../types/controlPanel";

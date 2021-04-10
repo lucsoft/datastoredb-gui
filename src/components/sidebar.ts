@@ -1,5 +1,5 @@
-import { Card, conditionalCSSClass, createElement, custom, DialogActionAfterSubmit, img, input, mIcon, RenderElement, RenderingX, RenderingXResult, span } from "@lucsoft/webgen"
-import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
+import { Card, conditionalCSSClass, createElement, custom, DialogActionAfterSubmit, img, mIcon, RenderElement, RenderingX, span } from "@lucsoft/webgen"
+import { DataStoreEvents, registerEvent } from "../common/eventmanager";
 import '../../res/css/sidebar.css';
 import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
