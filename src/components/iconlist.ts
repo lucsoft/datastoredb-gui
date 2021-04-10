@@ -7,6 +7,8 @@ import lostPanda from '../../res/lostpanda.svg';
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 import { supportedIcontypes } from "../../config.json";
 import { getStoredData } from "../common/refreshData";
+import { isVariantFrom } from "../common/iconData/variants";
+import { getImageSourceFromIcon } from "../common/iconData/getImageUrlFromIcon";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
@@ -100,7 +102,7 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
 }
 
 const renderSingleIcon = (icon: Icon) => {
-    const image = img(createDownloadLink(icon), 'icon');
+    const image = img(getImageSourceFromIcon(icon), 'icon');
     image.loading = "lazy";
     image.setAttribute('id', icon.id);
     image.onclick = async () => {
@@ -109,32 +111,18 @@ const renderSingleIcon = (icon: Icon) => {
         if (cachedData == undefined) return;
         emitEvent(DataStoreEvents.SidebarUpdate, {
             offset: () => getOffset(image),
-            image: image.src,
-            id: icon.id,
-            date: cachedData.date,
-            alts: cachedAllData
-                .filter(x => x.variantFrom == icon.id)
-                .map(x => createDownloadLink(x)),
-            tags: cachedData.tags,
-            isVariantFrom: icon.variantFrom ? createIdIconLink(cachedAllData.find(x => x.id == icon.variantFrom)) : undefined,
-            possiableAlts: cachedAllData
+            currentIcon: icon,
+            imageVariants: cachedAllData
+                .filter(x => x.variantFrom == icon.id),
+            variantFrom: isVariantFrom(icon, cachedAllData),
+            possiableVariants: cachedAllData
                 .filter(x => x.id != image.id)
                 .filter(x => x.variantFrom === undefined)
                 .filter(x => !cachedAllData.find(y => y.variantFrom == x.id))
-                .filter(x => compareArrayHalfMatch(x.tags, icon.tags))
-                .map(x => createIdIconLink(x)!),
-            displayName: cachedData.filename,
-            type: icon.type
+                .filter(x => compareArrayHalfMatch(x.tags, icon.tags)),
         })
     };
     return image;
-}
-function createIdIconLink(x?: Icon): undefined | ([ id: string, img: string, name: string ]) {
-    if (x == undefined) return undefined;
-    return [ x?.id, createDownloadLink(x), x.filename ];
-}
-function createDownloadLink(x: Icon): string {
-    return URL.createObjectURL(new File([ x.data ], x.filename, { type: x.type }));
 }
 
 function supportedIconType(icon: Icon) {

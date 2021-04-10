@@ -1,4 +1,5 @@
 import { custom, DialogActionAfterSubmit, img, input, mIcon, RenderingX, span } from "@lucsoft/webgen";
+import { triggerUpdateResponse } from "../common/api";
 import { list } from "../common/list";
 import { hmsys } from "../dashboard";
 import { UploadWizard, UploadWizardData } from "../types/UploadWizard";
@@ -60,7 +61,7 @@ export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
                 const response = (await uploadImage(state.files, hmsys))?.items
 
                 if (response?.length == 1)
-                    await hmsys.api.triggerResponse('@HomeSYS/DataStoreDB', { type: "updateFile", id: response[ 0 ].id, tags: state.tags, filename: state.name })
+                    await triggerUpdateResponse(response[ 0 ].id, { tags: state.tags, filename: state.name })
                 return DialogActionAfterSubmit.Close;
             } ]
         ]

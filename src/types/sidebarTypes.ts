@@ -1,17 +1,29 @@
+import { Icon } from "../data/IconsCache";
+
+export type SideBarType = {
+    currentIcon?: Icon
+    showVariableView?: boolean
+    showSidebar?: boolean
+    editTags?: boolean
+    variantFrom?: Icon
+    imageVariants?: Icon[]
+    possiableVariants?: Icon[]
+    offset?: SidebarNormalData[ "offset" ]
+    canUpload?: boolean
+    username?: string
+    canRemove?: boolean
+    canEdit?: boolean
+};
+
 export type SidebarNormalData = {
     offset: () => {
         bound: DOMRect;
         left: number;
         top: number;
     },
-    image: string,
-    id: string,
-    date: number,
-    alts: string[],
-    isVariantFrom?: [ id: string, img: string, name: string ],
-    possiableAlts: [ id: string, img: string, name: string ][]
-    tags: string[],
-    displayName: string,
-    type: string
+    currentIcon: Icon,
+    imageVariants: Icon[],
+    variantFrom?: Icon,
+    possiableVariants: Icon[]
 };
 export type SidebarData = SidebarNormalData | undefined | string

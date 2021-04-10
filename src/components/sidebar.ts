@@ -3,30 +3,16 @@ import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanage
 import '../../res/css/sidebar.css';
 import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
-import { SidebarNormalData } from "../types/sidebarTypes";
+import { SidebarNormalData, SideBarType } from "../types/sidebarTypes";
 import { hmsys } from "../dashboard";
 import { getStoredData } from "../common/refreshData";
-import { list } from "../common/list";
+import { isVariantFrom } from "../common/iconData/variants";
+import { Icon } from "../data/IconsCache";
+import { getImageSourceFromIcon, getImageSourceFromIconOpt } from "../common/iconData/getImageUrlFromIcon";
+import { triggerUpdate } from "../common/api";
+import { renderVariableView } from "./sidebar/variableView";
 
-type SideBarType = {
-    showVariableView?: boolean
-    showSidebar?: boolean
-    iconTitle?: string
-    id?: string
-    imageBlobUrl?: string
-    imageType?: string
-    lastUpdated?: number
-    editTags?: boolean
-    tags?: string[]
-    imageVariants?: string[]
-    isVariantFrom?: [ id: string, url: string, name: string ]
-    possiableVariants?: [ id: string, url: string, name: string ][]
-    offset?: SidebarNormalData[ "offset" ]
-    canUpload?: boolean
-    username?: string
-    canRemove?: boolean
-    canEdit?: boolean
-};
+
 export const createSidebar = (web: RenderingX): RenderElement => {
 
     return {
@@ -56,53 +42,52 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
             })
             const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, [
-                (state) => Card({}, {
+                ({ currentIcon, canEdit, username, canRemove, canUpload, offset, showSidebar, showVariableView, editTags, imageVariants, variantFrom }) => Card({}, {
                     getSize: () => ({}),
                     draw: (card) => {
 
-                        const image = img(state.imageBlobUrl, 'preview')
-                        const title = span(state.iconTitle, 'icon-title', state.canEdit ? 'editable' : 'static')
-                        const details = span(`by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`, 'extra-data');
-                        title.contentEditable = state.canEdit ? "true" : "false";
-                        title.onblur = handleBlurEventOfIconTitle(title, state)
+                        const image = img(getImageSourceFromIconOpt(currentIcon), 'preview')
+                        const title = span(currentIcon?.filename, 'icon-title', canEdit ? 'editable' : 'static')
+                        const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
+                        title.contentEditable = canEdit ? "true" : "false";
+                        title.onblur = handleBlurEventOfIconTitle(title, currentIcon)
                         const taglist = custom('ul', undefined, 'tags-list')
                         taglist.innerHTML = "";
 
-                        if (state.offset && state.showSidebar)
-                            updatePosition(sidebar, state.offset!)
-                        conditionalCSSClass(sidebar, state.showSidebar, 'open')
-                        taglist.append(...createTags(() => sidebarX, state))
-                        if (state.showSidebar) sidebar.focus();
-                        image.onload = () => details.innerText = `by ${state.username} • ${timeAgo(state.lastUpdated)} • ${state.imageType}@${image.naturalWidth}x${image.naturalHeight}`;
+                        if (offset && showSidebar) updatePosition(sidebar, offset)
+                        conditionalCSSClass(sidebar, showSidebar, 'open')
+                        taglist.append(...createTags(() => sidebarX, currentIcon, canEdit, editTags))
+                        if (showSidebar) sidebar.focus();
+                        image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
 
                         const add = mIcon('add')
                         const variantsList = custom('div', add, 'variants')
                         variantsList.innerHTML = "";
-                        if (state.imageVariants) variantsList.append(...state.imageVariants.map(src => img(src, 'alt-preview')))
-                        if (state.canUpload) variantsList.append(add)
+                        if (imageVariants) variantsList.append(...imageVariants.map(icon => img(getImageSourceFromIcon(icon), 'alt-preview')))
+                        if (canUpload) variantsList.append(add)
                         add.onclick = () => sidebarX.forceRedraw({ showVariableView: true })
 
-                        conditionalCSSClass(title, (state.iconTitle?.length ?? 0) > 20, 'small')
+                        conditionalCSSClass(title, (currentIcon?.filename?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
-                        if (state.showVariableView) {
-                            renderVariableView(sidebarX, shell, state);
-                        } else {
+                        if (showVariableView)
+                            renderVariableView(sidebarX, shell, currentIcon);
+                        else {
                             shell.append(
                                 image,
                                 title,
                                 taglist)
-                            if (!state.isVariantFrom)
+                            if (currentIcon && !currentIcon?.variantFrom)
                                 shell.append(
                                     span('Variants', 'variants-title'),
                                     variantsList,
-                                    createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(state))
+                                    createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(currentIcon))
                                 )
-                            else
+                            else if (variantFrom)
                                 shell.append(
-                                    createAction("update_disabled", `Remove this Variant from ${state.isVariantFrom[ 2 ]}`, true)
+                                    createAction("update_disabled", `Remove this Variant from ${variantFrom.filename}`, true)
                                 )
-                            if (state.canRemove)
-                                shell.append(createAction("delete", "Delete " + state.iconTitle, true, createDeleteDialog(web, state)))
+                            if (canRemove && currentIcon)
+                                shell.append(createAction("delete", "Delete " + currentIcon.filename, true, createDeleteDialog(web, currentIcon)))
                             shell.append(details)
                         }
 
@@ -131,13 +116,13 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 const iconId = data.updated?.[ 0 ];
                 const state = sidebarX.getState();
 
-                if (data.updated && iconId && state.id == iconId) {
-                    const iconData = (await getStoredData()).find(x => x.id == iconId);
-
+                if (data.updated && iconId && state.currentIcon && state.currentIcon.id == iconId) {
+                    const cachedAllData = await getStoredData();
+                    const iconData = cachedAllData.find(x => x.id == iconId);
+                    if (iconData === undefined) return;
                     sidebarX.forceRedraw({
-                        iconTitle: iconData?.filename,
-                        tags: iconData?.tags,
-                        lastUpdated: iconData?.date
+                        currentIcon: iconData,
+                        variantFrom: isVariantFrom(iconData, cachedAllData),
                     })
                 }
             })
@@ -153,7 +138,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     return;
                 }
                 if (typeof data === 'string') {
-                    if (currentState && currentState.id && currentState.id == data) {
+                    if (currentState && currentState.currentIcon && currentState.currentIcon.id == data) {
                         if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
                         sidebarX.forceRedraw({ showSidebar: false, showVariableView: false })
                     }
@@ -162,16 +147,11 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 disableGlobalDragAndDrop()
                 sidebarX.forceRedraw({
                     showSidebar: true,
-                    iconTitle: data.displayName,
-                    imageBlobUrl: data.image,
-                    id: data.id,
-                    tags: data.tags,
-                    lastUpdated: data.date,
-                    imageType: data.type,
-                    imageVariants: data.alts,
-                    isVariantFrom: data.isVariantFrom,
-                    showVariableView: currentState.id == data.id ? currentState.showVariableView : false,
-                    possiableVariants: data.possiableAlts,
+                    currentIcon: data.currentIcon,
+                    imageVariants: data.imageVariants,
+                    variantFrom: data.variantFrom,
+                    showVariableView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariableView : false,
+                    possiableVariants: data.possiableVariants,
                     offset: data.offset
                 })
             })
@@ -181,12 +161,12 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
 }
 
-const createTags = (sidebarX: () => RenderingXResult<SideBarType>, state: SideBarType) => {
-    const add = state.canEdit == true ? mIcon('edit') : ""
+const createTags = (sidebarX: () => RenderingXResult<SideBarType>, icon?: Icon, canEdit?: boolean, editTags?: boolean) => {
+    const add = canEdit == true ? mIcon('edit') : ""
     if (add)
         add.onclick = () => sidebarX().forceRedraw({ editTags: true })
-    if (state.editTags != true && state.tags)
-        return [ ...state.tags.map(x => {
+    if (editTags != true && icon?.tags)
+        return [ ...icon.tags.map(x => {
             const tag = span('#' + x)
             tag.onclick = () => {
                 sidebarX().forceRedraw({
@@ -197,15 +177,15 @@ const createTags = (sidebarX: () => RenderingXResult<SideBarType>, state: SideBa
             }
             return tag
         }), add ];
-    else if (state.editTags == true) {
+    else if (editTags == true) {
         const tagsInput = input({
-            value: state.tags?.join(' ')
+            value: icon?.tags.join(' ')
         })
         tagsInput.autofocus = true;
         tagsInput.onblur = () => {
             const newData = tagsInput.value.split(/_| |-|%20|,/)
-            if (JSON.stringify(newData) != JSON.stringify(state.tags))
-                hmsys.api.trigger('@HomeSYS/DataStoreDB', { type: "updateFile", id: state.id, tags: newData })
+            if (JSON.stringify(newData) != JSON.stringify(icon?.tags))
+                triggerUpdate(icon!.id, { tags: newData })
             sidebarX().forceRedraw({
                 editTags: false
             })
@@ -231,49 +211,28 @@ const createAction = (icon: string, text: string, isRed?: boolean, onClick?: nul
     return element;
 }
 
-function renderVariableView(sidebarX: RenderingXResult<SideBarType>, shell: HTMLElement, state: SideBarType) {
-    const header = list([
-        mIcon("arrow_back_ios_new"),
-        span("Variants")
-    ], [ "header" ]);
-    const manuelUploadButton = custom("button", "Select your File", "one");
-    const droparea = list([
-        span("Drop a new Image here", "firstLine"),
-        span("or", "secondLand"),
-        custom("center", manuelUploadButton)
-    ], [ "drop-area" ]);
-    header.onclick = () => sidebarX.forceRedraw({ showVariableView: false });
-    shell.append(
-        header,
-        droparea
-    );
-    console.log(state.possiableVariants);
-    if (state.possiableVariants && (state.possiableVariants.length) > 0) {
-        shell.append(
-            span("Recommended", "variants-title"),
-            list(state.possiableVariants.map(x => img(x[ 1 ], "alt-preview")), [ "variants" ])
-        );
-    }
+function getDetailsText(username?: string, icon?: Icon, image?: HTMLImageElement): string {
+    return `by ${username} • ${timeAgo(icon?.date)} • ${icon?.type}@${image?.naturalWidth}x${image?.naturalHeight}`;
 }
 
-function handleAllVariantsDownload(state: SideBarType): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
+function handleAllVariantsDownload(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
     return () => {
         const download = document.createElement('a');
         download.download = "";
-        download.href = state.imageBlobUrl ?? '';
-        download.download = state.iconTitle ?? '';
+        download.href = getImageSourceFromIcon(icon);
+        download.download = icon.filename ?? '';
         download.click();
     };
 }
 
-function handleBlurEventOfIconTitle(title: HTMLElement, state: SideBarType): ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null {
+function handleBlurEventOfIconTitle(title: HTMLElement, icon?: Icon): ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null {
     return () => {
-        if (title.innerText != state.iconTitle)
-            hmsys.api.trigger('@HomeSYS/DataStoreDB', { type: "updateFile", id: state.id, filename: title.innerText });
+        if (icon && title.innerText != icon.filename)
+            triggerUpdate(icon.id, { filename: title.innerText })
     };
 }
 
-function createDeleteDialog(web: RenderingX, state: SideBarType): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
+function createDeleteDialog(web: RenderingX, icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
     return () => web.toDialog({
         title: 'Are you sure?',
         userRequestClose: () => DialogActionAfterSubmit.RemoveClose,
@@ -281,7 +240,7 @@ function createDeleteDialog(web: RenderingX, state: SideBarType): ((this: Global
         buttons: [
             [ 'closed', DialogActionAfterSubmit.RemoveClose ],
             [ 'Delete', () => {
-                hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: state.id });
+                hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: icon.id });
                 return DialogActionAfterSubmit.RemoveClose;
             }
             ]
