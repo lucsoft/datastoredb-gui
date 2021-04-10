@@ -115,13 +115,19 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 const iconId = data.updated?.[ 0 ];
                 const state = sidebarX.getState();
 
+                const cachedAllData = await getStoredData();
+                const iconData = cachedAllData.find(x => x.id == iconId);
+                if (iconData === undefined) return;
+
                 if (data.updated && iconId && state.currentIcon && state.currentIcon.id == iconId) {
-                    const cachedAllData = await getStoredData();
-                    const iconData = cachedAllData.find(x => x.id == iconId);
-                    if (iconData === undefined) return;
                     sidebarX.forceRedraw({
                         currentIcon: iconData,
+                        possiableVariants: getPossibleVariants(cachedAllData, iconData),
                         variantFrom: isVariantFrom(iconData, cachedAllData),
+                    })
+                } else if (iconData.variantFrom == state.currentIcon?.id) {
+                    sidebarX.forceRedraw({
+                        possiableVariants: getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
                     })
                 }
             })

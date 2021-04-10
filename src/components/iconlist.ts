@@ -1,13 +1,13 @@
 import { custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
-import { compareArray, compareArrayHalfMatch, execludeCompareArray } from "../common/arrayCompare";
+import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
 import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 import { supportedIcontypes } from "../../config.json";
 import { getStoredData } from "../common/refreshData";
-import { isVariantFrom } from "../common/iconData/variants";
+import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
 import { getImageSourceFromIcon } from "../common/iconData/getImageUrlFromIcon";
 export const createIconList = () => {
     const list = document.createElement('div');
@@ -115,11 +115,7 @@ const renderSingleIcon = (icon: Icon) => {
             imageVariants: cachedAllData
                 .filter(x => x.variantFrom == icon.id),
             variantFrom: isVariantFrom(icon, cachedAllData),
-            possiableVariants: cachedAllData
-                .filter(x => x.id != image.id)
-                .filter(x => x.variantFrom === undefined)
-                .filter(x => !cachedAllData.find(y => y.variantFrom == x.id))
-                .filter(x => compareArrayHalfMatch(x.tags, icon.tags)),
+            possiableVariants: getPossibleVariants(cachedAllData, icon),
         })
     };
     return image;
