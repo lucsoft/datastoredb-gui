@@ -1,5 +1,6 @@
 import type { NetworkConnector } from '@lucsoft/network-connector';
 import * as config from '../../config.json';
+import { apiPath } from "../common/api";
 const form = document.createElement('form');
 const fileUp = document.createElement('input');
 fileUp.type = "file";
@@ -21,7 +22,7 @@ const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, for
         return done(undefined);
     const data = new FormData(form);
     const auth = hmsys.getAuth()!
-    fetch('https://eu01.hmsys.de:444/api/@HomeSYS/DataStoreDB/file', {
+    fetch(apiPath() + 'file', {
         method: 'POST',
         headers: new Headers({
             'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),

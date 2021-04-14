@@ -11,8 +11,9 @@ import { registerMasterDropArea } from "./components/dropareas";
 import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { generateUploadWizard } from "./components/uploadWizard";
+import * as config from '../config.json';
 
-export const hmsys = new NetworkConnector('eu01.hmsys.de:444')
+export const hmsys = new NetworkConnector(config[ "default-ip" ], { UNSECURE_AllowNonHTTPSConnection: !config[ "default-https" ] })
 export function renderMain(web: RenderingX, style: Style) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)

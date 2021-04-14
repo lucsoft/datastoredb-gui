@@ -13,7 +13,6 @@ import { triggerUpdate } from "../common/api";
 import { renderVariableView } from "./sidebar/variableView";
 import { sidebarGenerateTags } from "./sidebar/tags";
 
-
 export const createSidebar = (web: RenderingX): RenderElement => {
 
     return {
