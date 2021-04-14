@@ -17,7 +17,7 @@ export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
     })
 
     html.ondrop = (e: DragEvent) => {
-        if (html.classList.contains('disable-global-drop') || e.dataTransfer?.types[ 0 ] != "Files"
+        if (html.classList.contains('disable-global-drop') || !e.dataTransfer?.types.includes("Files")
             || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         e.preventDefault()
         html.classList.remove('drop-feedback')
@@ -32,7 +32,7 @@ export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
             uploadImage(files, hmsys)
     }
     html.ondragover = (e) => {
-        if (html.classList.contains('disable-global-drop') || e.dataTransfer?.types[ 0 ] != "Files"
+        if (html.classList.contains('disable-global-drop') || !e.dataTransfer?.types.includes("Files")
             || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
         dialog.open()
@@ -42,7 +42,7 @@ export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
     html.ondragenter = (e) => {
         if (html.classList.contains('disable-global-drop')
             || html.classList.contains('drop-feedback')
-            || e.dataTransfer?.types[ 0 ] != "Files"
+            || !e.dataTransfer?.types.includes("Files")
             || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
         dialog.open()
