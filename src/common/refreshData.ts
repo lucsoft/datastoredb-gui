@@ -2,6 +2,7 @@ import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 import { checkIfCacheIsAllowed } from "./checkIfCacheAllowed";
+import { massiveDownload } from "./massiveDownload";
 export let lastFilesCollected: Icon[] | undefined = undefined;
 export const getStoredData = async () => !checkIfCacheIsAllowed() ? lastFilesCollected ?? [] : await db.icons.orderBy('id').toArray()
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
@@ -22,8 +23,15 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
 
     const toRemove = oldData.map(x => x.id).filter(x => !data.files.map((x: Icon) => x.id).includes(x))
     const toAdd: string[] = data.files.map((x: Icon) => x.id).filter((x: string) => !oldData.map(x => x.id).includes(x))
-    const toAddFetch: Response[] = await Promise.all(toAdd.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
-    const toAddBlobs = await Promise.all(toAddFetch.map(x => x.blob()))
+    let toAddBlobs: Blob[] = [];
+    if (toAdd.length < 20) {
+        const toAddFetch: Response[] = await Promise.all(toAdd.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
+        toAddBlobs = await Promise.all(toAddFetch.map(x => x.blob()))
+    } else {
+        console.time()
+        toAddBlobs = (await massiveDownload(toAdd)).flat().map((_, i, blobArray) => blobArray.find(x => x[ 0 ] == toAdd[ i ])![ 1 ])
+        console.timeEnd()
+    }
     const toUpdateFetch: Response[] = await Promise.all(toUpdate.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
     const toUpdateBlobs = await Promise.all(toUpdateFetch.map(x => x.blob()))
     lastFilesCollected = toAdd.map((entry, index) => ({
