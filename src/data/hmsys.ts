@@ -73,7 +73,6 @@ export function updateFirstTimeDatabase(web: RenderingX) {
             emitEvent(DataStoreEvents.RefreshData, hmsys)
         else {
             const oldIcon = await db.icons.filter(x => x.id == data.id).first();
-            console.log(oldIcon);
             if (oldIcon == undefined) {
                 const id = setInterval(async () => {
                     const oldIcon = await db.icons.filter(x => x.id == data.id).first();

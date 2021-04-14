@@ -28,9 +28,7 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
         const toAddFetch: Response[] = await Promise.all(toAdd.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
         toAddBlobs = await Promise.all(toAddFetch.map(x => x.blob()))
     } else {
-        console.time()
         toAddBlobs = (await massiveDownload(toAdd)).flat().map((_, i, blobArray) => blobArray.find(x => x[ 0 ] == toAdd[ i ])![ 1 ])
-        console.timeEnd()
     }
     const toUpdateFetch: Response[] = await Promise.all(toUpdate.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
     const toUpdateBlobs = await Promise.all(toUpdateFetch.map(x => x.blob()))

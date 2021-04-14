@@ -57,8 +57,9 @@ export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
             [ 'Cancel', onClose ],
             [ 'Upload', async () => {
                 const state = uploadData.getState();
-                if (!state.files) return undefined;
-                const response = (await uploadImage(state.files, hmsys))?.items
+                const files = state.files;
+                if (!files) return undefined;
+                const response = (await uploadImage(files, hmsys))?.items
 
                 if (response?.length == 1)
                     await triggerUpdateResponse(response[ 0 ].id, { tags: state.tags, filename: state.name })

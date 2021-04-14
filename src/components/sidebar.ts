@@ -150,7 +150,6 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     return;
                 }
                 disableGlobalDragAndDrop()
-                console.log(data.possiableVariants, data.currentIcon);
                 sidebarX.forceRedraw({
                     showSidebar: true,
                     currentIcon: data.currentIcon,
@@ -214,7 +213,7 @@ function createDeleteDialog(web: RenderingX, icon: Icon): ((this: GlobalEventHan
     return () => web.toDialog({
         title: 'Are you sure?',
         userRequestClose: () => DialogActionAfterSubmit.RemoveClose,
-        content: span('Deleteing this File will be gone forever. (wich is a very long time)'),
+        content: span('Deleteing this File will be gone forever. (which is a very long time)'),
         buttons: [
             [ 'closed', DialogActionAfterSubmit.RemoveClose ],
             [ 'Delete', () => {

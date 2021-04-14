@@ -30,12 +30,12 @@ const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, for
         body: data
     })
         .then((e) => e.json())
-        .then(x => { done(x); fileUp.value = ""; })
+        .then(x => { done(x); resetFiles() })
         .catch(() => done(undefined));
 }
 export const uploadImage = (files: FileList, hmsys: NetworkConnector): Promise<responseType | undefined> => new Promise(done => {
-
-    fileUp.files = files;
+    if (fileUp.value == "")
+        fileUp.files = files;
     form.onsubmit = (event) => {
         event.preventDefault();
         fetchUploadFiles(fileUp, hmsys, form, done)
