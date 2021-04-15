@@ -24,6 +24,7 @@ export const createIconList = () => {
             const newData = data.new
                 .map(id => storedData.find(sd => sd.id == id)!)
                 .filter(icon => supportedIconType(icon))
+                .filter(icon => filterSettings(icon, currentSearchRequest))
                 .filter(x => tagFiltering(x, currentSearchRequest))
                 .filter(x => simpleTextFiltering(x, currentSearchRequest))
 
@@ -75,6 +76,7 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
 
     const elements = data
         .filter(icon => supportedIconType(icon))
+        .filter(icon => filterSettings(icon, filterOptions))
         .filter(icon => tagFiltering(icon, filterOptions))
         .filter(icon => simpleTextFiltering(icon, filterOptions))
         .map((icon) => renderSingleIcon(icon))
@@ -123,6 +125,13 @@ const renderSingleIcon = (icon: Icon) => {
 
 function supportedIconType(icon: Icon) {
     return supportedIcontypes.includes(icon.type);
+}
+function filterSettings(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }) {
+    if (filterOptions.includeTags.includes('overlay') ? false : icon.tags.includes("overlay"))
+        return false;
+    if (icon.variantFrom && filterOptions.filteredText == "")
+        return false;
+    return true;
 }
 
 function simpleTextFiltering(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }): unknown {
