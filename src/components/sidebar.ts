@@ -22,9 +22,10 @@ export const createSidebar = (web: RenderingX): RenderElement => {
             sidebar.tabIndex = 0;
 
             const shell = custom('div', undefined, 'shell')
-            document.body.addEventListener('click', (e) => {
+            document.addEventListener('click', (e) => {
                 // TODO Switch to a backdrop to get the a simpler click event thing
-                if (![ document.body,
+                if (![ document.querySelector('html'),
+                document.body,
                 document.querySelector('.incident-shell'),
                 document.querySelector('.image-list'),
                 document.querySelector('.homebar'),
@@ -32,7 +33,9 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 ...document.querySelectorAll('.image-list *'),
                 ...document.querySelectorAll('.homebar *')
                 ].includes(e.target as Element)) return
-                if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
+                const state = sidebarX.getState();
+                if (state.canUpload) enableGlobalDragAndDrop();
+                if (state.editTags) return;
 
                 sidebarX.forceRedraw({
                     showSidebar: false,
