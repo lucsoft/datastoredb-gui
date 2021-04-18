@@ -1,5 +1,10 @@
 import { SupportedThemes } from "@lucsoft/webgen"
+import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
+export const updateTheme = (theme: Style, selected: SupportedThemes) => {
+    theme.updateTheme(selected)
+    localStorage.setItem('webgen-theme', selected.toString());
+}
 export function updateColorBar(color: string) {
 
     const metaTag = document.head.querySelector('meta[name="theme-color"]')
