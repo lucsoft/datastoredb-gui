@@ -178,6 +178,9 @@
     gap: 12px;
     flex-wrap: wrap;
     margin: 6px 1.5rem 25px 1.5rem;
+    padding-bottom: 0.3rem;
+    max-height: 11rem;
+    overflow: auto;
 }
 .variants .alt-preview {
     height: 50px;
