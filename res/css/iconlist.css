@@ -28,7 +28,6 @@
     min-width: 64px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    animation: fadeIcon 250ms ease;
     transition: transform 150ms ease;
 }
 .image-list .icon:hover {
@@ -64,7 +63,6 @@
         position: absolute;
         margin: 0 auto;
         width: var(--max-width);
-        animation: fadeIcon 200ms ease;
     }
     .image-list {
         display: grid;
