@@ -1,36 +1,44 @@
 .dialog > .datastore-dialog {
     display: grid;
-    grid-template-columns: 28% auto;
-    max-width: 31rem;
-    gap: var(--gap);
+    grid-template-columns: 7rem auto;
+    width: 31rem;
+    gap: 1rem;
 }
-
-.dialog > .datastore-dialog svg {
-    fill: var(--on-card-text);
-}
-
-.datastore-dialog .copyright-notice {
-    font-size: 0.7rem;
-    line-height: 1.1;
-    display: inline-block;
-    color: var(--on-card-subtext);
-    margin-top: var(--gap);
-}
-.profile-badge {
-    margin-bottom: 0.4rem;
-}
-.profile-badge .username {
+.datastore-dialog .panda-icon svg {
     display: block;
-    line-height: 0.7;
+    width: 4.5rem;
+    margin-bottom: 0.5rem;
 }
-.profile-badge .id {
-    font-size: 0.7rem;
-    opacity: 0.8;
+.datastore-dialog > center {
+    margin-left: -0.57rem;
+    margin-right: 0.1rem;
 }
-.account-details {
-    font-size: 0.9rem;
-    line-height: 1.2;
-    margin-bottom: 1rem;
+.datastore-dialog .small-text {
+    width: 14rem;
+    overflow: hidden;
+    font-size: .6rem;
+    font-weight: 400;
+    text-align: right;
+}
+.datastore-dialog > center button {
+    margin: 0;
+    padding: 0.5rem .7rem;
+    display: block;
+    box-shadow: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+.datastore-dialog > center button:hover {
+    background-color: var(--on-card-background);
+    box-shadow: var(--box-shadow);
+    transform: none;
+}
+.datastore-dialog > list item {
+    align-items: center;
+}
+.datastore-dialog > list.style2 item .left {
+    font-size: 1rem;
 }
 
 @media (display-mode: standalone) {

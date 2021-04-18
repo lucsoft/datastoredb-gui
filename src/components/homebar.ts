@@ -12,6 +12,7 @@ import { manualUploadImage } from "./upload";
 import { supportedIcontypes } from '../../config.json';
 import { PandaIcon } from "./pandaIcon";
 import { UploadWizard } from "../types/UploadWizard";
+import { getStats } from "../common/api";
 export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: UploadWizard) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
@@ -51,6 +52,7 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
     const control = controlPanelContent(web, style);
     control.getShell().classList.add('datastore-dialog');
     const dialog = controlPanelDialog(web, control);
+    getStats().then(x => control.forceRedraw({ uptime: x.uptime, eventsEmitted: x.eventsEmitted }))
     settings.onclick = () => dialog.open()
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"

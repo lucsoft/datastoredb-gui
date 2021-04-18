@@ -4,7 +4,7 @@ import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanage
 import '../../res/css/incidentbar.css'
 import { hmsys } from "../dashboard"
 import { Style } from "@lucsoft/webgen/bin/lib/Style"
-import { updateColorBar, updateColorBarTheme } from "../common/themeColorBar"
+import { updateColorBar, updateColorBarTheme } from "../common/theming"
 
 export const createIncidentBar = (style: Style): RenderElement => ({
     draw: () => {

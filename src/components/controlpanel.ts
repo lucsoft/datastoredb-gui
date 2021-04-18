@@ -1,20 +1,14 @@
-import { createElement, custom, DialogActionAfterSubmit, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes } from "@lucsoft/webgen";
+import { Button, createElement, DialogActionAfterSubmit, list as List, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes, switchButtons } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
-import { envData } from "../common/envdata";
 import { ControlPanelType } from "../types/controlPanel";
-import { timeAgo } from "../common/date";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
-import { db } from "../data/IconsCache";
-import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
-import { PandaIcon } from "./pandaIcon";
+import { updateTheme } from "../common/theming";
 import { list } from "../common/list";
+import { envData } from "../common/envdata";
+import { PandaIcon } from "./pandaIcon";
+import { timeAgo } from "../common/date";
+import { resetAllData, setStore } from "../common/api";
 
-const renderUserProfile = (state: ControlPanelType) => {
-    const shell = custom('div', undefined, 'profile-badge');
-
-    shell.append(span(state.username, 'username'), span('#' + state.userId, 'id'));
-    return shell;
-};
 const renderCopryrightNotice = () => {
     const shell = span([
         `DataStoreDB-GUI v${envData.version} (${envData.lastCommit.substr(0, 8)}, ${new Date(envData.compiledDate).toLocaleDateString()})`,
@@ -25,46 +19,89 @@ const renderCopryrightNotice = () => {
     return shell;
 }
 
-export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {} as ControlPanelType, [
-    PandaIcon(),
-    (state) => list([
-        renderUserProfile(state),
-        list([
-            span(`Account created ${timeAgo(state.createDate)}\n`),
-            span(`Assinged ${state.iconCount} Icons\n`),
-            span(state.canRemove && state.canUpload ? 'You have full control over Panda 2.0' : `You have limited functionality for full access switch to a admin account.`)
-        ], [ 'account-details' ]),
-        multiStateSwitch("small",
-            { title: "Dimmed", action: () => updateTheme(theme, SupportedThemes.gray) },
-            { title: "Dark", action: () => updateTheme(theme, SupportedThemes.dark) },
-            { title: "White", action: () => updateTheme(theme, SupportedThemes.white) },
-            { title: "System", action: () => updateTheme(theme, SupportedThemes.auto) },
-        ),
-        renderCopryrightNotice()
-    ])
+const selectorView = (state: ControlPanelType, update: (data: Partial<ControlPanelType>) => void, theme: Style) => {
+    switch (state.render) {
+        case 'home':
+            return List({}, {
+                left: 'Account age',
+                right: span(timeAgo(state.createDate))
+            }, {
+                left: 'Running since',
+                right: span(timeAgo(state.uptime))
+            }, {
+                left: 'Events Emitted',
+                right: span(state.eventsEmitted?.toString())
+            }, {
+                left: 'Icons',
+                right: span(state.iconCount?.toString())
+            });
+        case 'news':
+            return span("Some more text coming here");
+        case 'settings':
+            return List({}, {
+                left: 'Theme',
+                right: multiStateSwitch("small",
+                    { title: "Dimmed", action: () => updateTheme(theme, SupportedThemes.gray) },
+                    { title: "Dark", action: () => updateTheme(theme, SupportedThemes.dark) },
+                    { title: "White", action: () => updateTheme(theme, SupportedThemes.white) },
+                    { title: "System", action: () => updateTheme(theme, SupportedThemes.auto) },
+                )
+            }, {
+                left: 'Compact View Mode',
+                right: switchButtons({
+                    checked: state.compactView,
+                    onAnimationComplete: () => {
+                        setStore('compact-view', !state.compactView)
+                        update({ compactView: !state.compactView })
+                    }
+                })
+            }, {
+                left: 'Always Show Variants',
+                right: switchButtons({
+                    checked: state.showAlwaysAllVariants,
+                    onAnimationComplete: () => {
+                        setStore('always-all-variants', !state.showAlwaysAllVariants)
+                        update({ showAlwaysAllVariants: !state.showAlwaysAllVariants })
+                    }
+                })
+            }, {
+                left: 'Clear Storage',
+                right: multiStateSwitch("small",
+                    {
+                        title: "Clear " + state.iconCount + " Files",
+                        action: () => resetAllData()
+                    }
+                )
+            }, {
+                left: 'Username',
+                right: span(state.username + '\n#' + state.userId, 'small-text')
+            })
+        case 'about':
+            return list([
+                PandaIcon().draw(),
+                renderCopryrightNotice()
+            ])
+        default:
+            return span("WIP");
+    }
+};
+export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, { render: 'home' } as ControlPanelType, [
+    (_, update) => Button({
+        big: false,
+        list: [
+            { text: 'Home', onclick: () => update({ render: 'home' }) },
+            { text: 'News', onclick: () => update({ render: 'news' }) },
+            { text: 'Settings', onclick: () => update({ render: 'settings' }) },
+            { text: 'About Panda', onclick: () => update({ render: 'about' }) }
+        ]
+    }),
+    (state, update) => selectorView(state, update, theme)
 ])
-const updateTheme = (theme: Style, selected: SupportedThemes) => {
-    theme.updateTheme(selected)
-    localStorage.setItem('webgen-theme', selected.toString());
-}
 export const controlPanelDialog = (web: RenderingX, control: RenderingXResult<any>) => web.toDialog({
-    title: "Panda 2.0",
+    title: "Panda",
     content: control,
     userRequestClose: () => DialogActionAfterSubmit.Close,
     buttons: [
-        [ 'Cleare Cache', () => {
-            return new Promise((done) => {
-                if (checkIfCacheIsAllowed())
-                    db.delete().then(() => {
-                        setTimeout(() => {
-                            location.href = location.href;
-                            done(DialogActionAfterSubmit.Close)
-                        }, 500)
-                    })
-                else
-                    location.href = location.href;
-            });
-        } ],
         [ 'Report a bug', () => {
             open("https://github.com/lucsoft/datastoredb-gui/issues/new")
             return undefined;
