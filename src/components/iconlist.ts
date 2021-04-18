@@ -41,7 +41,9 @@ export const createIconList = () => {
     registerEvent(DataStoreEvents.SearchBarUpdated, async (data) => {
         if ((await getStoredData()).length == 0)
             return;
-        if (currentSearchRequest.filteredText != data.filteredText
+        if (data === 'indirect-rerender')
+            renderIconlist(list, currentSearchRequest)
+        else if (currentSearchRequest.filteredText != data.filteredText
             || JSON.stringify(currentSearchRequest.execludeTags) != JSON.stringify(data.execludeTags)
             || JSON.stringify(currentSearchRequest.includeTags) != JSON.stringify(data.includeTags)
         ) {
