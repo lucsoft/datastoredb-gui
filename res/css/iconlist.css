@@ -12,11 +12,6 @@
 
 @keyframes fadeIcon {
     0% {
-        opacity: 0.01;
-        filter: blur(4px);
-        transform: scale(0.95);
-    }
-    50% {
         opacity: 0.2;
         filter: blur(4px);
         transform: scale(0.95);
@@ -33,7 +28,7 @@
     min-width: 64px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    animation: fadeIcon 300ms ease;
+    animation: fadeIcon 250ms ease;
     transition: transform 150ms ease;
 }
 .image-list .icon:hover {

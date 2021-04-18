@@ -8,6 +8,7 @@ import { envData } from "../common/envdata";
 import { PandaIcon } from "./pandaIcon";
 import { timeAgo } from "../common/date";
 import { resetAllData, setStore } from "../common/api";
+import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 
 const renderCopryrightNotice = () => {
     const shell = span([
@@ -52,6 +53,7 @@ const selectorView = (state: ControlPanelType, update: (data: Partial<ControlPan
                     checked: state.compactView,
                     onAnimationComplete: () => {
                         setStore('compact-view', !state.compactView)
+                        emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
                         update({ compactView: !state.compactView })
                     }
                 })
@@ -61,6 +63,7 @@ const selectorView = (state: ControlPanelType, update: (data: Partial<ControlPan
                     checked: state.showAlwaysAllVariants,
                     onAnimationComplete: () => {
                         setStore('always-all-variants', !state.showAlwaysAllVariants)
+                        emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
                         update({ showAlwaysAllVariants: !state.showAlwaysAllVariants })
                     }
                 })

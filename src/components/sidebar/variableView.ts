@@ -1,6 +1,5 @@
 import { img, mIcon, RenderingXResult, span } from "@lucsoft/webgen";
 import { triggerUpdate } from "../../common/api";
-import { getImageSourceFromIcon } from "../../common/iconData/getImageUrlFromIcon";
 import { list } from "../../common/list";
 import { Icon } from "../../data/IconsCache";
 import { SideBarType } from "../../types/sidebarTypes";
@@ -26,7 +25,7 @@ export function renderVariableView(sidebarX: RenderingXResult<SideBarType>, shel
 }
 
 function createNewVariantsIcon(mainIconId: string, icon: Icon) {
-    const imageE = img(getImageSourceFromIcon(icon), "alt-preview");
+    const imageE = img(URL.createObjectURL(icon.data), "alt-preview");
     imageE.onclick = () => triggerUpdate(icon.id, { variantFrom: mainIconId });
     return imageE;
 }

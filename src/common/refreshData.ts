@@ -2,7 +2,9 @@ import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 import { massiveDownload } from "./massiveDownload";
-export let lastFilesCollected: Icon[] | undefined = undefined;
+/**
+ * @deprecated
+ */
 export const getStoredData = async () => await db.icons.orderBy('id').toArray()
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
@@ -31,22 +33,20 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     }
     const toUpdateFetch: Response[] = await Promise.all(toUpdate.map((x: string) => hmsys.rest.get(config.targetId, `file/${x}`)))
     const toUpdateBlobs = await Promise.all(toUpdateFetch.map(x => x.blob()))
-    lastFilesCollected = toAdd.map((entry, index) => ({
-        ...data.files.find((x: Icon) => x.id == entry),
-        data: toAddBlobs[ index ]
-    }))
+    const mapBlobToFile = (data: Blob, icon: Icon) => new File([ data ], icon.filename, { type: icon.type });
+
     try {
         await db.transaction('rw', db.icons, async () => {
             await db.icons.bulkDelete(toRemove)
             await db.icons.bulkPut(toUpdate.map((entry, index) =>
             ({
                 ...data.files.find((x: Icon) => x.id == entry),
-                data: toUpdateBlobs[ index ]
+                data: mapBlobToFile(toUpdateBlobs[ index ], data.files[ index ])
             })))
             await db.icons.bulkAdd(toAdd.map((entry, index) =>
             ({
                 ...data.files.find((x: Icon) => x.id == entry),
-                data: toAddBlobs[ index ]
+                data: mapBlobToFile(toAddBlobs[ index ], data.files[ index ])
             })))
         })
     } catch (error) {

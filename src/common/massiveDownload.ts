@@ -1,18 +1,15 @@
 import { BlobReader, BlobWriter, Entry, ZipReader } from "@zip.js/zip.js";
 import { apiPath } from "./api";
+import { createChunks } from "./arrayCompare";
 
 function hexToBase64(str: any) {
     return btoa(String.fromCharCode.apply(null,
         str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
     );
 }
-const chunk = (array: any[], size: number) =>
-    array.reduce((acc, _, i) => {
-        if (i % size === 0) acc.push(array.slice(i, i + size))
-        return acc
-    }, [])
+
 export const massiveDownload = (globalIds: string[]): Promise<[ id: string, data: Blob ][][]> =>
-    Promise.all(chunk(globalIds, 450).map((x: string[]) => new Promise((done) => fetch(apiPath() + 'file/mass', {
+    Promise.all(createChunks(globalIds, 450).map((x: string[]) => new Promise((done) => fetch(apiPath() + 'file/mass', {
         method: 'GET',
         headers: {
             ids: x.map(x => hexToBase64(x)).join(' ')

@@ -5,10 +5,9 @@ import { timeAgo } from "../common/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
 import { SidebarNormalData, SideBarType } from "../types/sidebarTypes";
 import { hmsys } from "../dashboard";
-import { getStoredData } from "../common/refreshData";
 import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
-import { Icon } from "../data/IconsCache";
-import { getImageSourceFromIcon, getImageSourceFromIconOpt } from "../common/iconData/getImageUrlFromIcon";
+import { db, Icon } from "../data/IconsCache";
+import { getImageSourceFromIconOpt } from "../common/iconData/getImageUrlFromIcon";
 import { triggerUpdate } from "../common/api";
 import { renderVariableView } from "./sidebar/variableView";
 import { sidebarGenerateTags } from "./sidebar/tags";
@@ -67,7 +66,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         const add = mIcon('add')
                         const variantsList = custom('div', add, 'variants')
                         variantsList.innerHTML = "";
-                        if (imageVariants) variantsList.append(...imageVariants.map(icon => img(getImageSourceFromIcon(icon), 'alt-preview')))
+                        if (imageVariants) variantsList.append(...imageVariants.map(icon => img(URL.createObjectURL(icon.data), 'alt-preview')))
                         if (canUpload) variantsList.append(add)
                         add.onclick = () => sidebarX.forceRedraw({ showVariableView: true })
 
@@ -119,19 +118,19 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 const iconId = data.updated?.[ 0 ];
                 const state = sidebarX.getState();
 
-                const cachedAllData = await getStoredData();
-                const iconData = cachedAllData.find(x => x.id == iconId);
+                const cachedAllData = await db.icons.toArray();
+                const iconData = cachedAllData.find(x => x?.id == iconId);
                 if (iconData === undefined) return;
 
                 if (data.updated && iconId && state.currentIcon && state.currentIcon.id == iconId) {
                     sidebarX.forceRedraw({
                         currentIcon: iconData,
-                        possiableVariants: getPossibleVariants(cachedAllData, iconData),
-                        variantFrom: isVariantFrom(iconData, cachedAllData),
+                        possiableVariants: await getPossibleVariants(cachedAllData, iconData),
+                        variantFrom: isVariantFrom(iconData, cachedAllData)
                     })
                 } else if (iconData.variantFrom == state.currentIcon?.id) {
                     sidebarX.forceRedraw({
-                        possiableVariants: getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
+                        possiableVariants: await getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
                     })
                 }
             })
@@ -159,8 +158,8 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     currentIcon: data.currentIcon,
                     imageVariants: data.imageVariants,
                     variantFrom: data.variantFrom,
-                    showVariableView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariableView : false,
                     possiableVariants: data.possiableVariants,
+                    showVariableView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariableView : false,
                     offset: data.offset
                 })
             })
@@ -186,7 +185,7 @@ function handleAllVariantsDownload(icon: Icon): ((this: GlobalEventHandlers, ev:
     return () => {
         const download = document.createElement('a');
         download.download = "";
-        download.href = getImageSourceFromIcon(icon);
+        download.href = URL.createObjectURL(icon.data);
         download.download = icon.filename ?? '';
         download.click();
     };

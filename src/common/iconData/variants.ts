@@ -1,11 +1,11 @@
-import { Icon } from "../../data/IconsCache";
+import type { Icon } from "../../data/IconsCache";
 import { compareArrayHalfMatch } from "../arrayCompare";
 
-export function isVariantFrom(icon: Icon, cachedAllData: Icon[]): Icon | undefined {
-    return icon.variantFrom ? cachedAllData.find(x => x.id == icon.variantFrom) : undefined;
+export function isVariantFrom(icon: Icon, cachecachedAllData: Icon[]): Icon | undefined {
+    return icon.variantFrom ? cachecachedAllData.find(x => x.id == icon.variantFrom) : undefined;
 }
 
-export function getPossibleVariants(cachedAllData: Icon[], icon: Icon): Icon[] {
+export function getPossibleVariants(cachedAllData: Array<Icon>, icon: Icon): Icon[] {
     return cachedAllData
         .filter(x => x.id != icon.id)
         .filter(x => x.variantFrom === undefined)
