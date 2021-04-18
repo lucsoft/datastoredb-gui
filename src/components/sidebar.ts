@@ -12,6 +12,7 @@ import { getImageSourceFromIcon, getImageSourceFromIconOpt } from "../common/ico
 import { triggerUpdate } from "../common/api";
 import { renderVariableView } from "./sidebar/variableView";
 import { sidebarGenerateTags } from "./sidebar/tags";
+import { createAction } from "./sidebar/actions";
 
 export const createSidebar = (web: RenderingX): RenderElement => {
 
@@ -175,14 +176,6 @@ const updatePosition = (sidebar: HTMLElement, data: SidebarNormalData[ "offset" 
     sidebar.style.top = offset.top + "px";
     sidebar.style.left = (offset.left - (normal ? 0 : 365)) + "px";
     conditionalCSSClass(sidebar, !normal && matchMedia('(min-width: 700px)').matches, 'right')
-}
-
-const createAction = (icon: string, text: string, isRed?: boolean, onClick?: null | ((this: GlobalEventHandlers, ev: MouseEvent) => any)) => {
-    const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
-    if (onClick)
-        element.onclick = onClick;
-    element.append(mIcon(icon), span(text, 'label'))
-    return element;
 }
 
 function getDetailsText(username?: string, icon?: Icon, image?: HTMLImageElement): string {

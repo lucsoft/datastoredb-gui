@@ -121,9 +121,6 @@
     flex-flow: wrap;
     gap: 7px;
 }
-.sidebar.right .tags-list {
-    flex-direction: row-reverse;
-}
 .sidebar .tags-list span {
     background: var(--on-card-background);
     box-shadow: var(--box-shadow);
@@ -222,23 +219,6 @@
     font-weight: 500;
     margin-left: 0.5rem;
 }
-.drop-area span.firstLine {
-    display: block;
-    text-align: center;
-    font-weight: 400;
-    margin: 0.5rem 0 0 0;
-}
-.drop-area button {
-    width: calc(100% - 3rem);
-    margin: 0 1.5rem 1.5rem;
-}
-
-.drop-area span.secondLand {
-    display: block;
-    text-align: center;
-    font-weight: 400;
-    margin: 0.8rem 0 0.7rem;
-}
 
 @media (max-width: 700px) {
     .sidebar {
@@ -277,9 +257,5 @@
     .tags-list span {
         display: inline-block;
         margin-right: 7px;
-    }
-    .sidebar.right .tags-list {
-        margin-right: 0;
-        margin-left: 7px;
     }
 }
