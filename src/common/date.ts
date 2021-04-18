@@ -52,8 +52,8 @@ export function timeAgo(dateParam?: number) {
     else if (isYesterday)
         return getFormattedDate(date, 'Yesterday'); // Yesterday at 10:20
     else if (isThisYear)
-        return getFormattedDate(date, undefined, true); // 10. January at 10:20
+        return getFormattedDate(date, undefined, true); // 10 January at 10:20
 
 
-    return getFormattedDate(date); // 10. January 2017. at 10:20
+    return getFormattedDate(date); // 10 January 2017 at 10:20
 }
