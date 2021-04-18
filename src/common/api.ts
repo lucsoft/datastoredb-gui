@@ -1,7 +1,6 @@
 import { hmsys } from "../dashboard";
 const moduleId = '@HomeSYS/DataStoreDB';
 import * as config from "../../config.json";
-import { checkIfCacheIsAllowed } from "./checkIfCacheAllowed";
 import { db } from "../data/IconsCache";
 
 export const apiPath = () => `http${config[ "default-https" ] ? 's' : ''}://${config[ "default-ip" ]}/api/@HomeSYS/DataStoreDB/`;
@@ -37,9 +36,5 @@ export const resetAllData = () => {
     localStorage.removeItem('always-all-variants')
     localStorage.removeItem('compact-view')
     localStorage.removeItem('first-time-load')
-    if (checkIfCacheIsAllowed())
-        db.delete().then(() => location.href = location.href)
-    else
-        location.href = location.href;
-
+    db.delete().then(() => location.href = location.href)
 }

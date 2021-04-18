@@ -1,7 +1,6 @@
 import { createLocalStorageProvider } from "@lucsoft/network-connector";
 import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
 import * as config from '../../config.json';
-import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../components/dropareas";
 import { hmsys } from "../dashboard";
@@ -54,14 +53,10 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
     hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {
-        if (!checkIfCacheIsAllowed())
-            emitEvent(DataStoreEvents.RefreshData, hmsys)
-        else {
-            await db.transaction('rw', db.icons, async () => {
-                await db.icons.delete(data.deleted)
-            })
-            emitEvent(DataStoreEvents.RefreshDataComplete, { removed: [ data.deleted ] })
-        }
+        await db.transaction('rw', db.icons, async () => {
+            await db.icons.delete(data.deleted)
+        })
+        emitEvent(DataStoreEvents.RefreshDataComplete, { removed: [ data.deleted ] })
         emitEvent(DataStoreEvents.SidebarUpdate, data.deleted)
     })
     hmsys.api.sync('@HomeSYS/DataStoreDB/newFile', () => {
@@ -69,23 +64,19 @@ export function updateFirstTimeDatabase(web: RenderingX) {
     })
 
     hmsys.api.sync('@HomeSYS/DataStoreDB/updateFile', async (data: { filename: string, id: string, tags: string[], date: number, variantFrom: string }) => {
-        if (!checkIfCacheIsAllowed())
-            emitEvent(DataStoreEvents.RefreshData, hmsys)
-        else {
-            const oldIcon = await db.icons.filter(x => x.id == data.id).first();
-            if (oldIcon == undefined) {
-                const id = setInterval(async () => {
-                    const oldIcon = await db.icons.filter(x => x.id == data.id).first();
-                    if (oldIcon != undefined) {
-                        clearInterval(id);
-                        await updateIcon(oldIcon, data);
-                    }
-                }, 100)
-                return;
-            };
+        const oldIcon = await db.icons.filter(x => x.id == data.id).first();
+        if (oldIcon == undefined) {
+            const id = setInterval(async () => {
+                const oldIcon = await db.icons.filter(x => x.id == data.id).first();
+                if (oldIcon != undefined) {
+                    clearInterval(id);
+                    await updateIcon(oldIcon, data);
+                }
+            }, 100)
+            return;
+        };
 
-            await updateIcon(oldIcon, data);
-        }
+        await updateIcon(oldIcon, data);
         emitEvent(DataStoreEvents.RefreshDataComplete, { updated: [ data.id ] })
     })
 

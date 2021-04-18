@@ -1,10 +1,9 @@
 import { db, Icon } from '../data/IconsCache';
 import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
-import { checkIfCacheIsAllowed } from "./checkIfCacheAllowed";
 import { massiveDownload } from "./massiveDownload";
 export let lastFilesCollected: Icon[] | undefined = undefined;
-export const getStoredData = async () => !checkIfCacheIsAllowed() ? lastFilesCollected ?? [] : await db.icons.orderBy('id').toArray()
+export const getStoredData = async () => await db.icons.orderBy('id').toArray()
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
     const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
     const oldData = await db.icons.toArray();
@@ -36,25 +35,22 @@ registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
         ...data.files.find((x: Icon) => x.id == entry),
         data: toAddBlobs[ index ]
     }))
-    if (checkIfCacheIsAllowed()) {
-        try {
-            await db.transaction('rw', db.icons, async () => {
-                await db.icons.bulkDelete(toRemove)
-                await db.icons.bulkPut(toUpdate.map((entry, index) =>
-                ({
-                    ...data.files.find((x: Icon) => x.id == entry),
-                    data: toUpdateBlobs[ index ]
-                })))
-                await db.icons.bulkAdd(toAdd.map((entry, index) =>
-                ({
-                    ...data.files.find((x: Icon) => x.id == entry),
-                    data: toAddBlobs[ index ]
-                })))
-            })
-        } catch (error) {
-            console.log(error)
-        }
-
+    try {
+        await db.transaction('rw', db.icons, async () => {
+            await db.icons.bulkDelete(toRemove)
+            await db.icons.bulkPut(toUpdate.map((entry, index) =>
+            ({
+                ...data.files.find((x: Icon) => x.id == entry),
+                data: toUpdateBlobs[ index ]
+            })))
+            await db.icons.bulkAdd(toAdd.map((entry, index) =>
+            ({
+                ...data.files.find((x: Icon) => x.id == entry),
+                data: toAddBlobs[ index ]
+            })))
+        })
+    } catch (error) {
+        console.log(error)
     }
     if (toAdd.length !== 0 || toRemove.length !== 0 || toUpdate.length !== 0)
         emitEvent(DataStoreEvents.RefreshDataComplete, { new: toAdd, removed: toRemove, updated: toUpdate })

@@ -4,7 +4,6 @@ import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
-import { checkIfCacheIsAllowed } from "../common/checkIfCacheAllowed";
 import { supportedIcontypes } from "../../config.json";
 import { getStoredData } from "../common/refreshData";
 import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
@@ -18,8 +17,6 @@ export const createIconList = () => {
         const storedData: Icon[] = await getStoredData();
 
         if (data.new && data.new.length > 0) {
-            if (!checkIfCacheIsAllowed())
-                list.innerHTML = ""
 
             const newData = data.new
                 .map(id => storedData.find(sd => sd.id == id)!)
