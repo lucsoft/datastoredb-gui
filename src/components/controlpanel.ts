@@ -7,7 +7,7 @@ import { list } from "../common/list";
 import { envData } from "../common/envdata";
 import { PandaIcon } from "./pandaIcon";
 import { timeAgo } from "../common/date";
-import { resetAllData, setStore } from "../common/api";
+import { getStore, resetAllData, setStore } from "../common/api";
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 
 const renderCopryrightNotice = () => {
@@ -88,7 +88,11 @@ const selectorView = (state: ControlPanelType, update: (data: Partial<ControlPan
             return span("WIP");
     }
 };
-export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, { render: 'home' } as ControlPanelType, [
+export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {
+    render: 'home',
+    compactView: getStore('compact-view'),
+    showAlwaysAllVariants: getStore('always-all-variants')
+} as ControlPanelType, [
     (_, update) => Button({
         big: false,
         list: [

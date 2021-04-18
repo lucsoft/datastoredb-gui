@@ -125,12 +125,12 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 if (data.updated && iconId && state.currentIcon && state.currentIcon.id == iconId) {
                     sidebarX.forceRedraw({
                         currentIcon: iconData,
-                        possiableVariants: await getPossibleVariants(cachedAllData, iconData),
+                        possiableVariants: getPossibleVariants(cachedAllData, iconData),
                         variantFrom: isVariantFrom(iconData, cachedAllData)
                     })
                 } else if (iconData.variantFrom == state.currentIcon?.id) {
                     sidebarX.forceRedraw({
-                        possiableVariants: await getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
+                        possiableVariants: getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
                     })
                 }
             })
