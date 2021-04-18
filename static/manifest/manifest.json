@@ -1,6 +1,6 @@
 {
-    "short_name": "Panda 2.0",
-    "name": "Panda 2.0",
+    "short_name": "Panda",
+    "name": "Panda",
     "display": "standalone",
     "scope": "/",
     "start_url": "/",

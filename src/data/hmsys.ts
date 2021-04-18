@@ -22,13 +22,13 @@ export function updateFirstTimeDatabase(web: RenderingX) {
     })
     if (navigator.onLine == false) {
         emitEvent(DataStoreEvents.IncidentBar, {
-            message: "Connect to the Internet to interact with Panda 2.0"
+            message: "Connect to the Internet to interact with Panda"
         })
         return;
     }
     window.addEventListener('offline', () => {
         emitEvent(DataStoreEvents.IncidentBar, {
-            message: "Connect to the Internet to interact with Panda 2.0"
+            message: "Connect to the Internet to interact with Panda"
         })
         emitEvent(DataStoreEvents.ConnectionLost, undefined);
     })
@@ -36,8 +36,8 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         const profileData: any = await hmsys.api.requestUserData("services", "profile");
         if (profileData.services.DataStoreDB == undefined)
             web.toDialog({
-                title: "Panda 2.0 is unavailable",
-                content: span("This Account dosn't have access to Panda 2.0. Change your Account."),
+                title: "Panda is unavailable",
+                content: span("This Account dosn't have access to Panda. Change your Account."),
                 buttons: [ [ 'okay', DialogActionAfterSubmit.RemoveClose ] ]
             }).open()
 
