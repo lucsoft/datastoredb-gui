@@ -7,7 +7,6 @@ const TerserPlugin = require("terser-webpack-plugin");
 const webpack = require('webpack');
 const package = require('./package.json');
 const { execSync } = require('child_process')
-const WorkboxPlugin = require('workbox-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (_, mode) => {
@@ -76,13 +75,6 @@ module.exports = (_, mode) => {
                     { from: 'static/images', to: 'images' },
                     { from: 'static/manifest', to: 'manifest' },
                 ]
-            }),
-            new WorkboxPlugin.GenerateSW({
-                cleanupOutdatedCaches: true,
-                cacheId: 'datastoredb-gui',
-                mode: isProduction ? 'production' : 'development',
-                clientsClaim: true,
-                skipWaiting: true
             })
         ],
         optimization: isProduction ? {
