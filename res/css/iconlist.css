@@ -30,6 +30,10 @@
     image-rendering: crisp-edges;
     transition: transform 150ms ease;
 }
+.image-list.compact-view .icon{
+    height: 32px;
+    min-width: 32px;
+}
 .image-list .icon:hover {
     transform: scale(1.05);
 }

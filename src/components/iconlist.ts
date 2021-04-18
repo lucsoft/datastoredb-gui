@@ -1,19 +1,20 @@
-import { custom, img, span } from "@lucsoft/webgen";
+import { conditionalCSSClass, custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { compareArray, execludeCompareArray } from "../common/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { db, Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
 import { supportedIcontypes } from "../../config.json";
-import { getStoredData } from "../common/refreshData";
 import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
+import { getStore } from "../common/api";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
     renderIconlist(list, currentSearchRequest)
+    conditionalCSSClass(list, getStore('compact-view'), 'compact-view')
 
     registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
-        const storedData: Icon[] = await getStoredData();
+        const storedData: Icon[] = await db.icons.toArray();
 
         if (data.new && data.new.length > 0) {
             const newData = data.new
@@ -33,8 +34,8 @@ export const createIconList = () => {
         }
     })
     registerEvent(DataStoreEvents.SearchBarUpdated, async (data) => {
-        if ((await getStoredData()).length == 0)
-            return;
+        if ((await db.icons.count()) == 0) return;
+        conditionalCSSClass(list, getStore('compact-view'), 'compact-view')
         if (data === 'indirect-rerender')
             renderIconlist(list, currentSearchRequest)
         else if (currentSearchRequest.filteredText != data.filteredText

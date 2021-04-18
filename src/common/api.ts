@@ -30,8 +30,11 @@ export const getStats = async () => {
     return fetch(`http${config[ "default-https" ] ? 's' : ''}://${config[ "default-ip" ]}/stats`).then(x => x.json())
 }
 export const setStore = (type: 'always-all-variants' | 'compact-view', value: boolean) => {
-    localStorage[ type ] = value;
+    localStorage[ type ] = value.toString();
 }
+export const getStore = (type: 'always-all-variants' | 'compact-view') =>
+    localStorage[ type ] == 'true';
+
 export const resetAllData = () => {
     localStorage.removeItem('always-all-variants')
     localStorage.removeItem('compact-view')
