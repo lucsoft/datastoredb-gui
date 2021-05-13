@@ -2,7 +2,7 @@ import { NetworkConnector } from '@lucsoft/network-connector';
 import { custom } from '@lucsoft/webgen';
 import { renderHomeBar } from './components/homebar';
 import { createIconList } from './components/iconlist';
-import { createSidebar } from "./components/sidebar";
+import { createSidebar } from "./components/sidebar/sidebar";
 import { updateFirstTimeDatabase } from "./data/hmsys";
 import { createIncidentBar } from "./data/incidentBar";
 import './common/refreshData';

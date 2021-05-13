@@ -1,6 +1,6 @@
 import { img, mIcon, RenderingXResult, span } from "@lucsoft/webgen";
 import { triggerUpdate } from "../../common/api";
-import { list } from "../../common/list";
+import { list } from "../list";
 import { Icon } from "../../data/IconsCache";
 import { SideBarType } from "../../types/sidebarTypes";
 import { createAction } from "./actions";

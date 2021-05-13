@@ -1,17 +1,17 @@
 import { Card, conditionalCSSClass, createElement, custom, DialogActionAfterSubmit, img, mIcon, RenderElement, RenderingX, span } from "@lucsoft/webgen"
-import { DataStoreEvents, registerEvent } from "../common/eventmanager";
-import '../../res/css/sidebar.css';
-import { timeAgo } from "../common/date";
-import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "./dropareas";
-import { SidebarNormalData, SideBarType } from "../types/sidebarTypes";
-import { hmsys } from "../dashboard";
-import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
-import { db, Icon } from "../data/IconsCache";
-import { getImageSourceFromIconOpt } from "../common/iconData/getImageUrlFromIcon";
-import { triggerUpdate } from "../common/api";
-import { renderVariableView } from "./sidebar/variableView";
-import { sidebarGenerateTags } from "./sidebar/tags";
-import { createAction } from "./sidebar/actions";
+import { DataStoreEvents, registerEvent } from "../../common/eventmanager";
+import '../../../res/css/sidebar.css';
+import { timeAgo } from "../../common/user/date";
+import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "../dropareas";
+import { SidebarNormalData, SideBarType } from "../../types/sidebarTypes";
+import { hmsys } from "../../dashboard";
+import { getPossibleVariants, isVariantFrom } from "../../common/iconData/variants";
+import { db, Icon } from "../../data/IconsCache";
+import { getImageSourceFromIconOpt } from "../../common/iconData/getImageUrlFromIcon";
+import { triggerUpdate } from "../../common/api";
+import { renderVariableView } from "./variableView";
+import { sidebarGenerateTags } from "./tags";
+import { createAction } from "./actions";
 
 export const createSidebar = (web: RenderingX): RenderElement => {
 
