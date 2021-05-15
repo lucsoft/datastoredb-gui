@@ -1,5 +1,5 @@
 import { Button, createElement, DialogActionAfterSubmit, list as List, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes, switchButtons } from "@lucsoft/webgen";
-import '../../res/css/dialog.css';
+import '../../../res/css/dialog.css';
 import { ControlPanelType } from "../../types/controlPanel";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { updateTheme } from "../../common/user/theming";
