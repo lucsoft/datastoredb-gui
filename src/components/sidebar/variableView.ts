@@ -1,5 +1,5 @@
 import { img, mIcon, RenderingXResult, span } from "@lucsoft/webgen";
-import { triggerUpdate, triggerUpdateResponse } from "../../common/api";
+import { triggerUpdate } from "../../common/api";
 import { list } from "../list";
 import { Icon } from "../../data/IconsCache";
 import { SideBarType } from "../../types/sidebarTypes";
@@ -27,11 +27,7 @@ export function renderVariableView(sidebarX: RenderingXResult<SideBarType>, shel
 }
 const uploadCustomVariant = (icon: Icon) => {
     manualUploadImage((files) => {
-        uploadImage(files!, hmsys).then(x => {
-            x?.items.forEach(x => {
-                triggerUpdateResponse(x.id, { variantFrom: icon.id })
-            })
-        })
+        uploadImage(files!, hmsys, icon.id)
     })
     return undefined;
 };

@@ -17,28 +17,31 @@ document.body.append(form)
 
 export const resetFiles = () => form.reset();
 type responseType = { items: { "id": string, "filename": string, "type": string, "tags": string[], "date": number }[] };
-const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, form: HTMLFormElement, done: (data?: responseType | undefined) => void) => {
+const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, form: HTMLFormElement, done: (data?: responseType | undefined) => void, variantFrom?: string) => {
     if (fileUp.value == "")
         return done(undefined);
+
     const data = new FormData(form);
     const auth = hmsys.getAuth()!
+    const header = new Headers({
+        'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`)
+    })
+    if (variantFrom) header.append('variant-from', variantFrom);
     fetch(apiPath() + 'file', {
         method: 'POST',
-        headers: new Headers({
-            'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`),
-        }),
+        headers: header,
         body: data
     })
         .then((e) => e.json())
         .then(x => { done(x); resetFiles() })
         .catch(() => done(undefined));
 }
-export const uploadImage = (files: FileList, hmsys: NetworkConnector): Promise<responseType | undefined> => new Promise(done => {
+export const uploadImage = (files: FileList, hmsys: NetworkConnector, variantFrom?: string): Promise<responseType | undefined> => new Promise(done => {
     if (fileUp.value == "")
         fileUp.files = files;
     form.onsubmit = (event) => {
         event.preventDefault();
-        fetchUploadFiles(fileUp, hmsys, form, done)
+        fetchUploadFiles(fileUp, hmsys, form, done, variantFrom)
     };
     submit.click()
 });
