@@ -1,9 +1,9 @@
 import { custom, DialogActionAfterSubmit, img, input, mIcon, RenderingX, span } from "@lucsoft/webgen";
-import { triggerUpdateResponse } from "../common/api";
-import { list } from "./list";
+import { triggerUpdateResponse } from "../../common/api";
+import { list } from "../list";
 import { hmsys } from "./dashboard";
-import { UploadWizard, UploadWizardData } from "../types/UploadWizard";
-import { resetFiles, uploadImage } from "./upload";
+import { UploadWizard, UploadWizardData } from "../../types/UploadWizard";
+import { resetFiles, uploadImage } from "../upload";
 
 export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
     const onClose = () => {

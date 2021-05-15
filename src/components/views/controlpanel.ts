@@ -1,14 +1,14 @@
 import { Button, createElement, DialogActionAfterSubmit, list as List, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes, switchButtons } from "@lucsoft/webgen";
 import '../../res/css/dialog.css';
-import { ControlPanelType } from "../types/controlPanel";
+import { ControlPanelType } from "../../types/controlPanel";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
-import { updateTheme } from "../common/user/theming";
-import { list } from "./list";
-import { envData } from "../common/envdata";
-import { PandaIcon } from "./pandaIcon";
-import { timeAgo } from "../common/user/date";
-import { getStore, resetAllData, setStore } from "../common/api";
-import { DataStoreEvents, emitEvent } from "../common/eventmanager";
+import { updateTheme } from "../../common/user/theming";
+import { list } from "../list";
+import { envData } from "../../common/envdata";
+import { PandaIcon } from "../pandaIcon";
+import { timeAgo } from "../../common/user/date";
+import { getStore, resetAllData, setStore } from "../../common/api";
+import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 
 const renderCopryrightNotice = () => {
     const shell = span([

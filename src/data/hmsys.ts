@@ -3,7 +3,7 @@ import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
 import * as config from '../../config.json';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../components/dropareas";
-import { hmsys } from "../components/dashboard";
+import { hmsys } from "../components/views/dashboard";
 import { ProfileData } from "../types/profileDataTypes";
 import { db, Icon } from "./IconsCache";
 

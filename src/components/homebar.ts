@@ -4,7 +4,7 @@ import '../../res/css/homebar.css';
 
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { Icon } from "../data/IconsCache";
-import { controlPanelContent, controlPanelDialog } from "./controlpanel";
+import { controlPanelContent, controlPanelDialog } from "./views/controlpanel";
 import { getStoredData } from "./../common/refreshData";
 import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";

@@ -1,4 +1,4 @@
-import { hmsys } from "../components/dashboard";
+import { hmsys } from "../components/views/dashboard";
 const moduleId = '@HomeSYS/DataStoreDB';
 import * as config from "../../config.json";
 import { db } from "../data/IconsCache";

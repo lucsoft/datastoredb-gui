@@ -1,5 +1,5 @@
 import { RenderingX, span } from "@lucsoft/webgen";
-import { hmsys } from "./dashboard";
+import { hmsys } from "./views/dashboard";
 import { PandaIcon } from "./pandaIcon";
 import { resetFiles, uploadImage } from "./upload";
 import '../../res/css/dialogDropFiles.css';
