@@ -21,7 +21,7 @@
         "@lucsoft/network-connector": "^0.3.2",
         "@lucsoft/webgen": "^1.17.18",
         "@webpack-cli/serve": "^1.4.0",
-        "@zip.js/zip.js": "^2.2.30",
+        "@zip.js/zip.js": "^2.2.32",
         "clean-webpack-plugin": "^3.0.0",
         "copy-webpack-plugin": "^8.1.1",
         "css-loader": "^5.2.4",
