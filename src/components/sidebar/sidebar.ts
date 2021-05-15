@@ -4,7 +4,7 @@ import '../../../res/css/sidebar.css';
 import { timeAgo } from "../../common/user/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "../dropareas";
 import { SidebarNormalData, SideBarType } from "../../types/sidebarTypes";
-import { hmsys } from "../../dashboard";
+import { hmsys } from "../dashboard";
 import { getPossibleVariants, isVariantFrom } from "../../common/iconData/variants";
 import { db, Icon } from "../../data/IconsCache";
 import { getImageSourceFromIconOpt } from "../../common/iconData/getImageUrlFromIcon";

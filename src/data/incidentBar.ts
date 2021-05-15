@@ -2,7 +2,7 @@ import { EventTypes } from "@lucsoft/network-connector"
 import { createElement, custom, RenderElement, SupportedThemes } from "@lucsoft/webgen"
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager"
 import '../../res/css/incidentbar.css'
-import { hmsys } from "../dashboard"
+import { hmsys } from "../components/dashboard"
 import { Style } from "@lucsoft/webgen/bin/lib/Style"
 import { updateColorBar, updateColorBarTheme } from "../common/user/theming"
 

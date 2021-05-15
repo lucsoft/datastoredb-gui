@@ -1,7 +1,7 @@
 import { custom, DialogActionAfterSubmit, img, input, mIcon, RenderingX, span } from "@lucsoft/webgen";
 import { triggerUpdateResponse } from "../common/api";
 import { list } from "./list";
-import { hmsys } from "../dashboard";
+import { hmsys } from "./dashboard";
 import { UploadWizard, UploadWizardData } from "../types/UploadWizard";
 import { resetFiles, uploadImage } from "./upload";
 

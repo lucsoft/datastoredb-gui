@@ -1,6 +1,6 @@
 import { BlobReader, BlobWriter, Entry, ZipReader } from "@zip.js/zip.js";
 import { apiPath } from "./api";
-import { createChunks } from "./arrayCompare";
+import { createChunks } from "./iconData/arrayCompare";
 
 function hexToBase64(str: any) {
     return btoa(String.fromCharCode.apply(null,

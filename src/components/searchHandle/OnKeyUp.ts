@@ -1,5 +1,5 @@
 import { conditionalCSSClass, span } from "@lucsoft/webgen";
-import { compareArray, execludeCompareArray } from "../../common/arrayCompare";
+import { compareArray, execludeCompareArray } from "../../common/iconData/arrayCompare";
 import { Icon } from "../../data/IconsCache";
 
 let getWidth = (fontSize: string, value: string) => {

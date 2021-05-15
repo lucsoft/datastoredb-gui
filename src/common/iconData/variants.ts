@@ -1,5 +1,5 @@
 import type { Icon } from "../../data/IconsCache";
-import { compareArrayHalfMatch } from "../arrayCompare";
+import { compareArrayHalfMatch } from "./arrayCompare";
 
 export function isVariantFrom(icon: Icon, cachecachedAllData: Icon[]): Icon | undefined {
     return icon.variantFrom ? cachecachedAllData.find(x => x.id == icon.variantFrom) : undefined;

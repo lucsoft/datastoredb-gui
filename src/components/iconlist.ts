@@ -1,6 +1,6 @@
 import { conditionalCSSClass, custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
-import { compareArray, execludeCompareArray } from "../common/arrayCompare";
+import { compareArray, execludeCompareArray } from "../common/iconData/arrayCompare";
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { db, Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
