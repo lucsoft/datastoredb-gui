@@ -9,11 +9,12 @@ import { getPossibleVariants, isVariantFrom } from "../../common/iconData/varian
 import { db, Icon } from "../../data/IconsCache";
 import { getImageSourceFromIconOpt } from "../../common/iconData/getImageUrlFromIcon";
 import { triggerUpdate } from "../../common/api";
-import { renderVariableView } from "./variableView";
+import { renderVariantsView } from "./variantsView";
 import { sidebarGenerateTags } from "./tags";
 import { createAction } from "./actions";
+import { VariantsGeneratorDialog } from "./variantsGenerator";
 
-export const createSidebar = (web: RenderingX): RenderElement => {
+export const createSidebar = (web: RenderingX, generator: VariantsGeneratorDialog): RenderElement => {
 
     return {
         draw: () => {
@@ -39,13 +40,13 @@ export const createSidebar = (web: RenderingX): RenderElement => {
 
                 sidebarX.forceRedraw({
                     showSidebar: false,
-                    showVariableView: false
+                    showVariantsView: false
                 })
                 sidebar.classList.remove('open')
 
             })
             const sidebarX = web.toCustom({ shell: sidebar }, {} as SideBarType, [
-                ({ currentIcon, canEdit, username, canRemove, canUpload, offset, showSidebar, showVariableView, editTags, imageVariants, variantFrom, possiableVariants }) => Card({}, {
+                ({ currentIcon, canEdit, username, canRemove, canUpload, offset, showSidebar, showVariantsView: showVariantsView, editTags, imageVariants, variantFrom, possiableVariants }) => Card({}, {
                     getSize: () => ({}),
                     draw: (card) => {
 
@@ -68,11 +69,11 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                         variantsList.innerHTML = "";
                         if (imageVariants) variantsList.append(...imageVariants.map(icon => img(URL.createObjectURL(icon.data), 'alt-preview')))
                         if (canUpload) variantsList.append(add)
-                        add.onclick = () => sidebarX.forceRedraw({ showVariableView: true })
+                        add.onclick = () => sidebarX.forceRedraw({ showVariantsView: true })
 
                         conditionalCSSClass(title, (currentIcon?.filename?.length ?? 0) > 20, 'small')
                         shell.innerHTML = "";
-                        if (showVariableView) renderVariableView(sidebarX, shell, currentIcon, possiableVariants);
+                        if (showVariantsView) renderVariantsView(sidebarX, shell, currentIcon!, possiableVariants!, generator);
                         else {
                             shell.append(
                                 image,
@@ -142,13 +143,13 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                 const currentState = sidebarX.getState();
                 if (data === undefined) {
                     if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
-                    sidebarX.forceRedraw({ showSidebar: false, showVariableView: false })
+                    sidebarX.forceRedraw({ showSidebar: false, showVariantsView: false })
                     return;
                 }
                 if (typeof data === 'string') {
                     if (currentState && currentState.currentIcon && currentState.currentIcon.id == data) {
                         if (sidebarX.getState().canUpload) enableGlobalDragAndDrop();
-                        sidebarX.forceRedraw({ showSidebar: false, showVariableView: false })
+                        sidebarX.forceRedraw({ showSidebar: false, showVariantsView: false })
                     }
                     return;
                 }
@@ -159,7 +160,7 @@ export const createSidebar = (web: RenderingX): RenderElement => {
                     imageVariants: data.imageVariants,
                     variantFrom: data.variantFrom,
                     possiableVariants: data.possiableVariants,
-                    showVariableView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariableView : false,
+                    showVariantsView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariantsView : false,
                     offset: data.offset
                 })
             })

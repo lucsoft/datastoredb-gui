@@ -12,6 +12,7 @@ import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { generateUploadWizard } from "./uploadWizard";
 import * as config from '../../../config.json';
+import { generateVariantsWizard } from "../sidebar/variantsGenerator";
 
 export const hmsys = new NetworkConnector(config[ "default-ip" ], { UNSECURE_AllowNonHTTPSConnection: !config[ "default-https" ] })
 export function renderMain(web: RenderingX, style: Style) {
@@ -19,10 +20,11 @@ export function renderMain(web: RenderingX, style: Style) {
     document.body.append(shell)
 
     const wizard = generateUploadWizard(web);
+    const generator = generateVariantsWizard(web);
 
     web.toCustom({ shell }, {}, () => [
         createIncidentBar(style),
-        createSidebar(web),
+        createSidebar(web, generator),
         renderHomeBar(web, style, wizard),
         createIconList()
     ])

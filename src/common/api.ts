@@ -34,10 +34,11 @@ export const setStore = (type: 'always-all-variants' | 'compact-view', value: bo
 }
 export const getStore = (type: 'always-all-variants' | 'compact-view') =>
     localStorage[ type ] == 'true';
-
+export const getFilterMode = (): [ displayName: string, alpha: number, filter: string ] => config.filterMode[ parseInt(localStorage[ "filter-mode" ] ?? "0") ] as any;
 export const resetAllData = () => {
     localStorage.removeItem('always-all-variants')
     localStorage.removeItem('compact-view')
     localStorage.removeItem('first-time-load')
+    localStorage.setItem('filter-mode', "0")
     db.delete().then(() => location.href = location.href)
 }

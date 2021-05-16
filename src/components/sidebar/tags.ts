@@ -14,7 +14,7 @@ export const sidebarGenerateTags = (sidebarX: () => RenderingXResult<SideBarType
             tag.onclick = () => {
                 sidebarX().forceRedraw({
                     showSidebar: false,
-                    showVariableView: false
+                    showVariantsView: false
                 })
                 emitEvent(DataStoreEvents.SearchBarAddTag, x);
             }

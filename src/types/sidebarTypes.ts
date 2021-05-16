@@ -2,7 +2,7 @@ import { Icon } from "../data/IconsCache";
 
 export type SideBarType = {
     currentIcon?: Icon
-    showVariableView?: boolean
+    showVariantsView?: boolean
     showSidebar?: boolean
     editTags?: boolean
     variantFrom?: Icon
