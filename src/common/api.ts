@@ -9,7 +9,7 @@ export const triggerUpdateResponse = async (id: string, data: Partial<{
     variantFrom: string,
     tags: string[]
 }>) => {
-    await hmsys.api.triggerResponse(moduleId, {
+    await hmsys.api.triggerWithResponse(moduleId, {
         ...data,
         type: "updateFile",
         id

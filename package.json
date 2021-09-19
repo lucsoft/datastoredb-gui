@@ -1,6 +1,6 @@
 {
     "name": "datastoredb-gui",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Search for Icons, Images and more",
     "main": "main.ts",
     "scripts": {
@@ -18,7 +18,7 @@
     },
     "homepage": "https://github.com/lucsoft/datastoredb-gui#readme",
     "dependencies": {
-        "@lucsoft/network-connector": "^0.3.2",
+        "@lucsoft/network-connector": "^0.4.4",
         "@lucsoft/webgen": "^1.17.18",
         "@webpack-cli/serve": "^1.4.0",
         "@zip.js/zip.js": "^2.2.32",

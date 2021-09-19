@@ -1,4 +1,4 @@
-import { NetworkConnector } from '@lucsoft/network-connector';
+import { NetworkConnector, createLocalStorageProvider } from '@lucsoft/network-connector';
 import { custom } from '@lucsoft/webgen';
 import { renderHomeBar } from '../homebar';
 import { createIconList } from '../iconlist';
@@ -14,7 +14,10 @@ import { generateUploadWizard } from "./uploadWizard";
 import * as config from '../../../config.json';
 import { generateVariantsWizard } from "../sidebar/variantsGenerator";
 
-export const hmsys = new NetworkConnector(config[ "default-ip" ], { UNSECURE_AllowNonHTTPSConnection: !config[ "default-https" ] })
+export const hmsys = new NetworkConnector(config[ "default-ip" ], {
+    store: createLocalStorageProvider(),
+    AllowNonHTTPSConnection: !config[ "default-https" ]
+})
 export function renderMain(web: RenderingX, style: Style) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)

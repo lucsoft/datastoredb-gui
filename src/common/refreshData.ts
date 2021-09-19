@@ -7,7 +7,7 @@ import { massiveDownload } from "./massiveDownload";
  */
 export const getStoredData = async () => await db.icons.orderBy('id').toArray()
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {
-    const { data } = await hmsys.api.triggerResponse(config.targetId, { type: "getFiles" }) as any;
+    const { data } = await hmsys.api.triggerWithResponse(config.targetId, { type: "getFiles" }) as any;
     const oldData = await db.icons.toArray();
     const toUpdate: string[] = data.files.filter((x: Icon) => {
         const thing = oldData.find(y => y.id == x.id)

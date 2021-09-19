@@ -1,4 +1,4 @@
-import { createLocalStorageProvider } from "@lucsoft/network-connector";
+import { EventTypes } from "@lucsoft/network-connector";
 import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
 import * as config from '../../config.json';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
@@ -31,27 +31,30 @@ export function updateFirstTimeDatabase(web: RenderingX) {
         })
         emitEvent(DataStoreEvents.ConnectionLost, undefined);
     })
-    hmsys.connect(createLocalStorageProvider(async () => config[ "default-user" ])).then(async (_) => {
-        const profileData: any = await hmsys.api.requestUserData("services", "profile");
-        if (profileData.services.DataStoreDB == undefined)
+    hmsys.rawOn(EventTypes.LoginSuccessful, async () => {
+        const { userData }: any = await hmsys.api.requestUserData("services", "profile");
+        if (userData.services.DataStoreDB == undefined)
             web.toDialog({
                 title: "Panda is unavailable",
                 content: span("This Account dosn't have access to Panda. Change your Account."),
                 buttons: [ [ 'okay', DialogActionAfterSubmit.RemoveClose ] ]
             }).open()
 
-        if (profileData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
+        if (userData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
         emitEvent(DataStoreEvents.RecivedProfileData, {
-            canUpload: profileData.services.DataStoreDB.upload,
-            canRemove: profileData.services.DataStoreDB.remove,
-            canEdit: profileData.services.DataStoreDB.edit,
-            featureEnabled: profileData.services.DataStoreDB != undefined,
-            username: profileData.client.username,
-            userId: profileData.client.id,
-            createDate: profileData.client.createDate,
+            canUpload: userData.services.DataStoreDB.upload,
+            canRemove: userData.services.DataStoreDB.remove,
+            canEdit: userData.services.DataStoreDB.edit,
+            featureEnabled: userData.services.DataStoreDB != undefined,
+            username: userData.profile.username,
+            userId: userData.profile.id,
+            createDate: userData.profile.createDate,
         } as ProfileData)
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
+    hmsys.rawOn(EventTypes.CredentialsRequired, async () =>
+        hmsys.authorize(config[ "default-user" ].email, config[ "default-user" ].password));
+    hmsys.ready();
     hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {
         await db.transaction('rw', db.icons, async () => {
             await db.icons.delete(data.deleted)
