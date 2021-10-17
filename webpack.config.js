@@ -47,7 +47,6 @@ module.exports = (_, mode) => {
             ]
         },
         devServer: {
-            contentBase: "./dist",
             port: 80,
             host: '0.0.0.0'
         },

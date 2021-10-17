@@ -22,14 +22,13 @@ const fetchUploadFiles = (fileUp: HTMLInputElement, hmsys: NetworkConnector, for
         return done(undefined);
 
     const data = new FormData(form);
-    const auth = hmsys.getAuth()!
-    const header = new Headers({
-        'Authorization': 'Basic ' + btoa(`${auth.id}:${auth.token}`)
-    })
-    if (variantFrom) header.append('variant-from', variantFrom);
-    fetch(apiPath() + 'file', {
+    const { id, token } = hmsys.getAuth()!
+
+    fetch(apiPath() + 'file/upload' + (variantFrom ? "?variant-from=" + variantFrom : ""), {
         method: 'POST',
-        headers: header,
+        headers: {
+            'Authorization': 'Basic ' + btoa(`${id}:${token}`)
+        },
         body: data
     })
         .then((e) => e.json())

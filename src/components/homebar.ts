@@ -16,7 +16,7 @@ import { getStats } from "../common/api";
 export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: UploadWizard) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
-        iconData = data.filter(icon => supportedIcontypes.includes(icon.type))
+        iconData = data.filter(icon => supportedIcontypes.includes(icon.type!))
         control.forceRedraw({
             iconCount: data?.length ?? undefined
         })
@@ -72,7 +72,7 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
 
     registerEvent(DataStoreEvents.RefreshDataComplete, () => {
         getStoredData().then((data) => {
-            iconData = data.filter(icon => supportedIcontypes.includes(icon.type))
+            iconData = data.filter(icon => supportedIcontypes.includes(icon.type!))
             control.forceRedraw({
                 iconCount: data?.length ?? undefined
             })

@@ -113,7 +113,7 @@ const renderSingleIcon = (icon: Icon) => {
 }
 
 function supportedIconType(icon: Icon) {
-    return supportedIcontypes.includes(icon.type);
+    return supportedIcontypes.includes(icon.type!);
 }
 function filterSettings(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }) {
     if (filterOptions.includeTags.includes('overlay') ? false : icon.tags.includes("overlay"))

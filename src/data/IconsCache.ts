@@ -11,15 +11,17 @@ class IconsCache extends Dexie {
         this.icons = this.table("icon")
     }
 }
-
+export type GetFilesResponse = {
+    files: Icon[];
+}
 export interface Icon {
     date: number
     filename: string
     id: string
     tags: string[]
-    type: string
-    variantFrom: string
-    data: File
+    type?: string
+    variantFrom?: string
+    data?: File
 }
 
 export var db = new IconsCache();

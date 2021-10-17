@@ -24,6 +24,7 @@ export const sidebarGenerateTags = (sidebarX: () => RenderingXResult<SideBarType
         const tagsInput = input({
             value: icon?.tags.join(' ')
         })
+        //@ts-ignore
         tagsInput.autofocus = true;
         tagsInput.onblur = () => {
             const newData = tagsInput.value.split(/_| |-|%20|,/)

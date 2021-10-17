@@ -2,6 +2,7 @@ import { hmsys } from "../components/views/dashboard";
 const moduleId = '@HomeSYS/DataStoreDB';
 import * as config from "../../config.json";
 import { db } from "../data/IconsCache";
+import { BlobReader, BlobWriter, ZipReader } from "@zip.js/zip.js";
 
 export const apiPath = () => `http${config[ "default-https" ] ? 's' : ''}://${config[ "default-ip" ]}/api/@HomeSYS/DataStoreDB/`;
 export const triggerUpdateResponse = async (id: string, data: Partial<{
@@ -15,6 +16,20 @@ export const triggerUpdateResponse = async (id: string, data: Partial<{
         id
     })
 }
+export const triggerRawImages = async (images: String[]) => {
+    if (images.length == 0) return [];
+    const rsp = await fetch(apiPath() + "file/download", {
+        method: "POST",
+        headers: {
+            'Authorization': 'Basic ' + btoa(([ hmsys.getAuth()?.id, hmsys.getAuth()?.token ]).join(":"))
+        },
+        body: JSON.stringify(images)
+    })
+    const entries = await (new ZipReader(new BlobReader(await rsp.blob()))).getEntries();
+
+    return await Promise.all(entries.map(async (x) => [ x.filename, await x.getData!(new BlobWriter()) ] as [ id: string, data: Blob ]))
+};
+
 export const triggerUpdate = (id: string, data: Partial<{
     filename: string,
     variantFrom: string | null,

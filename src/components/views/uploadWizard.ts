@@ -29,6 +29,7 @@ export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
                     const tagsInput = input({
                         value: tags?.join(' ')
                     })
+                    //@ts-ignore
                     tagsInput.autofocus = true;
                     tagsInput.onblur = () => update({
                         editTags: false,
