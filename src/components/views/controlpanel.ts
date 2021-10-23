@@ -1,7 +1,6 @@
-import { Button, createElement, DialogActionAfterSubmit, list as List, multiStateSwitch, RenderingX, RenderingXResult, span, SupportedThemes, switchButtons } from "@lucsoft/webgen";
+import { Button, Checkbox, Dialog, list as List, span, SupportedThemes, Vertical } from "@lucsoft/webgen";
 import '../../../res/css/dialog.css';
 import { ControlPanelType } from "../../types/controlPanel";
-import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { updateTheme } from "../../common/user/theming";
 import { list } from "../list";
 import { envData } from "../../common/envdata";
@@ -9,6 +8,7 @@ import { PandaIcon } from "../pandaIcon";
 import { timeAgo } from "../../common/user/date";
 import { getStore, resetAllData, setStore } from "../../common/api";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
+import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
 const renderCopryrightNotice = () => {
     const shell = span([
@@ -20,99 +20,81 @@ const renderCopryrightNotice = () => {
     return shell;
 }
 
-const selectorView = (state: ControlPanelType, update: (data: Partial<ControlPanelType>) => void, theme: Style) => {
-    switch (state.render) {
-        case 'home':
-            return List({}, {
-                left: 'Account age',
-                right: span(timeAgo(state.createDate))
-            }, {
-                left: 'Running since',
-                right: span(timeAgo(state.uptime))
-            }, {
-                left: 'Events Emitted',
-                right: span(state.eventsEmitted?.toString())
-            }, {
-                left: 'Icons',
-                right: span(state.iconCount?.toString())
-            });
-        case 'news':
-            return span("Some more text coming here");
-        case 'settings':
-            return List({}, {
-                left: 'Theme',
-                right: multiStateSwitch("small",
-                    { title: "Dimmed", action: () => updateTheme(theme, SupportedThemes.gray) },
-                    { title: "Dark", action: () => updateTheme(theme, SupportedThemes.dark) },
-                    { title: "White", action: () => updateTheme(theme, SupportedThemes.white) },
-                    { title: "System", action: () => updateTheme(theme, SupportedThemes.auto) },
-                )
-            }, {
-                left: 'Compact View Mode',
-                right: switchButtons({
-                    checked: state.compactView,
-                    onAnimationComplete: () => {
-                        setStore('compact-view', !state.compactView)
-                        emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
-                        update({ compactView: !state.compactView })
-                    }
-                })
-            }, {
-                left: 'Always Show Variants',
-                right: switchButtons({
-                    checked: state.showAlwaysAllVariants,
-                    onAnimationComplete: () => {
-                        setStore('always-all-variants', !state.showAlwaysAllVariants)
-                        emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
-                        update({ showAlwaysAllVariants: !state.showAlwaysAllVariants })
-                    }
-                })
-            }, {
-                left: 'Clear Storage',
-                right: multiStateSwitch("small",
-                    {
-                        title: "Clear " + state.iconCount + " Files",
-                        action: () => resetAllData()
-                    }
-                )
-            }, {
-                left: 'Username',
-                right: span(state.username + '\n#' + state.userId, 'small-text')
+export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ use, state, update }) => {
+    use(Vertical({},
+        Button({ text: "Home", pressOn: () => update({ render: 'home' }) }),
+        Button({ text: "News", pressOn: () => update({ render: 'news' }) }),
+        Button({ text: "Settings", pressOn: () => update({ render: 'settings' }) }),
+        Button({ text: "About Panda", pressOn: () => update({ render: 'about' }) }),
+    ))
+    if (state.render == "home")
+        use(List({},
+            { left: 'Account age', right: span(timeAgo(state.createDate)) },
+            { left: 'Running since', right: span(timeAgo(state.uptime)) },
+            { left: 'Events Emitted', right: span(state.eventsEmitted?.toString()) },
+            { left: 'Icons', right: span(state.iconCount?.toString()) }
+        ));
+    else if (state.render == "news")
+        use(span("Some more text coming here"))
+    else if (state.render == "settings")
+        use(List({}, {
+            left: 'Theme',
+            right: Button({
+                text: "Theme",
+                dropdown: [
+                    [ "Dimmed", () => updateTheme(theme, SupportedThemes.gray) ],
+                    [ "Dark", () => updateTheme(theme, SupportedThemes.dark) ],
+                    [ "Light", () => updateTheme(theme, SupportedThemes.light) ],
+                    [ "System", () => updateTheme(theme, SupportedThemes.auto) ]
+                ]
             })
-        case 'about':
-            return list([
-                PandaIcon().draw(),
-                renderCopryrightNotice()
-            ])
-        default:
-            return span("WIP");
-    }
-};
-export const controlPanelContent = (web: RenderingX, theme: Style) => web.toCustom({ shell: createElement('div') }, {
-    render: 'home',
-    compactView: getStore('compact-view'),
-    showAlwaysAllVariants: getStore('always-all-variants')
-} as ControlPanelType, [
-    (_, update) => Button({
-        big: false,
-        list: [
-            { text: 'Home', onclick: () => update({ render: 'home' }) },
-            { text: 'News', onclick: () => update({ render: 'news' }) },
-            { text: 'Settings', onclick: () => update({ render: 'settings' }) },
-            { text: 'About Panda', onclick: () => update({ render: 'about' }) }
-        ]
-    }),
-    (state, update) => selectorView(state, update, theme)
-])
-export const controlPanelDialog = (web: RenderingX, control: RenderingXResult<any>) => web.toDialog({
-    title: "Panda",
-    content: control,
-    userRequestClose: () => DialogActionAfterSubmit.Close,
-    buttons: [
-        [ 'Report a bug', () => {
-            open("https://github.com/lucsoft/datastoredb-gui/issues/new")
-            return undefined;
-        } ],
-        [ 'close', DialogActionAfterSubmit.Close ]
-    ]
+        }, {
+            left: 'Compact View Mode',
+            right: Checkbox({
+                selected: state.compactView,
+                toggledOn: () => {
+                    setStore('compact-view', !state.compactView)
+                    emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
+                    update({ compactView: !state.compactView })
+                }
+            })
+        }, {
+            left: 'Always Show Variants',
+            right: Checkbox({
+                selected: state.showAlwaysAllVariants,
+                toggledOn: () => {
+                    setStore('always-all-variants', !state.showAlwaysAllVariants)
+                    emitEvent(DataStoreEvents.SearchBarUpdated, 'indirect-rerender')
+                    update({ showAlwaysAllVariants: !state.showAlwaysAllVariants })
+                }
+            })
+        }, {
+            left: 'Clear Storage',
+            right: Button({
+                text: "Clear " + state.iconCount + " Files",
+                pressOn: resetAllData
+            })
+        }, {
+            left: 'Username',
+            right: span(state.username + '\n#' + state.userId, 'small-text')
+        }))
+    else if (state.render === "about")
+        use(list([
+            PandaIcon().draw(),
+            renderCopryrightNotice()
+        ]))
+    else
+        update({
+            render: "home",
+            compactView: getStore('compact-view'),
+            showAlwaysAllVariants: getStore('always-all-variants')
+        })
 })
+    .setTitle("Panda")
+    .allowUserClose()
+    .addClass("datastore-dialog")
+    .addButton("Report a bug", () => {
+        open("https://github.com/lucsoft/datastoredb-gui/issues/new")
+        return undefined;
+    })
+    .addButton("close", "close")

@@ -50,15 +50,6 @@ export const createIconList = () => {
     return list;
 };
 
-function getOffset(el: HTMLElement) {
-    const rect = el.getBoundingClientRect();
-    return {
-        bound: rect,
-        left: rect.left + window.scrollX,
-        top: rect.top + window.scrollY
-    };
-}
-
 const lostPandaImage = custom('div', undefined, 'lost-panda')
 fetch(lostPanda).then(x => x.text())
     .then(x => {
@@ -100,9 +91,7 @@ const renderSingleIcon = (icon: Icon) => {
     image.setAttribute('id', icon.id);
     image.onclick = async () => {
         const cachedAllData = await db.icons.toArray();
-
         emitEvent(DataStoreEvents.SidebarUpdate, {
-            offset: () => getOffset(image),
             currentIcon: icon,
             imageVariants: cachedAllData.filter(x => x.variantFrom == icon.id),
             variantFrom: isVariantFrom(icon, cachedAllData),

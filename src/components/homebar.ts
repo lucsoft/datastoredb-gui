@@ -1,10 +1,10 @@
-import { createElement, custom, mIcon, RenderingX, span, conditionalCSSClass } from "@lucsoft/webgen";
+import { createElement, custom, Icon as mIcon, span, conditionalCSSClass, draw, RenderingX } from "@lucsoft/webgen";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import '../../res/css/homebar.css';
 
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { Icon } from "../data/IconsCache";
-import { controlPanelContent, controlPanelDialog } from "./views/controlpanel";
+import { dialogControlPanel } from "./views/controlpanel";
 import { getStoredData } from "./../common/refreshData";
 import { SearchHandleOnKeyboardDownEvent } from "./searchHandle/OnKeyDown";
 import { SearchHandleOnKeyboardUpEvent } from "./searchHandle/OnKeyUp";
@@ -13,11 +13,11 @@ import { supportedIcontypes } from '../../config.json';
 import { PandaIcon } from "./pandaIcon";
 import { UploadWizard } from "../types/UploadWizard";
 import { getStats } from "../common/api";
-export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: UploadWizard) => {
+export const renderHomeBar = (style: Style, uploadWizard: UploadWizard) => {
     let iconData: Icon[] = [];
     getStoredData().then((data) => {
         iconData = data.filter(icon => supportedIcontypes.includes(icon.type!))
-        control.forceRedraw({
+        dialog.unsafeViewOptions().update({
             iconCount: data?.length ?? undefined
         })
     })
@@ -47,12 +47,10 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
         if (val !== undefined) return tagSelectIndex = val
         return tagSelectIndex
     }, search, filteredUpdate)
-    const upload = mIcon("cloud_queue")
+    const upload = draw(mIcon("cloud_queue"))
     container.classList.add('homebar')
-    const control = controlPanelContent(web, style);
-    control.getShell().classList.add('datastore-dialog');
-    const dialog = controlPanelDialog(web, control);
-    getStats().then(x => control.forceRedraw({ uptime: x.uptime, eventsEmitted: x.eventsEmitted }))
+    const dialog = dialogControlPanel(style);
+    getStats().then(x => dialog.unsafeViewOptions().update({ uptime: x.uptime, eventsEmitted: x.eventsEmitted }))
     settings.onclick = () => dialog.open()
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         upload.innerHTML = data.canUpload ? "cloud_upload" : "cloud_off"
@@ -60,8 +58,8 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
             manualUploadImage((files) => {
                 if (files) uploadWizard.handleAuto(files)
             });
-        } : () => web.notify("Uploading with this account is disabled")
-        control.forceRedraw({
+        } : () => RenderingX.prototype.notify("Uploading with this account is disabled")
+        dialog.unsafeViewOptions().update({
             username: data.username,
             canRemove: data.canRemove,
             canUpload: data.canUpload,
@@ -73,7 +71,7 @@ export const renderHomeBar = (web: RenderingX, style: Style, uploadWizard: Uploa
     registerEvent(DataStoreEvents.RefreshDataComplete, () => {
         getStoredData().then((data) => {
             iconData = data.filter(icon => supportedIcontypes.includes(icon.type!))
-            control.forceRedraw({
+            dialog.unsafeViewOptions().update({
                 iconCount: data?.length ?? undefined
             })
         })

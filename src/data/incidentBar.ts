@@ -1,16 +1,12 @@
 import { EventTypes } from "@lucsoft/network-connector"
-import { createElement, custom, RenderElement, SupportedThemes } from "@lucsoft/webgen"
+import { Component, createElement, custom, SupportedThemes } from "@lucsoft/webgen"
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager"
 import '../../res/css/incidentbar.css'
 import { hmsys } from "../components/views/dashboard"
-import { Style } from "@lucsoft/webgen/bin/lib/Style"
-import { updateColorBar, updateColorBarTheme } from "../common/user/theming"
+import { updateColorBar } from "../common/user/theming"
 
-export const createIncidentBar = (style: Style): RenderElement => ({
+export const createIncidentBar = (): Component => ({
     draw: () => {
-        style.onThemeUpdate((e) => {
-            updateColorBarTheme(e)
-        })
         hmsys.rawOn(EventTypes.Disconnected, () => {
             if (navigator.onLine) {
                 emitEvent(DataStoreEvents.IncidentBar, {
@@ -30,7 +26,7 @@ export const createIncidentBar = (style: Style): RenderElement => ({
 
         registerEvent(DataStoreEvents.IncidentBar, (data) => {
             if (data == undefined) {
-                updateColorBarTheme(Number(localStorage.getItem('webgen-theme') ?? SupportedThemes.auto))
+                new BroadcastChannel("themeChange").postMessage(Number(localStorage.getItem('webgen-theme') ?? SupportedThemes.auto))
                 shell.classList.remove('active')
             }
             else {

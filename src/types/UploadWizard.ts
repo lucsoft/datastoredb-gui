@@ -1,4 +1,5 @@
-import { RenderingXResult } from "@lucsoft/webgen";
+import { DialogData } from "@lucsoft/webgen"
+
 export type UploadWizardData = {
     files: FileList,
     icon: string,
@@ -13,9 +14,7 @@ export type UploadWizardData = {
     editTags: undefined
 }
 export type UploadWizard = {
-    data: RenderingXResult<UploadWizardData>,
+    data: UploadWizardData,
     handleAuto: (files: FileList) => void,
-    dialog: {
-        open: () => void;
-    }
+    dialog: DialogData
 }

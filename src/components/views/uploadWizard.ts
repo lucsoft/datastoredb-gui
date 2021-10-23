@@ -1,39 +1,42 @@
-import { custom, DialogActionAfterSubmit, img, input, mIcon, RenderingX, span } from "@lucsoft/webgen";
+import { Component, custom, Dialog, img, Icon, span, Vertical, draw, Input } from "@lucsoft/webgen";
 import { triggerUpdateResponse } from "../../common/api";
 import { list } from "../list";
 import { hmsys } from "./dashboard";
 import { UploadWizard, UploadWizardData } from "../../types/UploadWizard";
 import { resetFiles, uploadImage } from "../upload";
 
-export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
-    const onClose = () => {
-        resetFiles();
-        return DialogActionAfterSubmit.Close;
-    };
+export const generateUploadWizard = (): UploadWizard => {
 
-    const uploadData = rendr.toCustom({}, {} as UploadWizardData, [
-        ({ icon }) => img(icon),
-        ({ name }, update) => ({
-            draw: () => {
-                const data = custom('div', name, 'icon-title')
-                data.contentEditable = "true";
-                data.onblur = () => update({ name: data.innerText })
-                return name ? data : span("");
-            }
-        }),
-        ({ tags, editTags }, update) => ({
-            draw: () => {
-                const add = mIcon('edit')
-                add.onclick = () => update({ editTags: true })
+    let globalStateObject: (() => {
+        use: (comp: Component) => void;
+        state: Partial<UploadWizardData>;
+        update: (data: Partial<UploadWizardData>) => void;
+    }) | undefined = undefined;
+    const dialog = Dialog<UploadWizardData>((obj) => {
+        globalStateObject = () => obj;
+        const { name, icon, files, editTags, tags } = obj.state;
+        const data = custom('div', name, 'icon-title')
+        data.contentEditable = "true";
+        data.onblur = () => obj.update({ name: data.innerText })
+        const add = draw(Icon('edit'));
+        add.onclick = () => obj.update({ editTags: true })
+
+        obj.use(Vertical({
+
+        },
+            img(icon),
+            data,
+            (() => {
                 if (editTags) {
-                    const tagsInput = input({
+                    const tagsInput = draw(Input({
+                        placeholder: "Tags sperated by `_ -,`",
                         value: tags?.join(' ')
-                    })
+                    }))
                     //@ts-ignore
                     tagsInput.autofocus = true;
-                    tagsInput.onblur = () => update({
+                    tagsInput.onblur = () => obj.update({
                         editTags: false,
-                        tags: tagsInput.value
+                        tags: tagsInput.querySelector("input")!.value
                             .split(/_| |-|%20|,/)
                     })
                     tagsInput.classList.add('tags-input')
@@ -43,49 +46,43 @@ export const generateUploadWizard = (rendr: RenderingX): UploadWizard => {
                     return list([ ...tags.map(x => span('#' + x)), add ], [ 'tags-list' ]);
                 else
                     return span("")
-            }
-        }),
-        ({ files }) => span(((files?.length ?? 0) > 1) ? `You will upload ${files?.length ?? 0} Files.\nLet's see how fast our Pandas can handle your request.` : "You can update title & tags before you upload this File.\n")
-    ]);
+            })(),
+            span(((files?.length ?? 0) > 1) ? `You will upload ${files?.length ?? 0} Files.\nLet's see how fast our Pandas can handle your request.` : "You can update title & tags before you upload this File.\n")
+        ))
+    })
+        .allowUserClose()
+        .addClass("dropwizard")
+        .onClose(() => resetFiles())
+        .setTitle("Finish your upload")
+        .addButton("Cancel", "close")
+        .addButton("Upload", async (): Promise<"close" | undefined> => {
+            const { files, tags, name: filename } = globalStateObject!().state;
 
-    uploadData.getShell().classList.add('dropwizard')
+            if (!files) return undefined;
+            const response = (await uploadImage(files, hmsys))?.items
 
-    const uploadWizard = rendr.toDialog({
-        title: 'Finish your upload',
-        content: uploadData,
-        userRequestClose: onClose,
-        buttons: [
-            [ 'Cancel', onClose ],
-            [ 'Upload', async () => {
-                const state = uploadData.getState();
-                const files = state.files;
-                if (!files) return undefined;
-                const response = (await uploadImage(files, hmsys))?.items
+            if (response?.length == 1)
+                await triggerUpdateResponse(response[ 0 ].id, { tags, filename })
 
-                if (response?.length == 1)
-                    await triggerUpdateResponse(response[ 0 ].id, { tags: state.tags, filename: state.name })
-                return DialogActionAfterSubmit.Close;
-            } ]
-        ]
-    });
-
+            return "close";
+        });
     return {
-        dialog: uploadWizard,
+        dialog,
         handleAuto: (files) => {
             if (files?.length == 1) {
                 const icon = files.item(0);
                 const name = icon?.name.replace(/\.([a-zA-Z])+$/, '') ?? ''
-                uploadData.forceRedraw({
+                globalStateObject!().update({
                     icon: URL.createObjectURL(icon),
                     name,
                     tags: name.split(/_| |-|%20/),
                     files
                 })
             } else
-                uploadData.forceRedraw({ files })
+                globalStateObject!().update({ files })
 
-            uploadWizard.open()
+            dialog.open()
         },
-        data: uploadData
+        data: globalStateObject!().state as UploadWizardData
     }
 }

@@ -1,20 +1,18 @@
-import { RenderingX, span } from "@lucsoft/webgen";
+import { Dialog, span } from "@lucsoft/webgen";
 import { hmsys } from "./views/dashboard";
 import { PandaIcon } from "./pandaIcon";
 import { resetFiles, uploadImage } from "./upload";
 import '../../res/css/dialogDropFiles.css';
 import { supportedIcontypes } from '../../config.json';
 import { UploadWizard } from "../types/UploadWizard";
-export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
+export function registerMasterDropArea(wizard: UploadWizard) {
     const html = document.querySelector('html')!;
-    const data = web.toCustom({}, {}, [
-        PandaIcon(),
-        span("Drop your files Here!", "dropfilestitle")
-    ]);
-    data.getShell().classList.add('dialog-dropfiles')
-    const dialog = web.toDialog({
-        content: data
+
+    const dialog = Dialog(({ use }) => {
+        use(PandaIcon())
+        use(span("Drop your files Here!", "dropfilestitle"))
     })
+        .addClass("dialog-dropfiles")
 
     html.ondrop = (e: DragEvent) => {
         if (html.classList.contains('disable-global-drop')
@@ -24,7 +22,7 @@ export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
         html.classList.remove('drop-feedback')
         const files = e.dataTransfer?.files;
 
-        dialog.close(false);
+        dialog.close();
         if (files?.length == 0) return
         if (e.shiftKey == false)
             wizard.handleAuto(files)
@@ -53,7 +51,7 @@ export function registerMasterDropArea(web: RenderingX, wizard: UploadWizard) {
         if (e.relatedTarget != null) return;
         html.classList.remove('drop-feedback')
         resetFiles();
-        dialog.close(false)
+        dialog.close()
     }
 }
 

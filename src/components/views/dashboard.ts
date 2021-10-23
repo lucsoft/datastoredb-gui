@@ -1,37 +1,34 @@
 import { NetworkConnector, createLocalStorageProvider } from '@lucsoft/network-connector';
-import { custom } from '@lucsoft/webgen';
+import { custom, View } from '@lucsoft/webgen';
 import { renderHomeBar } from '../homebar';
 import { createIconList } from '../iconlist';
-import { createSidebar } from "../sidebar/sidebar";
+import { registerSidebarEvents } from "../sidebar/sidebar";
 import { updateFirstTimeDatabase } from "../../data/hmsys";
 import { createIncidentBar } from "../../data/incidentBar";
 import '../../common/refreshData';
 import '../../../res/css/master.css';
 import { registerMasterDropArea } from "../dropareas";
-import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { generateUploadWizard } from "./uploadWizard";
 import * as config from '../../../config.json';
-import { generateVariantsWizard } from "../sidebar/variantsGenerator";
 
 export const hmsys = new NetworkConnector(config[ "default-ip" ], {
     store: createLocalStorageProvider(),
     AllowNonHTTPSConnection: !config[ "default-https" ]
 })
-export function renderMain(web: RenderingX, style: Style) {
+export function renderMain(style: Style) {
     const shell = custom('div', undefined, 'masterShell')
     document.body.append(shell)
 
-    const wizard = generateUploadWizard(web);
-    const generator = generateVariantsWizard(web);
+    const wizard = generateUploadWizard();
 
-    web.toCustom({ shell }, {}, () => [
-        createIncidentBar(style),
-        createSidebar(web, generator),
-        renderHomeBar(web, style, wizard),
-        createIconList()
-    ])
+    View(({ use }) => {
+        use(createIncidentBar())
+        use(renderHomeBar(style, wizard))
+        use(createIconList())
+    }).appendOn(shell)
 
-    registerMasterDropArea(web, wizard)
-    updateFirstTimeDatabase(web);
+    registerMasterDropArea(wizard)
+    registerSidebarEvents();
+    updateFirstTimeDatabase();
 }

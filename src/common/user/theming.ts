@@ -5,8 +5,8 @@ export const updateTheme = (theme: Style, selected: SupportedThemes) => {
     theme.updateTheme(selected)
     localStorage.setItem('webgen-theme', selected.toString());
 }
-export function updateColorBar(color: string) {
 
+export function updateColorBar(color: string) {
     const metaTag = document.head.querySelector('meta[name="theme-color"]')
     if (metaTag)
         metaTag.setAttribute('content', color)
@@ -18,14 +18,14 @@ export function updateColorBar(color: string) {
     }
 }
 
-export function updateColorBarTheme(theme: SupportedThemes) {
-    switch (theme) {
+new BroadcastChannel("themeChange").addEventListener("message", (theme: MessageEvent<SupportedThemes>) => {
+    switch (theme.data) {
         case SupportedThemes.autoDark:
         case SupportedThemes.dark:
             updateColorBar('#0a0a0a')
             break;
-        case SupportedThemes.autoWhite:
-        case SupportedThemes.white:
+        case SupportedThemes.autoLight:
+        case SupportedThemes.light:
             updateColorBar('#e6e6e6')
             break;
         case SupportedThemes.gray:
@@ -34,4 +34,4 @@ export function updateColorBarTheme(theme: SupportedThemes) {
         default:
             break;
     }
-}
+})

@@ -1,5 +1,5 @@
 import { EventTypes } from "@lucsoft/network-connector";
-import { DialogActionAfterSubmit, RenderingX, span } from "@lucsoft/webgen";
+import { Dialog, span } from "@lucsoft/webgen";
 import * as config from '../../config.json';
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../components/dropareas";
@@ -7,17 +7,17 @@ import { hmsys } from "../components/views/dashboard";
 import { ProfileData } from "../types/profileDataTypes";
 import { db, Icon } from "./IconsCache";
 
-export function updateFirstTimeDatabase(web: RenderingX) {
-    const backDialog = web.toDialog({
-        title: 'You are Back!',
-        content: span('It looks like you are back! Lets join the HmSYS Network.'),
-        buttons: [
-            [ 'reconnect', () => { location.href = location.href; return DialogActionAfterSubmit.Close; } ]
-        ]
-    })
+const reconnectDialog = Dialog(({ use }) => {
+    use(span('It looks like you are back! Lets join the HmSYS Network.'))
+})
+    .setTitle("You are Back!")
+    .onClose(() => { location.href = location.href; })
+    .addButton("Reconnect", "close")
+
+export function updateFirstTimeDatabase() {
     window.addEventListener('online', () => {
         emitEvent(DataStoreEvents.IncidentBar, undefined)
-        backDialog.open()
+        reconnectDialog.open()
     })
     if (navigator.onLine == false) {
         emitEvent(DataStoreEvents.IncidentBar, {
@@ -34,11 +34,10 @@ export function updateFirstTimeDatabase(web: RenderingX) {
     hmsys.rawOn(EventTypes.LoginSuccessful, async () => {
         const { userData }: any = await hmsys.api.requestUserData("services", "profile");
         if (userData.services.DataStoreDB == undefined)
-            web.toDialog({
-                title: "Panda is unavailable",
-                content: span("This Account dosn't have access to Panda. Change your Account."),
-                buttons: [ [ 'okay', DialogActionAfterSubmit.RemoveClose ] ]
-            }).open()
+            Dialog(({ use }) => use(span("This Account dosn't have access to Panda. Change your Account.")))
+                .setTitle("Panda is unavailable")
+                .addButton("Okay", "close")
+                .open()
 
         if (userData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
         emitEvent(DataStoreEvents.RecivedProfileData, {
