@@ -26,7 +26,7 @@ export const createIncidentBar = (): Component => ({
 
         registerEvent(DataStoreEvents.IncidentBar, (data) => {
             if (data == undefined) {
-                new BroadcastChannel("themeChange").postMessage(Number(localStorage.getItem('webgen-theme') ?? SupportedThemes.auto))
+                emitEvent(DataStoreEvents.ThemeChange, Number(localStorage.getItem('webgen-theme') ?? SupportedThemes.auto))
                 shell.classList.remove('active')
             }
             else {

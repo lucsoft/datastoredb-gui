@@ -1,5 +1,6 @@
 import { SupportedThemes } from "@lucsoft/webgen"
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
+import { DataStoreEvents, registerEvent } from "../eventmanager";
 
 export const updateTheme = (theme: Style, selected: SupportedThemes) => {
     theme.updateTheme(selected)
@@ -8,8 +9,7 @@ export const updateTheme = (theme: Style, selected: SupportedThemes) => {
 
 export function updateColorBar(color: string) {
     const metaTag = document.head.querySelector('meta[name="theme-color"]')
-    if (metaTag)
-        metaTag.setAttribute('content', color)
+    metaTag?.setAttribute('content', color)
     if (!metaTag) {
         const metaTag = document.createElement('meta')
         metaTag.name = "theme-color"
@@ -18,8 +18,8 @@ export function updateColorBar(color: string) {
     }
 }
 
-new BroadcastChannel("themeChange").addEventListener("message", (theme: MessageEvent<SupportedThemes>) => {
-    switch (theme.data) {
+registerEvent(DataStoreEvents.ThemeChange, (theme) => {
+    switch (theme) {
         case SupportedThemes.autoDark:
         case SupportedThemes.dark:
             updateColorBar('#0a0a0a')

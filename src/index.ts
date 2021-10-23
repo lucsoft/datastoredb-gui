@@ -1,4 +1,5 @@
 import { BootstrapIcons, SupportedThemes, WebGen } from "@lucsoft/webgen";
+import { DataStoreEvents, emitEvent } from "./common/eventmanager";
 import { renderMain } from "./components/views/dashboard";
 
 const web = WebGen({
@@ -6,7 +7,7 @@ const web = WebGen({
     icon: new BootstrapIcons(),
     events: {
         themeChanged: (e) => {
-            new BroadcastChannel("themeChange").postMessage(e)
+            emitEvent(DataStoreEvents.ThemeChange, e)
         }
     }
 })

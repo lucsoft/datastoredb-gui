@@ -1,4 +1,5 @@
 import { NetworkConnector } from "@lucsoft/network-connector"
+import { SupportedThemes } from "@lucsoft/webgen"
 import { ProfileData } from "../types/profileDataTypes"
 import { SidebarData } from "../types/sidebarTypes"
 
@@ -11,7 +12,8 @@ export const enum DataStoreEvents {
     IconDataLoaded,
     SearchBarUpdated,
     SearchBarAddTag,
-    ConnectionLost
+    ConnectionLost,
+    ThemeChange
 }
 
 let events: DataStoreEvent[] = []
@@ -29,6 +31,7 @@ type DataStoreEventType<TypeT> =
     & (TypeT extends DataStoreEvents.RefreshDataComplete ? { new?: string[], removed?: string[], updated?: string[] } : unknown)
     & (TypeT extends DataStoreEvents.SearchBarUpdated ? { includeTags: string[], execludeTags: string[], filteredText: string } | 'indirect-rerender' : unknown)
     & (TypeT extends DataStoreEvents.SearchBarAddTag ? string : unknown)
+    & (TypeT extends DataStoreEvents.ThemeChange ? SupportedThemes : unknown)
 
 export const registerEvent = <TypeT extends DataStoreEvents>(id: TypeT, action: (metaData: DataStoreEventType<TypeT>) => void) => {
     events.push({ id, action })
