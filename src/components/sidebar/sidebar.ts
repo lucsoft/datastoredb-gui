@@ -27,6 +27,7 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
         changeOn: handleBlurEventOfIconTitle(currentIcon)
     });
     const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
+    image.loading = "eager";
     image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
     const add = mIcon('add') as HTMLElement
     add.onclick = () => view.update({ showVariantsView: true })
@@ -68,10 +69,9 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
     .allowUserClose()
     .onClose(() => {
         const dia = sidebarDialog.unsafeViewOptions<SideBarType>();
-        if (dia.state.canUpload) enableGlobalDragAndDrop();
         dia.update({ showVariantsView: false })
+        if (dia.state.canUpload) enableGlobalDragAndDrop();
     })
-
 export const registerSidebarEvents = () => {
     const view: () => ViewOptions<SideBarType> = sidebarDialog.unsafeViewOptions;
     registerEvent(DataStoreEvents.ConnectionLost, () => {

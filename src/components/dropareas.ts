@@ -1,19 +1,12 @@
-import { Dialog, span } from "@lucsoft/webgen";
 import { hmsys } from "./views/dashboard";
-import { PandaIcon } from "./pandaIcon";
 import { resetFiles, uploadImage } from "./upload";
 import '../../res/css/dialogDropFiles.css';
 import { UploadWizard } from "../types/UploadWizard";
 import { config } from "../common/envdata";
+import { dropFilesHere } from "./dialogs";
 
 export function registerMasterDropArea(wizard: UploadWizard) {
     const html = document.querySelector('html')!;
-
-    const dialog = Dialog(({ use }) => {
-        use(PandaIcon())
-        use(span("Drop your files Here!", "dropfilestitle"))
-    })
-        .addClass("dialog-dropfiles")
 
     html.ondrop = (e: DragEvent) => {
         if (html.classList.contains('disable-global-drop')
@@ -23,7 +16,7 @@ export function registerMasterDropArea(wizard: UploadWizard) {
         html.classList.remove('drop-feedback')
         const files = e.dataTransfer?.files;
 
-        dialog.close();
+        dropFilesHere.close();
         if (files?.length == 0) return
         if (e.shiftKey == false)
             wizard.handleAuto(files)
@@ -36,7 +29,7 @@ export function registerMasterDropArea(wizard: UploadWizard) {
             || !e.dataTransfer?.types.includes("Files")
             || !config.supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
-        dialog.open()
+        dropFilesHere.open()
         e.preventDefault()
     }
 
@@ -46,13 +39,13 @@ export function registerMasterDropArea(wizard: UploadWizard) {
             || !e.dataTransfer?.types.includes("Files")
             || !config.supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
-        dialog.open()
+        dropFilesHere.open()
     }
     html.ondragleave = (e: DragEvent) => {
         if (e.relatedTarget != null) return;
         html.classList.remove('drop-feedback')
         resetFiles();
-        dialog.close()
+        dropFilesHere.close()
     }
 }
 

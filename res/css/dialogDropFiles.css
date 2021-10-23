@@ -1,8 +1,3 @@
-.dialog-dropfiles.dialog-content {
-    display: grid;
-    justify-items: center;
-    margin: 0;
-}
 .dialog-dropfiles .panda-icon svg {
     display: block;
     margin: 48px 73px 33px;
@@ -21,6 +16,7 @@
 .dropwizard {
     max-width: 27rem;
 }
+
 .dropwizard img {
     display: block;
     width: 8rem;
@@ -40,6 +36,7 @@
     border-radius: .2rem;
     transition: background-color 250ms ease;
 }
+
 .dropwizard .icon-title:hover, .dropwizard .icon-title:focus {
     background: var(--on-card-background);
     box-shadow: var(--box-shadow);
@@ -65,11 +62,17 @@
 .dropwizard .tags-list span:hover {
     opacity: 0.8;
 }
+
 .dropwizard .tags-list span.material-icons-round {
     font-size: 15px;
     padding: 4px 5px;
 }
+
 .dropwizard .tags-input {
     display: block;
     margin: 0 0 1rem 0;
+}
+
+.disable-global-drop {
+    border: 1px solid green;
 }
