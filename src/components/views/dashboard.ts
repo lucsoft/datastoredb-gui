@@ -10,11 +10,11 @@ import '../../../res/css/master.css';
 import { registerMasterDropArea } from "../dropareas";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";
 import { generateUploadWizard } from "./uploadWizard";
-import * as config from '../../../config.json';
+import { config } from "../../common/envdata";
 
-export const hmsys = new NetworkConnector(config[ "default-ip" ], {
+export const hmsys = new NetworkConnector(config.defaultIp, {
     store: createLocalStorageProvider(),
-    AllowNonHTTPSConnection: !config[ "default-https" ]
+    AllowNonHTTPSConnection: !config.defaultHttps
 })
 export function renderMain(style: Style) {
     const shell = custom('div', undefined, 'masterShell')

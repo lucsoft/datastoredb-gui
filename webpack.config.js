@@ -25,6 +25,11 @@ module.exports = (_, mode) => {
         resolve: {
             extensions: [ ".js", ".ts" ]
         },
+        experiments: {
+            topLevelAwait: true,
+            futureDefaults: true,
+            cacheUnaffected: true
+        },
         module: {
             rules: [
                 {
@@ -67,6 +72,7 @@ module.exports = (_, mode) => {
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(package.version.toString()),
                 COMPILED_AD: JSON.stringify(new Date()),
+                CONFIG: JSON.stringify(require("./config.json")),
                 LAST_COMMIT: JSON.stringify(execSync("git rev-parse HEAD").toString().trim())
             }),
             new CopyWebpackPlugin({

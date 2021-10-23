@@ -1,7 +1,7 @@
 import { db, GetFilesResponse, Icon } from '../data/IconsCache';
-import * as config from '../../res/config.json';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 import { triggerRawImages } from "./api";
+import { config } from "./envdata";
 /**
  * @deprecated
  */

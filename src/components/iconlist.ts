@@ -4,9 +4,9 @@ import { compareArray, execludeCompareArray } from "../common/iconData/arrayComp
 import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
 import { db, Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
-import { supportedIcontypes } from "../../config.json";
 import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
 import { getStore } from "../common/api";
+import { config } from "../common/envdata";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
@@ -102,8 +102,9 @@ const renderSingleIcon = (icon: Icon) => {
 }
 
 function supportedIconType(icon: Icon) {
-    return supportedIcontypes.includes(icon.type!);
+    return config.supportedIcontypes.includes(icon.type!);
 }
+
 function filterSettings(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }) {
     if (filterOptions.includeTags.includes('overlay') ? false : icon.tags.includes("overlay"))
         return false;

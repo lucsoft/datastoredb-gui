@@ -3,8 +3,9 @@ import { hmsys } from "./views/dashboard";
 import { PandaIcon } from "./pandaIcon";
 import { resetFiles, uploadImage } from "./upload";
 import '../../res/css/dialogDropFiles.css';
-import { supportedIcontypes } from '../../config.json';
 import { UploadWizard } from "../types/UploadWizard";
+import { config } from "../common/envdata";
+
 export function registerMasterDropArea(wizard: UploadWizard) {
     const html = document.querySelector('html')!;
 
@@ -17,7 +18,7 @@ export function registerMasterDropArea(wizard: UploadWizard) {
     html.ondrop = (e: DragEvent) => {
         if (html.classList.contains('disable-global-drop')
             || !e.dataTransfer?.types.includes("Files")
-            || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
+            || !config.supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         e.preventDefault()
         html.classList.remove('drop-feedback')
         const files = e.dataTransfer?.files;
@@ -33,7 +34,7 @@ export function registerMasterDropArea(wizard: UploadWizard) {
     html.ondragover = (e) => {
         if (html.classList.contains('disable-global-drop')
             || !e.dataTransfer?.types.includes("Files")
-            || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
+            || !config.supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
         dialog.open()
         e.preventDefault()
@@ -43,7 +44,7 @@ export function registerMasterDropArea(wizard: UploadWizard) {
         if (html.classList.contains('disable-global-drop')
             || html.classList.contains('drop-feedback')
             || !e.dataTransfer?.types.includes("Files")
-            || !supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
+            || !config.supportedIcontypes.includes(e.dataTransfer.items[ 0 ].type)) return;
         html.classList.add('drop-feedback')
         dialog.open()
     }
@@ -58,7 +59,6 @@ export function registerMasterDropArea(wizard: UploadWizard) {
 export function disableGlobalDragAndDrop() {
     document.querySelector('html')?.classList.add('disable-global-drop')
 }
-
 
 export function enableGlobalDragAndDrop() {
     document.querySelector('html')?.classList.remove('disable-global-drop')

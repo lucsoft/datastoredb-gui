@@ -2,13 +2,14 @@
     "compilerOptions": {
         "incremental": true,
         "target": "esnext",
-        "module": "commonjs",
+        "module": "ESNext",
         "strict": true,
         "outDir": "bin",
         "alwaysStrict": true,
         "noUnusedParameters": true,
         "noUnusedLocals": true,
         "resolveJsonModule": true,
+        "moduleResolution": "Node",
         "typeRoots": [
             "./declarations.d.ts",
             "./node_modules/@types"

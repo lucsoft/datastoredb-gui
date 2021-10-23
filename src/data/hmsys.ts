@@ -1,6 +1,6 @@
 import { EventTypes } from "@lucsoft/network-connector";
 import { Dialog, span } from "@lucsoft/webgen";
-import * as config from '../../config.json';
+import { config } from "../common/envdata";
 import { DataStoreEvents, emitEvent } from "../common/eventmanager";
 import { disableGlobalDragAndDrop } from "../components/dropareas";
 import { hmsys } from "../components/views/dashboard";
@@ -52,7 +52,7 @@ export function updateFirstTimeDatabase() {
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });
     hmsys.rawOn(EventTypes.CredentialsRequired, async () =>
-        hmsys.authorize(config[ "default-user" ].email, config[ "default-user" ].password));
+        hmsys.authorize(config.defaultUser.email, config.defaultUser.password));
     hmsys.ready();
     hmsys.api.sync('@HomeSYS/DataStoreDB/removeFile', async (data) => {
         await db.transaction('rw', db.icons, async () => {

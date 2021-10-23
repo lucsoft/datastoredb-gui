@@ -1,9 +1,9 @@
-import { Button, Checkbox, Dialog, list as List, span, SupportedThemes, Vertical } from "@lucsoft/webgen";
+import { Button, Checkbox, Dialog, draw, list as List, span, SupportedThemes, Vertical } from "@lucsoft/webgen";
 import '../../../res/css/dialog.css';
 import { ControlPanelType } from "../../types/controlPanel";
 import { updateTheme } from "../../common/user/theming";
 import { list } from "../list";
-import { envData } from "../../common/envdata";
+import { version, lastCommit, compiledDate } from "../../common/envdata";
 import { PandaIcon } from "../pandaIcon";
 import { timeAgo } from "../../common/user/date";
 import { getStore, resetAllData, setStore } from "../../common/api";
@@ -12,8 +12,8 @@ import { Style } from "@lucsoft/webgen/bin/lib/Style";
 
 const renderCopryrightNotice = () => {
     const shell = span([
-        `DataStoreDB-GUI v${envData.version} (${envData.lastCommit.substr(0, 8)}, ${new Date(envData.compiledDate).toLocaleDateString()})`,
-        `© 2020–${new Date(envData.compiledDate).getFullYear()} lucsoft\n`,
+        `DataStoreDB-GUI v${version} (${lastCommit.substr(0, 8)}, ${new Date(compiledDate).toLocaleDateString()})`,
+        `© 2020–${new Date(compiledDate).getFullYear()} lucsoft\n`,
         'This programm is published under the terms of the CC0 license and may include these products: \nHmSYS, @lucsoft/network-connector and @lucsoft/webgen'
     ].join('\n'));
     shell.classList.add('copyright-notice');
@@ -80,7 +80,7 @@ export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ 
         }))
     else if (state.render === "about")
         use(list([
-            PandaIcon().draw(),
+            draw(PandaIcon()),
             renderCopryrightNotice()
         ]))
     else

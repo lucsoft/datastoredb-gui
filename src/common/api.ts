@@ -1,10 +1,12 @@
 import { hmsys } from "../components/views/dashboard";
 const moduleId = '@HomeSYS/DataStoreDB';
-import * as config from "../../config.json";
 import { db } from "../data/IconsCache";
 import { BlobReader, BlobWriter, ZipReader } from "@zip.js/zip.js";
+import { config } from "./envdata";
 
-export const apiPath = () => `http${config[ "default-https" ] ? 's' : ''}://${config[ "default-ip" ]}/api/@HomeSYS/DataStoreDB/`;
+const { defaultHttps, defaultIp, filterMode } = config;
+
+export const apiPath = () => `http${defaultHttps ? 's' : ''}://${defaultIp}/api/@HomeSYS/DataStoreDB/`;
 export const triggerUpdateResponse = async (id: string, data: Partial<{
     filename: string,
     variantFrom: string,
@@ -27,7 +29,7 @@ export const triggerRawImages = async (images: String[]) => {
     })
     const entries = await (new ZipReader(new BlobReader(await rsp.blob()))).getEntries();
 
-    return await Promise.all(entries.map(async (x) => [ x.filename, await x.getData!(new BlobWriter()) ] as [ id: string, data: Blob ]))
+    return Promise.all(entries.map(async (x) => [ x.filename, await x.getData!(new BlobWriter()) ] as [ id: string, data: Blob ]))
 };
 
 export const triggerUpdate = (id: string, data: Partial<{
@@ -42,14 +44,14 @@ export const triggerUpdate = (id: string, data: Partial<{
     })
 }
 export const getStats = async () => {
-    return fetch(`http${config[ "default-https" ] ? 's' : ''}://${config[ "default-ip" ]}/stats`).then(x => x.json())
+    return fetch(`http${defaultHttps ? 's' : ''}://${defaultIp}/stats`).then(x => x.json())
 }
 export const setStore = (type: 'always-all-variants' | 'compact-view', value: boolean) => {
     localStorage[ type ] = value.toString();
 }
 export const getStore = (type: 'always-all-variants' | 'compact-view') =>
     localStorage[ type ] == 'true';
-export const getFilterMode = (): [ displayName: string, alpha: number, filter: string ] => config.filterMode[ parseInt(localStorage[ "filter-mode" ] ?? "0") ] as any;
+export const getFilterMode = (): [ displayName: string, alpha: number, filter: string ] => filterMode[ parseInt(localStorage[ "filter-mode" ] ?? "0") ] as any;
 export const resetAllData = () => {
     localStorage.removeItem('always-all-variants')
     localStorage.removeItem('compact-view')

@@ -1,6 +1,6 @@
 import type { NetworkConnector } from '@lucsoft/network-connector';
-import * as config from '../../config.json';
 import { apiPath } from "../common/api";
+import { config } from "../common/envdata";
 const form = document.createElement('form');
 const fileUp = document.createElement('input');
 fileUp.type = "file";
