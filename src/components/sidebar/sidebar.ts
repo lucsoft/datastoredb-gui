@@ -10,16 +10,17 @@ import { db, Icon } from "../../data/IconsCache";
 import { getImageSourceFromIconOpt } from "../../common/iconData/getImageUrlFromIcon";
 import { triggerUpdate } from "../../common/api";
 import { renderVariantsView } from "./variantsView";
-import { sidebarGenerateTags } from "./tags";
+import { tagComponent } from "./tags";
 import { createAction } from "./actions";
 import { deleteDialog } from "../dialogs";
 
-const dialog = Dialog<SideBarType>((view) => {
+export const sidebarDialog = Dialog<SideBarType>((view) => {
+
     disableGlobalDragAndDrop()
 
     const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom } = view.state;
-    const image = img(getImageSourceFromIconOpt(currentIcon));
-
+    const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
+    if (!currentIcon) return view.use(span("Something illeagl happend"));
     // const title = use(span(currentIcon?.filename, 'icon-title', canEdit ? 'editable' : 'static'))
     const title = Input({
         color: canEdit ? undefined : Color.Disabled,
@@ -29,8 +30,6 @@ const dialog = Dialog<SideBarType>((view) => {
     });
     const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
     image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
-    const tags = Horizontal({}, ...sidebarGenerateTags(view))
-
     const add = mIcon('add') as HTMLElement
     add.onclick = () => view.update({ showVariantsView: true })
     const variants = Horizontal({ classes: [ "variants" ] },
@@ -40,17 +39,17 @@ const dialog = Dialog<SideBarType>((view) => {
 
     const optionalData = [];
 
-    if (currentIcon && !currentIcon?.variantFrom)
+    if (currentIcon?.variantFrom)
         optionalData.push(
             span('Variants', 'variants-title'),
             variants,
             createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(currentIcon))
         );
-    if (variantFrom && currentIcon)
+    if (variantFrom)
         optionalData.push(
             createAction("update_disabled", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon))
         )
-    if (canRemove && currentIcon)
+    if (canRemove)
         optionalData.push(
             createAction("delete", "Delete " + currentIcon.filename, true, openDeleteDialog(currentIcon))
         )
@@ -59,21 +58,24 @@ const dialog = Dialog<SideBarType>((view) => {
         view.use(renderVariantsView(view))
     }
     else
-        view.use(Vertical({ classes: [ "shell" ] },
+        view.use(Vertical({ classes: [ "shell" ], align: "flex-start", gap: " " },
             image,
             title,
-            tags,
+            tagComponent(view, sidebarDialog),
             ...optionalData,
             details
         ))
-}).allowUserClose().onClose(() => {
-    const dia = dialog.unsafeViewOptions<SideBarType>();
-    if (dia.state.canUpload) enableGlobalDragAndDrop();
-    dia.update({ showVariantsView: false })
 })
+    .addClass("sidebar")
+    .allowUserClose()
+    .onClose(() => {
+        const dia = sidebarDialog.unsafeViewOptions<SideBarType>();
+        if (dia.state.canUpload) enableGlobalDragAndDrop();
+        dia.update({ showVariantsView: false })
+    })
 
 export const registerSidebarEvents = () => {
-    const view: () => ViewOptions<SideBarType> = dialog.unsafeViewOptions;
+    const view: () => ViewOptions<SideBarType> = sidebarDialog.unsafeViewOptions;
     registerEvent(DataStoreEvents.ConnectionLost, () => {
         view().update({
             canEdit: false,
@@ -111,13 +113,13 @@ export const registerSidebarEvents = () => {
     })
     registerEvent(DataStoreEvents.SidebarUpdate, (data) => {
         const currentState = view().state;
-        if (data === undefined) return dialog.close();
+        if (data === undefined) return sidebarDialog.close();
         console.log(data);
         if (typeof data === 'string') {
-            if (currentState && currentState.currentIcon && currentState.currentIcon.id == data) dialog.close();
+            if (currentState && currentState.currentIcon && currentState.currentIcon.id == data) sidebarDialog.close();
             return;
         }
-        dialog.open();
+        sidebarDialog.open();
         view().update({
             currentIcon: data.currentIcon,
             imageVariants: data.imageVariants,

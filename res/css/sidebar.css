@@ -1,82 +1,15 @@
 .sidebar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    display: none;
-    margin: -3rem 0 0 -2.8rem;
-    user-select: none;
-    z-index: 20;
-}
-.sidebar.right {
-    margin: -3rem 0 0 6.5rem;
-}
-.sidebar.open {
-    display: block;
-    opacity: 1;
-}
-@keyframes fadeInInnerCard {
-    0% {
-        margin-bottom: -15rem;
-        margin-right: -7rem;
-    }
-}
-@keyframes fadeInInnerCardRight {
-    0% {
-        margin-bottom: -15rem;
-    }
-}
-.sidebar .shell {
-    width: 365px;
-    animation: fadeInInnerCard 400ms ease;
-}
-.sidebar.right .shell {
-    justify-items: end;
-    animation: fadeInInnerCardRight 400ms ease;
-}
-.sidebar cardlist {
     margin: 0;
+    width: 365px;
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
 }
-@keyframes fadeInCard {
-    from {
-        transform: translate(0,20%);
-    }
-}
-@keyframes fadeInCardSlim {
-    from {
-        transform: translate(0,-10%);
-    }
-}
-.sidebar card {
-    box-shadow: 0px 10px 22px 0px rgb(0 0 0 / 30%);
-    animation: fadeInCard 250ms ease;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
+
+.sidebar>.dialog-content {
+    margin: unset;
 }
 
-@keyframes fadeInImage {
-    0% {
-        height: 4rem;
-        margin-left: 2.5rem;
-    }
-    30% {
-        height: 4rem;
-        margin-left: 2.5rem;
-    }
-}
-@keyframes fadeInImageRight {
-    0% {
-        height: 4rem;
-        margin-right: 2.5rem;
-    }
-    30% {
-        height: 4rem;
-        margin-right: 2.5rem;
-    }
-}
 .sidebar .preview {
     display: block;
     height: 7rem;
@@ -85,6 +18,7 @@
     margin: 1.4rem 0 0 1.5rem;
     animation: fadeInImage 300ms ease;
 }
+
 .sidebar .icon-title {
     display: block;
     margin: 0.2rem 1rem 0.2rem .9rem;
@@ -100,20 +34,25 @@
     -moz-user-select: text;
     -webkit-user-select: text;
 }
+
 .sidebar .icon-title.editable:hover {
     background: var(--on-card-background);
     box-shadow: var(--box-shadow);
 }
+
 .sidebar .icon-title:not(.editable) {
     cursor: pointer;
 }
+
 .sidebar .icon-title.small {
     font-size: 30px;
     line-height: 2rem;
 }
-.sidebar.right .icon-title  {
+
+.sidebar.right .icon-title {
     text-align: right;
 }
+
 .sidebar .tags-list {
     margin: 6px 1.5rem 21px 1.5rem;
     padding: 0;
@@ -121,44 +60,54 @@
     flex-flow: wrap;
     gap: 7px;
 }
-.sidebar .tags-list span {
-    background: var(--on-card-background);
-    box-shadow: var(--box-shadow);
-    border-radius: 7px;
-    font-size: 14px;
-    padding: 4px 7px 4px;
-    font-weight: 500;
+
+.sidebar .tags-list a {
+    height: 24px;
+    padding: 0 9px;
 }
-.sidebar .tags-list span:hover {
-    opacity: 0.8;
+
+.sidebar .tags-list .wcheckbox {
+    height: 24px;
+    width: 24px;
 }
+
+.sidebar .tags-list .webgen-icon {
+    font-size: 15px;
+}
+
 .sidebar .tags-list span.material-icons-round {
     font-size: 15px;
     padding: 4px 5px;
 }
+
 .sidebar .variants-title {
     font-size: 18px;
     display: block;
     font-weight: 500;
     margin: 0 1.5rem 0 1.5rem;
 }
+
 .sidebar .action {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
 }
+
 .sidebar .action:hover {
     opacity: 0.9;
 }
+
 .sidebar .action span.material-icons-round {
     font-size: 26px;
     padding: 0 15px 0 1.3rem;
 }
+
 .sidebar .action span.label {
     font-size: 16px;
     display: inline-flex;
     font-weight: 400;
 }
+
 .sidebar .action.red {
     color: #EA4747;
 }
@@ -170,6 +119,7 @@
     color: gray;
     margin: 0 0 1.5rem 1.5rem;
 }
+
 .variants {
     display: flex;
     gap: 12px;
@@ -179,11 +129,13 @@
     max-height: 11rem;
     overflow: auto;
 }
+
 .variants .alt-preview {
     height: 50px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
+
 .variants .material-icons-round {
     margin: 7px 5px;
     border-radius: 10px;
@@ -192,6 +144,7 @@
     box-shadow: var(--box-shadow);
     font-size: 19px;
 }
+
 .variants .material-icons-round:hover {
     opacity: 0.8;
 }
@@ -207,13 +160,16 @@
     display: flex;
     align-items: center;
 }
+
 .header span {
     font-size: 18px;
     margin-left: -0.2rem;
 }
+
 .header:hover {
     opacity: 0.9;
 }
+
 .header span:last-child {
     font-size: 18px;
     font-weight: 500;
@@ -237,11 +193,11 @@
         width: 100%;
         animation: fadeInInnerCardRight 400ms ease;
     }
-
     .sidebar .preview {
         animation: none;
     }
 }
+
 @media (max-width: 410px) {
     .sidebar {
         top: 2rem !important;
@@ -250,12 +206,5 @@
         width: 100%;
         margin: 1rem;
         transform: none;
-    }
-}
-
-@supports not (list-style-type: "")  {
-    .tags-list span {
-        display: inline-block;
-        margin-right: 7px;
     }
 }
