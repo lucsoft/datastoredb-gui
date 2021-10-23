@@ -93,7 +93,6 @@ export const registerSidebarEvents = () => {
     registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
         const iconId = data.updated?.[ 0 ];
         const dia = view();
-        console.log(data)
         const cachedAllData = await db.icons.toArray();
         const iconData = cachedAllData.find(x => x?.id == iconId);
         if (iconData === undefined) return;
