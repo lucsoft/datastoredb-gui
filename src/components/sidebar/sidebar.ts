@@ -15,12 +15,10 @@ import { createAction } from "./actions";
 import { deleteDialog } from "../dialogs";
 
 export const sidebarDialog = Dialog<SideBarType>((view) => {
-
-    disableGlobalDragAndDrop()
-
     const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom } = view.state;
-    const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
     if (!currentIcon) return view.use(span("Something illeagl happend"));
+    disableGlobalDragAndDrop()
+    const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
     // const title = use(span(currentIcon?.filename, 'icon-title', canEdit ? 'editable' : 'static'))
     const title = Input({
         color: canEdit ? undefined : Color.Disabled,
