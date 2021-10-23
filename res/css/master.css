@@ -1,14 +1,3 @@
-html {
-    width: 100%;
-    height: calc(100% + 1px);
-    display: table;
-}
-
-body {
-    width: 100%;
-    display: table-cell;
-}
-
 html, body {
     margin: 0;
     padding: 0;
