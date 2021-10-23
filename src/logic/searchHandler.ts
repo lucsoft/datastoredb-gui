@@ -1,6 +1,6 @@
 import { conditionalCSSClass, span } from "@lucsoft/webgen";
-import { compareArray, execludeCompareArray } from "../../common/iconData/arrayCompare";
-import { Icon } from "../../data/IconsCache";
+import { compareArray, execludeCompareArray } from "../common/iconData/arrayCompare";
+import { Icon } from "../data/IconsCache";
 
 let getWidth = (fontSize: string, value: string) => {
     let div = document.createElement('div');
@@ -76,3 +76,54 @@ export const SearchHandleOnKeyboardUpEvent = (tagSelector: HTMLElement, tagIndex
             tagSelector.append(span('Sorry, we don\'t have no any more tags', 'help'))
     }
 }
+
+export const SearchHandleOnKeyboardDownEvent = (tagSelector: HTMLElement, tagSelectIndex: (val?: number) => number, search: HTMLInputElement, filteredUpdate: () => void) => (e: KeyboardEvent): void => {
+
+    if (e.key == "Tab")
+        e.preventDefault();
+    else if ((e.key == "ArrowDown" || e.key == "ArrowUp") && tagSelector.children.length >= 2) {
+        e.preventDefault();
+        tagSelector.querySelectorAll('.selected')[ 0 ]?.classList.remove('selected');
+        if (e.key == "ArrowUp") {
+            if (tagSelectIndex() != 0)
+                tagSelectIndex(tagSelectIndex() - 1)
+            else
+                tagSelectIndex(tagSelector.children.length - 2)
+        } else {
+            if (tagSelectIndex() == tagSelector.children.length - 2)
+                tagSelectIndex(0);
+            else
+                tagSelectIndex(tagSelectIndex() + 1)
+        }
+        tagSelector.querySelectorAll('*')[ tagSelectIndex() ].classList.add('selected');
+    }
+    else if (e.key == "Backspace" && search.value.substr(0, search.selectionStart ?? 0).endsWith('\u200b ')) {
+        e.preventDefault();
+        const match = search.value.substr(0, search.selectionStart ?? 0)
+            .match(/[#|!|-][\w|\d|.]*\u200b $/);
+        if (match)
+            search.value = search.value.replace(match[ 0 ], '');
+        if (search.value.length == 0) {
+            filteredUpdate()
+        }
+    }
+    else if ((e.key == "ArrowLeft" && search.value.substr(0, search.selectionStart ?? 0).endsWith('\u200b ')) || (e.key == "ArrowRight" && search.value.substr(search.selectionStart ?? 0).match(/^[#|!|-].*\u200b /))) {
+        e.preventDefault();
+
+        if (e.key == "ArrowLeft") {
+            const match = search.value.substr(0, search.selectionStart ?? 0)
+                .match(/[#|!|-][\w|\d|.]*\u200b $/);
+
+            if (match)
+                search.selectionEnd = search.selectionStart = search.selectionStart ? search.selectionStart - match[ 0 ].length : 0;
+
+        } else if (e.key == "ArrowRight") {
+            const match = search.value.substr(search.selectionStart ?? 0)
+                .match(/^[#|!|-][\w|\d|.]*\u200b /);
+
+            if (match)
+                search.selectionEnd = search.selectionStart = (search.selectionStart ?? 0) + match[ 0 ].length;
+        }
+    }
+
+};
