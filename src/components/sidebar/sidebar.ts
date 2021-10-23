@@ -59,7 +59,7 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
         view.use(Vertical({ classes: [ "shell" ], align: "flex-start", gap: " " },
             image,
             title,
-            tagComponent(view, sidebarDialog),
+            tagComponent(currentIcon, canEdit ?? false, view, sidebarDialog),
             ...optionalData,
             details
         ))
@@ -112,7 +112,6 @@ export const registerSidebarEvents = () => {
     registerEvent(DataStoreEvents.SidebarUpdate, (data) => {
         const currentState = view().state;
         if (data === undefined) return sidebarDialog.close();
-        console.log(data);
         if (typeof data === 'string') {
             if (currentState && currentState.currentIcon && currentState.currentIcon.id == data) sidebarDialog.close();
             return;

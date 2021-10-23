@@ -73,6 +73,7 @@ module.exports = (_, mode) => {
                 VERSION: JSON.stringify(package.version.toString()),
                 COMPILED_AD: JSON.stringify(new Date()),
                 CONFIG: JSON.stringify(require("./config.json")),
+                NEWS: JSON.stringify(require("./news.json")),
                 LAST_COMMIT: JSON.stringify(execSync("git rev-parse HEAD").toString().trim())
             }),
             new CopyWebpackPlugin({

@@ -1,5 +1,11 @@
+export const enum ControlPanelEnum {
+    home,
+    settings,
+    news,
+    about,
+}
 export type ControlPanelType = {
-    render: 'home' | 'settings' | 'news' | 'about'
+    render: ControlPanelEnum
     username?: string
     canUpload?: boolean
     canRemove?: boolean

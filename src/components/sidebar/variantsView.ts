@@ -1,6 +1,5 @@
 import { img, Icon as mIcon, span, draw, Component, Horizontal, Vertical, ViewOptions } from "@lucsoft/webgen";
 import { triggerUpdate } from "../../common/api";
-import { list } from "../list";
 import { db, Icon } from "../../data/IconsCache";
 import { createAction } from "./actions";
 import { manualUploadImage, uploadImage } from "../upload";
@@ -26,7 +25,7 @@ export function renderVariantsView(main: ViewOptions<SideBarType>): Component {
     if (possiableVariants && icon?.id && (possiableVariants.length) > 0)
         optionalData.push(
             span("Recommended", "variants-title"),
-            list(possiableVariants.map(x => createNewVariantsIcon(icon.id, x)), [ "variants" ])
+            Horizontal({ classes: [ "variants" ] }, ...possiableVariants.map(x => createNewVariantsIcon(icon.id, x)))
         )
 
     return Vertical({},

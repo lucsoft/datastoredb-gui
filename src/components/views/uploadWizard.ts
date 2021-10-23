@@ -1,9 +1,9 @@
 import { Component, custom, Dialog, img, Icon, span, Vertical, draw, Input } from "@lucsoft/webgen";
 import { triggerUpdateResponse } from "../../common/api";
-import { list } from "../list";
 import { hmsys } from "./dashboard";
 import { UploadWizard, UploadWizardData } from "../../types/UploadWizard";
 import { resetFiles, uploadImage } from "../upload";
+import { tagComponent } from "../sidebar/tags";
 
 export const generateUploadWizard = (): UploadWizard => {
 
@@ -21,9 +21,7 @@ export const generateUploadWizard = (): UploadWizard => {
         const add = draw(Icon('edit'));
         add.onclick = () => obj.update({ editTags: true })
 
-        obj.use(Vertical({
-
-        },
+        obj.use(Vertical({},
             img(icon),
             data,
             (() => {
@@ -43,7 +41,7 @@ export const generateUploadWizard = (): UploadWizard => {
                     return tagsInput;
                 }
                 else if (tags)
-                    return list([ ...tags.map(x => span('#' + x)), add ], [ 'tags-list' ]);
+                    return tagComponent({ tags, date: 0, filename: "", id: "" }, true);
                 else
                     return span("")
             })(),

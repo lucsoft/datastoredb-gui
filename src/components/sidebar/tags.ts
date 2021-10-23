@@ -1,17 +1,16 @@
 import { draw, Input, ViewOptions, Horizontal, nullish, Button, DialogData, Checkbox } from "@lucsoft/webgen";
 import { triggerUpdate } from "../../common/api";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
-import { SideBarType } from "../../types/sidebarTypes";
+import { Icon } from "../../data/IconsCache";
 
-export const tagComponent = (view: ViewOptions<SideBarType>, dialog?: DialogData) => {
-    const { currentIcon: icon, canEdit, editTags } = view.state;
+export const tagComponent = (icon: Icon, canEdit?: boolean, view?: ViewOptions<{ editTags: boolean }>, dialog?: DialogData) => {
 
     const button = Checkbox({
         icon: "pencil-fill",
         selected: true,
-        toggledOn: () => view.update({ editTags: true })
+        toggledOn: () => view?.update({ editTags: true })
     })
-    if (editTags)
+    if (view?.state.editTags)
         return Horizontal({ classes: [ "tags-list" ] }, (() => {
             const tag = draw(Input({
                 placeholder: "Tags",
@@ -33,10 +32,10 @@ export const tagComponent = (view: ViewOptions<SideBarType>, dialog?: DialogData
         ...nullish(
             ...icon!.tags.map(tag => Button({
                 text: `#${tag}`,
-                pressOn: () => {
-                    dialog?.close();
+                pressOn: dialog ? () => {
+                    dialog.close();
                     emitEvent(DataStoreEvents.SearchBarAddTag, tag);
-                }
+                } : undefined
             })),
             canEdit ? button : null
         )

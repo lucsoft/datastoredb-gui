@@ -1,5 +1,4 @@
-import { Dialog, img, span, Vertical } from "@lucsoft/webgen"
-import { list } from "../list";
+import { custom, Dialog, img, span, Vertical } from "@lucsoft/webgen"
 import '../../../res/css/generator.css';
 import { uploadImage } from "../upload";
 import { hmsys } from "../views/dashboard";
@@ -15,10 +14,8 @@ type ImageGenList = {
 function imageSelectorComponent(update: (updateStateData: Partial<ImageGenList>) => void, imagelist: imageGen[], isDisabled: boolean, index: number, icon: imageGen) {
     const image = img(URL.createObjectURL(icon.image));
 
-    const shell = list([
-        image,
-        span(icon.title)
-    ], [ 'gen-icon-shell', icon.selected ? 'selected' : 'normal' ]);
+    const shell = custom("div", undefined, "gen-icon-shell", icon.selected ? 'selected' : 'normal');
+    shell.append(image, span(icon.title));
     shell.onclick = () => {
         imagelist[ index ].selected = !icon.selected;
         update(isDisabled ? { disabled: imagelist } : { normal: imagelist })
@@ -29,8 +26,8 @@ function imageSelectorComponent(update: (updateStateData: Partial<ImageGenList>)
 export const VariantsGeneratorDialog = Dialog<ImageGenList>(({ use, update, state }) => {
     use(Vertical({},
         span("Select Variants you wannt to generate and publish"),
-        list(state.normal?.map((x, index) => imageSelectorComponent(update, state.normal ?? [], false, index, x)) ?? [], [ 'variants-generator' ]),
-        list(state.disabled?.map((x, index) => imageSelectorComponent(update, state.disabled ?? [], true, index, x)) ?? [], [ 'variants-generator' ])
+        Vertical({ classes: [ 'variants-generator' ] }, ...state.normal?.map((x, index) => imageSelectorComponent(update, state.normal ?? [], false, index, x)) ?? []),
+        Vertical({ classes: [ 'variants-generator' ] }, ...state.disabled?.map((x, index) => imageSelectorComponent(update, state.disabled ?? [], true, index, x)) ?? [])
     ))
 })
     .setTitle("Variants Generator")

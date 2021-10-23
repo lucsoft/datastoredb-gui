@@ -1,9 +1,8 @@
-import { Button, Checkbox, Dialog, draw, list as List, span, SupportedThemes, Vertical } from "@lucsoft/webgen";
+import { Button, ButtonStyle, Checkbox, Component, Dialog, Horizontal, list as List, nullish, span, SupportedThemes, Vertical } from "@lucsoft/webgen";
 import '../../../res/css/dialog.css';
-import { ControlPanelType } from "../../types/controlPanel";
+import { ControlPanelEnum, ControlPanelType } from "../../types/controlPanel";
 import { updateTheme } from "../../common/user/theming";
-import { list } from "../list";
-import { version, lastCommit, compiledDate } from "../../common/envdata";
+import { version, lastCommit, compiledDate, news } from "../../common/envdata";
 import { PandaIcon } from "../pandaIcon";
 import { timeAgo } from "../../common/user/date";
 import { getStore, resetAllData, setStore } from "../../common/api";
@@ -21,23 +20,15 @@ const renderCopryrightNotice = () => {
 }
 
 export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ use, state, update }) => {
-    use(Vertical({},
-        Button({ text: "Home", pressOn: () => update({ render: 'home' }) }),
-        Button({ text: "News", pressOn: () => update({ render: 'news' }) }),
-        Button({ text: "Settings", pressOn: () => update({ render: 'settings' }) }),
-        Button({ text: "About Panda", pressOn: () => update({ render: 'about' }) }),
-    ))
-    if (state.render == "home")
-        use(List({},
+    let view: { [ type in ControlPanelEnum ]: Component } = {
+        [ ControlPanelEnum.home ]: List({},
             { left: 'Account age', right: span(timeAgo(state.createDate)) },
             { left: 'Running since', right: span(timeAgo(state.uptime)) },
             { left: 'Events Emitted', right: span(state.eventsEmitted?.toString()) },
             { left: 'Icons', right: span(state.iconCount?.toString()) }
-        ));
-    else if (state.render == "news")
-        use(span("Some more text coming here"))
-    else if (state.render == "settings")
-        use(List({}, {
+        ),
+        [ ControlPanelEnum.news ]: Vertical({ align: "flex-start" }, ...news.map(x => span(x))),
+        [ ControlPanelEnum.settings ]: List({}, {
             left: 'Theme',
             right: Button({
                 text: "Theme",
@@ -69,26 +60,32 @@ export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ 
                 }
             })
         }, {
-            left: 'Clear Storage',
-            right: Button({
-                text: "Clear " + state.iconCount + " Files",
-                pressOn: resetAllData
-            })
+            left: 'LocalStorage',
+            right: Button({ text: "Reset Client", pressOn: resetAllData })
         }, {
             left: 'Username',
             right: span(state.username + '\n#' + state.userId, 'small-text')
-        }))
-    else if (state.render === "about")
-        use(list([
-            draw(PandaIcon()),
-            renderCopryrightNotice()
-        ]))
-    else
-        update({
-            render: "home",
+        }),
+
+        [ ControlPanelEnum.about ]: Vertical({ align: "flex-start" }, PandaIcon(), renderCopryrightNotice()),
+    };
+
+    use(Horizontal({
+        classes: [ "split-view" ],
+        gap: "1rem"
+    },
+        Vertical({ classes: [ "button-list" ] },
+            Button(createNavButton(state, update, "Home", ControlPanelEnum.home)),
+            Button(createNavButton(state, update, "News", ControlPanelEnum.news)),
+            Button(createNavButton(state, update, "Settings", ControlPanelEnum.settings)),
+            Button(createNavButton(state, update, "About Panda", ControlPanelEnum.about)),
+        ),
+        ...nullish(state.render !== undefined ? view[ state.render ] : (update({
+            render: ControlPanelEnum.home,
             compactView: getStore('compact-view'),
             showAlwaysAllVariants: getStore('always-all-variants')
-        })
+        })!))
+    ))
 })
     .setTitle("Panda")
     .allowUserClose()
@@ -98,3 +95,7 @@ export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ 
         return undefined;
     })
     .addButton("close", "close")
+
+function createNavButton({ render }: Partial<ControlPanelType>, update: (data: Partial<ControlPanelType>) => void, title: string, id: Partial<ControlPanelType>[ "render" ]) {
+    return { text: title, state: render == id ? ButtonStyle.Secondary : ButtonStyle.Inline, pressOn: () => update({ render: id }) };
+}

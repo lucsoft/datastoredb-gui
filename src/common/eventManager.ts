@@ -21,7 +21,6 @@ type DataStoreEvent = {
     action: (metaData: any) => void
 }
 
-
 type DataStoreEventType<TypeT> =
     (TypeT extends DataStoreEvents.RecivedProfileData ? ProfileData : unknown)
     & (TypeT extends DataStoreEvents.IncidentBar ? (undefined | { message: string }) : unknown)
