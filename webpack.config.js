@@ -25,9 +25,9 @@ module.exports = (_, mode) => {
         resolve: {
             extensions: [ ".js", ".ts" ]
         },
+        stats: 'minimal',
         experiments: {
             topLevelAwait: true,
-            futureDefaults: true,
             cacheUnaffected: true
         },
         module: {

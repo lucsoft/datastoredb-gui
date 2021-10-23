@@ -2,10 +2,6 @@ import { db, GetFilesResponse, Icon } from '../data/IconsCache';
 import { DataStoreEvents, emitEvent, registerEvent } from "./eventmanager";
 import { triggerRawImages } from "./api";
 import { config } from "./envdata";
-/**
- * @deprecated
- */
-export const getStoredData = async () => await db.icons.orderBy('id').toArray()
 const mapBlobToFile = (data: Blob, icon: Icon) => new File([ data ], icon.filename, { type: icon.type });
 
 registerEvent(DataStoreEvents.RefreshData, async (hmsys) => {

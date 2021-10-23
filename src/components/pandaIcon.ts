@@ -1,16 +1,10 @@
-import { RenderElement, span } from "@lucsoft/webgen";
+import { Component, span } from "@lucsoft/webgen";
 import pandaIcon from '../../res/pandaicon.svg';
 
-const data = fetch(pandaIcon).then(x => x.text());
+const data = await fetch(pandaIcon).then(x => x.text());
 
-export const PandaIcon = (): RenderElement => {
+export const PandaIcon = (): Component => {
     const icon = span(undefined, 'webgen-svg', 'panda-icon')
-    data.then(x => {
-        icon.innerHTML = x
-    })
-    return {
-        draw: () => {
-            return icon;
-        }
-    }
+    icon.innerHTML = data;
+    return icon;
 }
