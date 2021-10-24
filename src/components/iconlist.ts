@@ -56,6 +56,7 @@ export async function renderIconlist(element: HTMLElement, filterOptions: {
     filteredText: string;
 }) {
     const count = await db.icons.count()
+
     let elements = (await db.icons
         .filter(icon => supportedIconType(icon))
         .filter(icon => filterSettings(icon, filterOptions))
@@ -89,7 +90,7 @@ const renderSingleIcon = (icon: Icon) => {
 }
 
 function supportedIconType(icon: Icon) {
-    return config.supportedIcontypes.includes(icon.type!);
+    return config.supportedIcontypes.includes(icon.data?.type ?? "");
 }
 
 function filterSettings(icon: Icon, filterOptions: { includeTags: string[]; execludeTags: string[]; filteredText: string; }) {

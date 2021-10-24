@@ -19,9 +19,9 @@ export interface Icon {
     filename: string
     id: string
     tags: string[]
-    type?: string
     variantFrom?: string
     data?: File
+    type?: string
 }
 
 export var db = new IconsCache();

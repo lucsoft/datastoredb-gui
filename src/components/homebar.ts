@@ -27,7 +27,7 @@ export const renderHomeBar = (style: Style, uploadWizard: UploadWizard) => {
     shell.classList.add("homebar");
 
     async function updateIconData() {
-        iconData = await db.icons.orderBy('id').filter(x => config.supportedIcontypes.includes(x.type!)).toArray();
+        iconData = await db.icons.orderBy('id').filter(x => config.supportedIcontypes.includes(x.data?.type ?? "")).toArray();
         db.icons.count().then(iconCount => dialog.unsafeViewOptions().update({ iconCount }))
     }
     updateIconData()

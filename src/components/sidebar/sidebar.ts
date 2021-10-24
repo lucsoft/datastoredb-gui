@@ -135,7 +135,7 @@ function titleComponent(currentIcon: Icon, canEdit: boolean | undefined, view: V
 }
 
 function getDetailsText(username?: string, icon?: Icon, image?: HTMLImageElement): string {
-    return `by ${username ?? "Unknown User"} • ${timeAgo(icon?.date)} • ${icon?.type}@${image?.naturalWidth}x${image?.naturalHeight}`;
+    return `by ${username ?? "Unknown User"} • ${timeAgo(icon?.date)} • ${icon?.data?.type}@${image?.naturalWidth}x${image?.naturalHeight}`;
 }
 
 function handleAllVariantsDownload(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
