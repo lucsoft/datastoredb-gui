@@ -40,14 +40,15 @@ export function updateFirstTimeDatabase() {
                 .open()
 
         if (userData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
+        console.log(userData);
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: userData.services.DataStoreDB.upload,
             canRemove: userData.services.DataStoreDB.remove,
             canEdit: userData.services.DataStoreDB.edit,
             featureEnabled: userData.services.DataStoreDB != undefined,
             username: userData.profile.username,
-            userId: userData.profile.id,
-            createDate: userData.profile.createDate,
+            userId: userData._id,
+            createDate: userData.profile.created,
         } as ProfileData)
         emitEvent(DataStoreEvents.RefreshData, hmsys)
     });

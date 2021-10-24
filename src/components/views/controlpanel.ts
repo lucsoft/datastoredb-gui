@@ -94,7 +94,7 @@ export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ 
         open("https://github.com/lucsoft/datastoredb-gui/issues/new")
         return undefined;
     })
-    .addButton("close", "close")
+    .addButton("close", "close");
 
 function createNavButton({ render }: Partial<ControlPanelType>, update: (data: Partial<ControlPanelType>) => void, title: string, id: Partial<ControlPanelType>[ "render" ]) {
     return { text: title, state: render == id ? ButtonStyle.Secondary : ButtonStyle.Inline, pressOn: () => update({ render: id }) };

@@ -11,6 +11,7 @@ import { PandaIcon } from "./pandaIcon";
 import { UploadWizard } from "../types/UploadWizard";
 import { getStats } from "../common/api";
 import { config } from "../common/envdata";
+import { ControlPanelType } from "../types/controlPanel";
 
 type homeBarState = {
     uploadAllowed: boolean
@@ -38,7 +39,7 @@ export const renderHomeBar = (style: Style, uploadWizard: UploadWizard) => {
         homeBar.unsafeViewOptions<homeBarState>().update({
             uploadAllowed: data.canUpload
         });
-        dialog.unsafeViewOptions().update({
+        dialog.unsafeViewOptions<ControlPanelType>().update({
             username: data.username,
             canRemove: data.canRemove,
             canUpload: data.canUpload,
