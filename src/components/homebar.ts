@@ -34,7 +34,11 @@ export const renderHomeBar = (style: Style, uploadWizard: UploadWizard) => {
     const { search, tagSelector } = createSearchComponent(() => iconData);
 
     const dialog = dialogControlPanel(style);
-    getStats().then(x => dialog.unsafeViewOptions().update({ uptime: x.uptime, eventsEmitted: x.eventsEmitted }))
+    getStats().then(x => dialog.unsafeViewOptions<ControlPanelType>().update({
+        uptime: x.uptime,
+        loadAverage: x.host.loadAverage,
+        eventsEmitted: x.eventsEmitted
+    }))
     registerEvent(DataStoreEvents.RecivedProfileData, (data) => {
         homeBar.unsafeViewOptions<homeBarState>().update({
             uploadAllowed: data.canUpload

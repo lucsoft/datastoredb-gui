@@ -25,7 +25,8 @@ export const dialogControlPanel = (theme: Style) => Dialog<ControlPanelType>(({ 
             { left: 'Account age', right: span(timeAgo(state.createDate)) },
             { left: 'Running since', right: span(timeAgo(state.uptime)) },
             { left: 'Events Emitted', right: span(state.eventsEmitted?.toString()) },
-            { left: 'Icons', right: span(state.iconCount?.toString()) }
+            { left: 'Icons', right: span(state.iconCount?.toString()) },
+            { left: 'Load', right: span(state.loadAverage?.map(x => x.toFixed(2)).join(", ")) }
         ),
         [ ControlPanelEnum.news ]: Vertical({ align: "flex-start" }, ...news.map(x => span(x))),
         [ ControlPanelEnum.settings ]: List({}, {
