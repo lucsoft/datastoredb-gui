@@ -27,8 +27,7 @@ module.exports = (_, mode) => {
         },
         stats: 'minimal',
         experiments: {
-            topLevelAwait: true,
-            cacheUnaffected: true
+            topLevelAwait: true
         },
         module: {
             rules: [
@@ -53,7 +52,8 @@ module.exports = (_, mode) => {
         },
         devServer: {
             port: 80,
-            host: '0.0.0.0'
+            host: '0.0.0.0',
+            hot: false
         },
         plugins: [
             new MiniCssExtractPlugin({

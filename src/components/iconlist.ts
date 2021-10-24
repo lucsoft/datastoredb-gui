@@ -13,25 +13,20 @@ export const createIconList = () => {
     renderIconlist(list, currentSearchRequest)
     conditionalCSSClass(list, getStore('compact-view'), 'compact-view')
 
-    registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
-        const storedData: Icon[] = await db.icons.toArray();
+    registerEvent(DataStoreEvents.SyncIconRemove, (data) => {
+        data.forEach(x => list.querySelector(`[id="${x}"]`)?.remove())
+    })
+    registerEvent(DataStoreEvents.SyncIconAdd, async (data) => {
+        const newData = data
+            .filter(icon => supportedIconType(icon))
+            .filter(icon => filterSettings(icon, currentSearchRequest))
+            .filter(x => tagFiltering(x, currentSearchRequest))
+            .filter(x => simpleTextFiltering(x, currentSearchRequest))
+        if (list.children[ 0 ]?.classList.contains('empty-list') && newData.length > 0)
+            list.innerHTML = "";
 
-        if (data.new && data.new.length > 0) {
-            const newData = data.new
-                .map(id => storedData.find(sd => sd.id == id)!)
-                .filter(icon => supportedIconType(icon))
-                .filter(icon => filterSettings(icon, currentSearchRequest))
-                .filter(x => tagFiltering(x, currentSearchRequest))
-                .filter(x => simpleTextFiltering(x, currentSearchRequest))
-            if (list.children[ 0 ]?.classList.contains('empty-list') && newData.length > 0)
-                list.innerHTML = "";
-
-            list.append(...newData
-                .map(icon => renderSingleIcon(icon)))
-        }
-        if (data.removed && data.removed.length > 0) {
-            data.removed.forEach(x => list.querySelector(`[id="${x}"]`)?.remove())
-        }
+        list.append(...newData
+            .map(icon => renderSingleIcon(icon)))
     })
     registerEvent(DataStoreEvents.SearchBarUpdated, async (data) => {
         if ((await db.icons.count()) == 0) return;

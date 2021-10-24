@@ -21,22 +21,16 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
 
     const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
     image.loading = "eager";
-    image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
     const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
-
+    image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
     const optionalData = [];
-    if (variantFrom)
-        optionalData.push(
-            createAction("file-minus", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon))
-        )
-    if (canRemove)
-        optionalData.push(
-            createAction("file-x", "Delete " + currentIcon.filename, true, openDeleteDialog(currentIcon))
-        )
 
-    if (showVariantsView) {
-        view.use(renderVariantsView(view))
-    }
+    if (variantFrom)
+        optionalData.push(createAction("file-minus", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon)))
+    if (canRemove)
+        optionalData.push(createAction("file-x", "Delete " + currentIcon.filename, true, openDeleteDialog(currentIcon)))
+
+    if (showVariantsView) view.use(renderVariantsView(view))
     else
         view.use(Vertical({ classes: [ "shell" ], align: "flex-start", gap: " " },
             image,
@@ -56,6 +50,7 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
         dia.update({ showVariantsView: false, editTags: false, openTitleEdit: false })
         if (dia.state.canUpload) enableGlobalDragAndDrop();
     })
+
 export const registerSidebarEvents = () => {
     const view: () => ViewOptions<SideBarType> = sidebarDialog.unsafeViewOptions;
     registerEvent(DataStoreEvents.ConnectionLost, () => {
@@ -74,22 +69,22 @@ export const registerSidebarEvents = () => {
             canEdit: data.canEdit
         })
     })
-    registerEvent(DataStoreEvents.RefreshDataComplete, async (data) => {
-        const iconId = data.updated?.[ 0 ];
+    registerEvent(DataStoreEvents.SyncIconUpdate, async (data) => {
+        const currentIcon = data.find(x => x.id == dia.state.currentIcon?.id);
+        const iconIsVariantFromCurrentIcon = data.find(x => x.variantFrom == dia.state.currentIcon?.id);
         const dia = view();
         const cachedAllData = await db.icons.toArray();
-        const iconData = cachedAllData.find(x => x?.id == iconId);
-        if (iconData === undefined) return;
+        if (!currentIcon || !iconIsVariantFromCurrentIcon) return;
 
-        if (data.updated && iconId && dia.state.currentIcon && dia.state.currentIcon.id == iconId) {
+        if (currentIcon) {
             dia.update({
-                currentIcon: iconData,
-                possiableVariants: getPossibleVariants(cachedAllData, iconData),
-                variantFrom: isVariantFrom(iconData, cachedAllData)
+                currentIcon: currentIcon,
+                possiableVariants: getPossibleVariants(cachedAllData, currentIcon),
+                variantFrom: isVariantFrom(currentIcon, cachedAllData)
             })
-        } else if (iconData.variantFrom == dia.state.currentIcon?.id) {
+        } else if (iconIsVariantFromCurrentIcon) {
             dia.update({
-                possiableVariants: getPossibleVariants(cachedAllData, cachedAllData.find(x => x.id == iconData.variantFrom)!)
+                possiableVariants: getPossibleVariants(cachedAllData, iconIsVariantFromCurrentIcon)
             })
         }
     })

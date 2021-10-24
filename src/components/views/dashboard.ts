@@ -5,7 +5,6 @@ import { createIconList } from '../iconlist';
 import { registerSidebarEvents } from "../sidebar/sidebar";
 import { updateFirstTimeDatabase } from "../../data/hmsys";
 import { createIncidentBar } from "../../data/incidentBar";
-import '../../common/refreshData';
 import '../../../res/css/master.css';
 import { registerMasterDropArea } from "../dropareas";
 import { Style } from "@lucsoft/webgen/bin/lib/Style";

@@ -52,7 +52,9 @@ export const renderHomeBar = (style: Style, uploadWizard: UploadWizard) => {
         })
     })
 
-    registerEvent(DataStoreEvents.RefreshDataComplete, () => updateIconData());
+    registerEvent(DataStoreEvents.SyncIconAdd, () => updateIconData());
+    registerEvent(DataStoreEvents.SyncIconUpdate, () => updateIconData());
+    registerEvent(DataStoreEvents.SyncIconRemove, () => updateIconData());
 
     const homeBar = View<homeBarState>(({ state, use }) => {
         use(Horizontal({},
