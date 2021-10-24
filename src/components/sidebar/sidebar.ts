@@ -70,11 +70,11 @@ export const registerSidebarEvents = () => {
         })
     })
     registerEvent(DataStoreEvents.SyncIconUpdate, async (data) => {
+        const dia = sidebarDialog.unsafeViewOptions<SideBarType>();
         const currentIcon = data.find(x => x.id == dia.state.currentIcon?.id);
         const iconIsVariantFromCurrentIcon = data.find(x => x.variantFrom == dia.state.currentIcon?.id);
-        const dia = view();
         const cachedAllData = await db.icons.toArray();
-        if (!currentIcon || !iconIsVariantFromCurrentIcon) return;
+        if (!(currentIcon || iconIsVariantFromCurrentIcon)) return;
 
         if (currentIcon) {
             dia.update({

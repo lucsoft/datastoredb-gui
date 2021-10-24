@@ -45,29 +45,29 @@
     box-shadow: var(--box-shadow);
 }
 
-.sidebar .tags-list {
-    margin: 6px 1.5rem 21px 1.5rem;
-    padding: 0;
+.tags-list {
+    padding: 6px 1.5rem 21px 1.5rem;
+    box-sizing: border-box;
     display: flex;
     flex-flow: wrap;
     gap: 7px;
 }
 
-.sidebar .tags-list a {
+.tags-list a {
     height: 24px;
     padding: 0 9px;
 }
 
-.sidebar .tags-list .wiconbutton {
+.tags-list .wiconbutton {
     height: 24px;
     width: 24px;
 }
 
-.sidebar .tags-list .webgen-icon {
+.tags-list .webgen-icon {
     font-size: 15px;
 }
 
-.sidebar .tags-list span.material-icons-round {
+.tags-list span.material-icons-round {
     font-size: 15px;
     padding: 4px 5px;
 }

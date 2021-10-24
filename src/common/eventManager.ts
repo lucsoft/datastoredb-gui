@@ -42,6 +42,5 @@ export const registerEvent = <TypeT extends DataStoreEvents>(id: TypeT, action: 
     events.push({ id, action })
 }
 export const emitEvent = <TypeT extends DataStoreEvents>(id: TypeT, metaData: DataStoreEventType<TypeT>) => {
-    console.log(id, metaData);
     events.filter(x => x.id === id).forEach(x => x.action(metaData))
 }
