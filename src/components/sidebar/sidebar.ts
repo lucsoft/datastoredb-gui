@@ -12,6 +12,7 @@ import { renderVariantsView } from "./variantsView";
 import { tagComponent } from "./tags";
 import { createAction } from "./actions";
 import { deleteDialog } from "../dialogs";
+import { sidebarOpenIcon } from "../../logic/openIcon";
 
 export const sidebarDialog = Dialog<SideBarType>((view) => {
     const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom, openTitleEdit } = view.state;
@@ -29,10 +30,13 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
     }) : staticTitle;
     const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
     image.loading = "eager";
-    console.log(canUpload, canEdit);
     image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
     const variants = Horizontal({ classes: [ "variants" ] }, ...nullish(
-        ...imageVariants?.map(icon => img(URL.createObjectURL(icon.data), 'alt-preview')) ?? [],
+        ...imageVariants?.map(icon => {
+            const imageIcon = img(URL.createObjectURL(icon.data), 'alt-preview');
+            imageIcon.onclick = () => sidebarOpenIcon(icon)
+            return imageIcon;
+        }) ?? [],
         canUpload && canEdit
             ? IconButton({
                 icon: "plus",

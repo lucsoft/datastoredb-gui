@@ -116,9 +116,11 @@
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+    width: calc(100% - 3rem);
     margin: 6px 1.5rem 20px 1.5rem;
     padding-bottom: 0.3rem;
     max-height: 11rem;
+    overflow: auto;
 }
 
 .variants .alt-preview {

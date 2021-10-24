@@ -40,7 +40,6 @@ export function updateFirstTimeDatabase() {
                 .open()
 
         if (userData.services.DataStoreDB.upload != true) disableGlobalDragAndDrop()
-        console.log(userData);
         emitEvent(DataStoreEvents.RecivedProfileData, {
             canUpload: userData.services.DataStoreDB.upload,
             canRemove: userData.services.DataStoreDB.remove,

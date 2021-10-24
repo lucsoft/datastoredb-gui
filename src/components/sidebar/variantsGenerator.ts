@@ -1,4 +1,4 @@
-import { Color, custom, Dialog, Horizontal, img, span, Vertical } from "@lucsoft/webgen"
+import { custom, Dialog, Horizontal, img, span, Vertical } from "@lucsoft/webgen"
 import '../../../res/css/generator.css';
 import { uploadImage } from "../upload";
 import { hmsys } from "../views/dashboard";
@@ -45,4 +45,4 @@ export const VariantsGeneratorDialog = Dialog<ImageGenList>(({ use, update, stat
         await uploadImage(transfer.files, hmsys, state.from?.id);
         emitEvent(DataStoreEvents.SidebarUpdate, undefined);
         return "close";
-    }, Color.Critical)
+    })

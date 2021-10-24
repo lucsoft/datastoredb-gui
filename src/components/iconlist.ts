@@ -1,12 +1,12 @@
 import { conditionalCSSClass, custom, img, span } from "@lucsoft/webgen";
 import '../../res/css/iconlist.css';
 import { compareArray, execludeCompareArray } from "../common/iconData/arrayCompare";
-import { DataStoreEvents, emitEvent, registerEvent } from "../common/eventmanager";
+import { DataStoreEvents, registerEvent } from "../common/eventmanager";
 import { db, Icon } from '../data/IconsCache';
 import lostPanda from '../../res/lostpanda.svg';
-import { getPossibleVariants, isVariantFrom } from "../common/iconData/variants";
 import { getStore } from "../common/api";
 import { config } from "../common/envdata";
+import { sidebarOpenIcon } from "../logic/openIcon";
 export const createIconList = () => {
     const list = document.createElement('div');
     let currentSearchRequest: { includeTags: string[]; execludeTags: string[]; filteredText: string; } = { execludeTags: [], includeTags: [], filteredText: "" }
@@ -89,15 +89,7 @@ const renderSingleIcon = (icon: Icon) => {
     const image = img(URL.createObjectURL(icon.data), 'icon');
     image.loading = "lazy";
     image.setAttribute('id', icon.id);
-    image.onclick = async () => {
-        const cachedAllData = await db.icons.toArray();
-        emitEvent(DataStoreEvents.SidebarUpdate, {
-            currentIcon: icon,
-            imageVariants: cachedAllData.filter(x => x.variantFrom == icon.id),
-            variantFrom: isVariantFrom(icon, cachedAllData),
-            possiableVariants: getPossibleVariants(cachedAllData, icon)
-        })
-    };
+    image.onclick = () => sidebarOpenIcon(icon);
     return image;
 }
 
