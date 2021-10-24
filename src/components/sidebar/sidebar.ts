@@ -158,6 +158,6 @@ function createRemovedRef(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEve
 function openDeleteDialog(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
     return () => {
         sidebarDialog.close();
-        deleteDialog.open().unsafeViewOptions().update(icon.id);
+        deleteDialog.open().unsafeViewOptions<{ id: string }>().update({ id: icon.id });
     }
 }
