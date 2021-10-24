@@ -18,32 +18,11 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
     const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom, openTitleEdit } = view.state;
     if (!currentIcon) return view.use(span("Something illeagl happend"));
     disableGlobalDragAndDrop()
-    const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
 
-    const staticTitle = span(currentIcon?.filename, 'icon-title', canEdit ? "editable" : "noeditable");
-    staticTitle.onclick = () => canEdit ? view.update({ openTitleEdit: true }) : null;
-    const title = openTitleEdit ? Input({
-        placeholder: "Icon",
-        value: currentIcon?.filename ?? "",
-        autoFocus: true,
-        blurOn: handleBlurEventOfIconTitle(currentIcon)
-    }) : staticTitle;
-    const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
+    const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
     image.loading = "eager";
     image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
-    const variants = Horizontal({ classes: [ "variants" ] }, ...nullish(
-        ...imageVariants?.map(icon => {
-            const imageIcon = img(URL.createObjectURL(icon.data), 'alt-preview');
-            imageIcon.onclick = () => sidebarOpenIcon(icon)
-            return imageIcon;
-        }) ?? [],
-        canUpload && canEdit
-            ? IconButton({
-                icon: "plus",
-                clickOn: () => view.update({ showVariantsView: true })
-            })
-            : null
-    ))
+    const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
 
     const optionalData = [];
     if (variantFrom)
@@ -61,10 +40,10 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
     else
         view.use(Vertical({ classes: [ "shell" ], align: "flex-start", gap: " " },
             image,
-            title,
+            titleComponent(currentIcon, canEdit, view, openTitleEdit),
             tagComponent(currentIcon, canEdit ?? false, view, sidebarDialog),
             span('Variants', 'variants-title'),
-            variants,
+            variantsComponent(imageVariants, canUpload, canEdit, view),
             createAction("file-arrow-down", 'Download All Variants', false, handleAllVariantsDownload(currentIcon)),
             ...optionalData,
             details
@@ -130,6 +109,34 @@ export const registerSidebarEvents = () => {
             showVariantsView: currentState.currentIcon?.id == data.currentIcon.id ? currentState.showVariantsView : false
         })
     })
+}
+
+function variantsComponent(imageVariants: Icon[] | undefined, canUpload: boolean | undefined, canEdit: boolean | undefined, view: ViewOptions<SideBarType>) {
+    return Horizontal({ classes: [ "variants" ] }, ...nullish(
+        ...imageVariants?.map(icon => {
+            const imageIcon = img(URL.createObjectURL(icon.data), 'alt-preview');
+            imageIcon.onclick = () => sidebarOpenIcon(icon);
+            return imageIcon;
+        }) ?? [],
+        canUpload && canEdit
+            ? IconButton({
+                icon: "plus",
+                clickOn: () => view.update({ showVariantsView: true })
+            })
+            : null
+    ));
+}
+
+function titleComponent(currentIcon: Icon, canEdit: boolean | undefined, view: ViewOptions<SideBarType>, openTitleEdit: boolean | undefined) {
+    const staticTitle = span(currentIcon?.filename, 'icon-title', canEdit ? "editable" : "noeditable");
+    staticTitle.onclick = () => canEdit ? view.update({ openTitleEdit: true }) : null;
+    const title = openTitleEdit ? Input({
+        placeholder: "Icon",
+        value: currentIcon?.filename ?? "",
+        autoFocus: true,
+        blurOn: handleBlurEventOfIconTitle(currentIcon)
+    }) : staticTitle;
+    return title;
 }
 
 function getDetailsText(username?: string, icon?: Icon, image?: HTMLImageElement): string {
