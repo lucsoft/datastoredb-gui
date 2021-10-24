@@ -1,9 +1,16 @@
-import { custom, draw, Icon, span } from "@lucsoft/webgen";
+import { draw, Horizontal, Icon, span } from "@lucsoft/webgen";
 
 export const createAction = (icon: string, text: string, isRed?: boolean, onClick?: null | ((this: GlobalEventHandlers, ev: MouseEvent) => any)) => {
-    const element = custom('span', undefined, 'action', isRed ? 'red' : 'black')
+    const element = draw(Horizontal({
+        classes: [ 'action', isRed ? 'red' : 'black' ],
+        margin: "8px 24px",
+        gap: "16px"
+    },
+        Icon(icon),
+        span(text, 'label')
+    ));
     if (onClick)
         element.onclick = onClick;
-    element.append(draw(Icon(icon)), span(text, 'label'))
+
     return element;
 }

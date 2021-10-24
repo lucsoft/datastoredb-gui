@@ -1,10 +1,12 @@
-import { custom, Dialog, img, span, Vertical } from "@lucsoft/webgen"
+import { Color, custom, Dialog, Horizontal, img, span, Vertical } from "@lucsoft/webgen"
 import '../../../res/css/generator.css';
 import { uploadImage } from "../upload";
 import { hmsys } from "../views/dashboard";
 import { Icon } from "../../data/IconsCache";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
+
 export type imageGen = { selected: boolean, title: string, image?: File };
+
 type ImageGenList = {
     from?: Icon;
     target?: Icon;
@@ -26,8 +28,10 @@ function imageSelectorComponent(update: (updateStateData: Partial<ImageGenList>)
 export const VariantsGeneratorDialog = Dialog<ImageGenList>(({ use, update, state }) => {
     use(Vertical({},
         span("Select Variants you wannt to generate and publish"),
-        Vertical({ classes: [ 'variants-generator' ] }, ...state.normal?.map((x, index) => imageSelectorComponent(update, state.normal ?? [], false, index, x)) ?? []),
-        Vertical({ classes: [ 'variants-generator' ] }, ...state.disabled?.map((x, index) => imageSelectorComponent(update, state.disabled ?? [], true, index, x)) ?? [])
+        Horizontal({ align: "space-around" },
+            Vertical({ classes: [ 'variants-generator' ] }, ...state.normal?.map((x, index) => imageSelectorComponent(update, state.normal ?? [], false, index, x)) ?? []),
+            Vertical({ classes: [ 'variants-generator' ] }, ...state.disabled?.map((x, index) => imageSelectorComponent(update, state.disabled ?? [], true, index, x)) ?? [])
+        )
     ))
 })
     .setTitle("Variants Generator")
@@ -41,4 +45,4 @@ export const VariantsGeneratorDialog = Dialog<ImageGenList>(({ use, update, stat
         await uploadImage(transfer.files, hmsys, state.from?.id);
         emitEvent(DataStoreEvents.SidebarUpdate, undefined);
         return "close";
-    })
+    }, Color.Critical)

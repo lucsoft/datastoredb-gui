@@ -1,4 +1,4 @@
-import { Dialog, span, Vertical } from "@lucsoft/webgen";
+import { Color, Dialog, span, Vertical } from "@lucsoft/webgen";
 import { PandaIcon } from "./pandaIcon";
 import { hmsys } from "./views/dashboard";
 
@@ -9,7 +9,7 @@ export const deleteDialog = Dialog<string>(({ use }) => use(span('Deleteing this
     .addButton("Delete", () => {
         hmsys.api.trigger("@HomeSYS/DataStoreDB", { type: "removeFile", id: deleteDialog.unsafeViewOptions().state })
         return "close";
-    });
+    }, Color.Critical);
 
 export const dropFilesHere = Dialog(({ use }) => use(Vertical({},
     PandaIcon(),

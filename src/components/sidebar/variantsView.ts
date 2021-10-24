@@ -8,6 +8,7 @@ import { imageGen, VariantsGeneratorDialog } from "./variantsGenerator";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 import { variantDisabled, variantDuplicate, variantOverlay, variantRaw } from "../../logic/imageTransfromer";
 import { SideBarType } from "../../types/sidebarTypes";
+import { sidebarDialog } from "./sidebar";
 
 export function renderVariantsView(main: ViewOptions<SideBarType>): Component {
     const optionalData = [];
@@ -17,7 +18,7 @@ export function renderVariantsView(main: ViewOptions<SideBarType>): Component {
         classes: [ "header" ],
         align: "flex-start"
     },
-        draw(mIcon("arrow_back_ios_new")),
+        draw(mIcon("chevron-left")),
         span("Variants")));
 
     header.onclick = () => main.update({ showVariantsView: false });
@@ -28,11 +29,12 @@ export function renderVariantsView(main: ViewOptions<SideBarType>): Component {
             Horizontal({ classes: [ "variants" ] }, ...possiableVariants.map(x => createNewVariantsIcon(icon.id, x)))
         )
 
-    return Vertical({},
+    return Vertical({ margin: "-0.5rem 1rem 0.5rem" },
         header,
         ...optionalData,
-        createAction("add_photo_alternate", "Upload Custom Variant", false, () => uploadCustomVariant(icon!)),
-        createAction("filter_b_and_w", "Open Variants Generator", false, async () => {
+        createAction("file-arrow-up", "Upload Custom Variant", false, () => uploadCustomVariant(icon!)),
+        createAction("file-earmark-image", "Open Variants Generator", false, async () => {
+            sidebarDialog.close()
             const mapDatatoGeneratorList = await buildGenartorList(icon);
             var data = await db.icons.filter(x => x.tags.includes('overlay') && x.tags.includes('basic')).filter(x => x.variantFrom == undefined).toArray();
             VariantsGeneratorDialog.unsafeViewOptions()!.update({ from: icon, target: icon, normal: data.map(mapDatatoGeneratorList) })

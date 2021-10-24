@@ -1,30 +1,27 @@
-import { draw, Input, ViewOptions, Horizontal, nullish, Button, DialogData, Checkbox } from "@lucsoft/webgen";
+import { draw, Input, ViewOptions, Horizontal, nullish, Button, DialogData, IconButton } from "@lucsoft/webgen";
 import { triggerUpdate } from "../../common/api";
 import { DataStoreEvents, emitEvent } from "../../common/eventmanager";
 import { Icon } from "../../data/IconsCache";
 
 export const tagComponent = (icon: Icon, canEdit?: boolean, view?: ViewOptions<{ editTags: boolean }>, dialog?: DialogData) => {
-
-    const button = Checkbox({
+    const button = IconButton({
         icon: "pencil-fill",
-        selected: true,
-        toggledOn: () => view?.update({ editTags: true })
+        clickOn: () => view?.update({ editTags: true })
     })
     if (view?.state.editTags)
         return Horizontal({ classes: [ "tags-list" ] }, (() => {
             const tag = draw(Input({
                 placeholder: "Tags",
-                value: icon?.tags.join(' ')
+                value: icon?.tags.join(' '),
+                autoFocus: true,
+                blurOn: (value) => {
+                    const newData = value.split(/_| |-|%20|,/)
+                    if (JSON.stringify(newData) != JSON.stringify(icon?.tags))
+                        triggerUpdate(icon!.id, { tags: newData })
+                    view.update({ editTags: false })
+                }
             }))
-            const tagsInput = tag.querySelector("input")!;
-            //@ts-ignore
-            tagsInput.autofocus = true;
-            tagsInput.onblur = () => {
-                const newData = tagsInput.value.split(/_| |-|%20|,/)
-                if (JSON.stringify(newData) != JSON.stringify(icon?.tags))
-                    triggerUpdate(icon!.id, { tags: newData })
-                view.update({ editTags: false })
-            }
+            tag.classList.add("tag-input");
             return tag;
         })())
 

@@ -1,10 +1,9 @@
-import { img, Icon as mIcon, span, Dialog, Input, Color, Vertical, Horizontal, ViewOptions } from "@lucsoft/webgen"
+import { img, span, Dialog, Input, Vertical, Horizontal, ViewOptions, nullish, IconButton } from "@lucsoft/webgen"
 import { DataStoreEvents, registerEvent } from "../../common/eventmanager";
 import '../../../res/css/sidebar.css';
 import { timeAgo } from "../../common/user/date";
 import { disableGlobalDragAndDrop, enableGlobalDragAndDrop } from "../dropareas";
 import { SideBarType } from "../../types/sidebarTypes";
-// import { hmsys } from "../views/dashboard";
 import { getPossibleVariants, isVariantFrom } from "../../common/iconData/variants";
 import { db, Icon } from "../../data/IconsCache";
 import { getImageSourceFromIconOpt } from "../../common/iconData/getImageUrlFromIcon";
@@ -15,42 +14,41 @@ import { createAction } from "./actions";
 import { deleteDialog } from "../dialogs";
 
 export const sidebarDialog = Dialog<SideBarType>((view) => {
-    const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom } = view.state;
+    const { currentIcon, canEdit, username, canRemove, canUpload, showVariantsView: showVariantsView, imageVariants, variantFrom, openTitleEdit } = view.state;
     if (!currentIcon) return view.use(span("Something illeagl happend"));
     disableGlobalDragAndDrop()
     const image = img(getImageSourceFromIconOpt(currentIcon), "preview");
-    // const title = use(span(currentIcon?.filename, 'icon-title', canEdit ? 'editable' : 'static'))
-    const title = Input({
-        color: canEdit ? undefined : Color.Disabled,
+
+    const staticTitle = span(currentIcon?.filename, 'icon-title', canEdit ? "editable" : "noeditable");
+    staticTitle.onclick = () => canEdit ? view.update({ openTitleEdit: true }) : null;
+    const title = openTitleEdit ? Input({
         placeholder: "Icon",
         value: currentIcon?.filename ?? "",
-        changeOn: handleBlurEventOfIconTitle(currentIcon)
-    });
+        autoFocus: true,
+        blurOn: handleBlurEventOfIconTitle(currentIcon)
+    }) : staticTitle;
     const details = span(getDetailsText(username, currentIcon, image), 'extra-data');
     image.loading = "eager";
+    console.log(canUpload, canEdit);
     image.onload = () => details.innerText = getDetailsText(username, currentIcon, image);
-    const add = mIcon('add') as HTMLElement
-    add.onclick = () => view.update({ showVariantsView: true })
-    const variants = Horizontal({ classes: [ "variants" ] },
-        ...(imageVariants ?? []).map(icon => img(URL.createObjectURL(icon.data), 'alt-preview')),
-        ...(canUpload && canEdit ? [ add ] : [])
-    )
+    const variants = Horizontal({ classes: [ "variants" ] }, ...nullish(
+        ...imageVariants?.map(icon => img(URL.createObjectURL(icon.data), 'alt-preview')) ?? [],
+        canUpload && canEdit
+            ? IconButton({
+                icon: "plus",
+                clickOn: () => view.update({ showVariantsView: true })
+            })
+            : null
+    ))
 
     const optionalData = [];
-
-    if (currentIcon?.variantFrom)
-        optionalData.push(
-            span('Variants', 'variants-title'),
-            variants,
-            createAction("file_download", 'Download All Variants', false, handleAllVariantsDownload(currentIcon))
-        );
     if (variantFrom)
         optionalData.push(
-            createAction("update_disabled", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon))
+            createAction("file-minus", `Remove this Variant from ${variantFrom.filename}`, true, createRemovedRef(currentIcon))
         )
     if (canRemove)
         optionalData.push(
-            createAction("delete", "Delete " + currentIcon.filename, true, openDeleteDialog(currentIcon))
+            createAction("file-x", "Delete " + currentIcon.filename, true, openDeleteDialog(currentIcon))
         )
 
     if (showVariantsView) {
@@ -61,6 +59,9 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
             image,
             title,
             tagComponent(currentIcon, canEdit ?? false, view, sidebarDialog),
+            span('Variants', 'variants-title'),
+            variants,
+            createAction("file-arrow-down", 'Download All Variants', false, handleAllVariantsDownload(currentIcon)),
             ...optionalData,
             details
         ))
@@ -69,7 +70,7 @@ export const sidebarDialog = Dialog<SideBarType>((view) => {
     .allowUserClose()
     .onClose(() => {
         const dia = sidebarDialog.unsafeViewOptions<SideBarType>();
-        dia.update({ showVariantsView: false })
+        dia.update({ showVariantsView: false, editTags: false, openTitleEdit: false })
         if (dia.state.canUpload) enableGlobalDragAndDrop();
     })
 export const registerSidebarEvents = () => {
@@ -143,6 +144,7 @@ function handleAllVariantsDownload(icon: Icon): ((this: GlobalEventHandlers, ev:
 
 function handleBlurEventOfIconTitle(icon?: Icon): ((text: string) => void) {
     return (text) => {
+        sidebarDialog.unsafeViewOptions<SideBarType>().update({ openTitleEdit: false })
         if (icon && text != icon.filename) triggerUpdate(icon.id, { filename: text })
     };
 }
@@ -154,5 +156,8 @@ function createRemovedRef(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEve
 }
 
 function openDeleteDialog(icon: Icon): ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null {
-    return () => deleteDialog.open().unsafeViewOptions().update(icon.id);
+    return () => {
+        sidebarDialog.close();
+        deleteDialog.open().unsafeViewOptions().update(icon.id);
+    }
 }

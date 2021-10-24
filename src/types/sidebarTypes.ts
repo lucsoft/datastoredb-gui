@@ -4,6 +4,7 @@ export type SideBarType = {
     currentIcon?: Icon
     showVariantsView?: boolean
     editTags?: boolean
+    openTitleEdit: boolean
     variantFrom?: Icon
     imageVariants?: Icon[]
     possiableVariants?: Icon[]

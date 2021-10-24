@@ -19,7 +19,7 @@
     "homepage": "https://github.com/lucsoft/datastoredb-gui#readme",
     "dependencies": {
         "@lucsoft/network-connector": "^0.4.4",
-        "@lucsoft/webgen": "^1.19.17",
+        "@lucsoft/webgen": "^1.19.18",
         "@webpack-cli/serve": "^1.6.0",
         "@zip.js/zip.js": "^2.3.18",
         "clean-webpack-plugin": "^4.0.0",
