@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "incremental": true,
-        "target": "esnext",
+        "target": "es2021",
         "module": "ESNext",
         "strict": true,
         "outDir": "bin",

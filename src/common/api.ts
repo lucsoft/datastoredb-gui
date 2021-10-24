@@ -1,10 +1,16 @@
 import { hmsys } from "../components/views/dashboard";
 const moduleId = '@HomeSYS/DataStoreDB';
 import { db } from "../data/IconsCache";
-import { BlobReader, BlobWriter, ZipReader } from "@zip.js/zip.js";
+
 import { config } from "./envdata";
 
 const { defaultHttps, defaultIp, filterMode } = config;
+let data: typeof import("@zip.js/zip.js") | null = null;
+export const getZipJS = async () => {
+    if (data) return data;
+    data = await import('@zip.js/zip.js');
+    return data;
+}
 
 export const apiPath = () => `http${defaultHttps ? 's' : ''}://${defaultIp}/api/@HomeSYS/DataStoreDB/`;
 export const triggerUpdateResponse = async (id: string, data: Partial<{
@@ -27,6 +33,7 @@ export const triggerRawImages = async (images: String[]) => {
         },
         body: JSON.stringify(images)
     })
+    const { BlobReader, ZipReader, BlobWriter } = await getZipJS()
     const entries = await (new ZipReader(new BlobReader(await rsp.blob()))).getEntries();
 
     return Promise.all(entries.map(async (x) => [ x.filename, await x.getData!(new BlobWriter()) ] as [ id: string, data: Blob ]))

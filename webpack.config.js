@@ -18,6 +18,7 @@ module.exports = (_, mode) => {
         mode: isProduction ? "production" : "development",
         devtool: isProduction ? undefined : 'inline-source-map',
         output: {
+            publicPath: '',
             filename: '[name].js',
             chunkFilename: '[name].bundle.js',
             path: path.resolve(__dirname, 'dist'),
@@ -85,6 +86,8 @@ module.exports = (_, mode) => {
         ],
         optimization: isProduction ? {
             minimize: true,
+            emitOnErrors: false,
+            usedExports: true,
             minimizer: [ new TerserPlugin(), new CssMinimizerPlugin() ],
             splitChunks: {
                 chunks: 'async',
